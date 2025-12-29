@@ -1,0 +1,124 @@
+.price-drop-top-n {
+    margin: var(--spacing-8) 0;
+    padding: var(--spacing-6);
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+    border-radius: var(--radius-xl);
+}
+
+.top-n-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-6);
+}
+
+.top-n-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+}
+
+.top-n-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-4);
+}
+
+.top-n-item-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.top-n-item {
+    display: flex;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    position: relative;
+    transition: all var(--transition-base);
+}
+
+.top-n-item:hover {
+    transform: translateY(-2px);
+}
+
+.top-n-rank {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    flex-shrink: 0;
+}
+
+.top-n-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.top-n-product-name {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.top-n-prices {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.top-n-old-price {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    text-decoration: line-through;
+}
+
+.top-n-arrow {
+    color: var(--color-text-tertiary);
+}
+
+.top-n-new-price {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.top-n-drop {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.top-n-drop-amount {
+    font-size: var(--font-size-sm);
+    color: var(--color-error);
+    font-weight: var(--font-weight-medium);
+}
+
+@media (max-width: 768px) {
+    .price-drop-top-n {
+        padding: var(--spacing-4);
+    }
+
+    .top-n-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .top-n-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-2);
+    }
+}

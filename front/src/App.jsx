@@ -1,0 +1,34 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Header } from './components/layout/Header';
+import { Footer } from './components/layout/Footer';
+import { HomePage } from './pages/HomePage';
+import { CartPage } from './pages/CartPage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
+import { FlashSaleQueuePage } from './pages/FlashSaleQueuePage';
+import { LoginPage } from './pages/LoginPage';
+import { SignupPage } from './pages/SignupPage';
+
+function App() {
+    return (
+        <BrowserRouter>
+            <div className="app">
+                <Header />
+                <main className="main-content">
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/signup" element={<SignupPage />} />
+                        <Route path="/products/:id" element={<ProductDetailPage />} />
+                        <Route path="/cart" element={<CartPage />} />
+                        <Route path="/flash-sale/:id" element={<FlashSaleQueuePage />} />
+                        <Route path="/category/:category" element={<HomePage />} />
+                        <Route path="/search" element={<HomePage />} />
+                    </Routes>
+                </main>
+                <Footer />
+            </div>
+        </BrowserRouter>
+    );
+}
+
+export default App;

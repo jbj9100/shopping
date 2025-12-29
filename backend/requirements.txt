@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+pydantic[email]
+pydantic-settings
+python-dotenv
+sqlalchemy>=2.0
+asyncpg
+alembic
+redis
+passlib[argon2]
+aiokafka

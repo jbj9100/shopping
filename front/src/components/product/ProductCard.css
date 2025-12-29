@@ -1,0 +1,192 @@
+.product-card-link {
+    display: block;
+    height: 100%;
+}
+
+.product-card-link.disabled {
+    cursor: not-allowed;
+}
+
+.product-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: all var(--transition-base);
+}
+
+/* 가격 변동 애니메이션 */
+.product-card.price-changed {
+    animation: cardPulse 0.6s ease-out;
+    box-shadow: 0 0 0 3px var(--color-warning) !important;
+}
+
+@keyframes cardPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+/* 이상 가격 처리 */
+.product-card.anomalous {
+    opacity: 0.6;
+}
+
+.product-card.anomalous .product-card-image {
+    filter: grayscale(100%);
+}
+
+.product-card-image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    background: var(--color-background);
+    overflow: hidden;
+}
+
+.product-card-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+}
+
+.product-card:hover:not(.anomalous) .product-card-image {
+    transform: scale(1.05);
+}
+
+.product-card-image-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-4xl);
+    color: var(--color-text-tertiary);
+}
+
+.product-card-discount-badge {
+    position: absolute;
+    top: var(--spacing-2);
+    left: var(--spacing-2);
+}
+
+.product-card-status-badge {
+    position: absolute;
+    top: var(--spacing-2);
+    left: var(--spacing-2);
+}
+
+.product-card-stock-badge {
+    position: absolute;
+    top: var(--spacing-2);
+    right: var(--spacing-2);
+}
+
+.product-card-content {
+    padding: var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    flex: 1;
+}
+
+.product-card-depletion {
+    margin-bottom: var(--spacing-1);
+}
+
+.product-card-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: var(--line-height-normal);
+    min-height: calc(var(--font-size-base) * var(--line-height-normal) * 2);
+}
+
+.product-card-price-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+}
+
+.product-card-original-price {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    text-decoration: line-through;
+}
+
+.product-card-price {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    transition: all var(--transition-base);
+}
+
+/* 가격 변동 시 강조 */
+.product-card.price-changed .product-card-price {
+    animation: priceFlash 0.6s ease-out;
+}
+
+@keyframes priceFlash {
+    0% {
+        background: var(--color-warning);
+        color: var(--color-text-primary);
+        transform: scale(1.1);
+        padding: var(--spacing-1) var(--spacing-2);
+        border-radius: var(--radius);
+    }
+
+    100% {
+        background: transparent;
+        color: var(--color-primary);
+        transform: scale(1);
+        padding: 0;
+    }
+}
+
+.product-card-rating {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-sm);
+}
+
+.product-card-stars {
+    color: var(--color-warning);
+    font-weight: var(--font-weight-medium);
+}
+
+.product-card-reviews {
+    color: var(--color-text-secondary);
+}
+
+.product-card-shipping {
+    margin-top: auto;
+    display: flex;
+    gap: var(--spacing-2);
+}
+
+.product-card-anomaly-notice {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    text-align: center;
+    padding: var(--spacing-2);
+    background: var(--color-background);
+    border-radius: var(--radius);
+    margin-top: var(--spacing-2);
+}

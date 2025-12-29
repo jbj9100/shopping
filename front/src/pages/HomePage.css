@@ -1,0 +1,210 @@
+.home-page {
+    min-height: 100vh;
+}
+
+/* 프로모션 배너 */
+.promotion-banner {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: var(--color-text-inverse);
+    padding: var(--spacing-8) 0;
+    margin-bottom: var(--spacing-6);
+}
+
+.promotion-content {
+    text-align: center;
+}
+
+.promotion-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-2);
+}
+
+.promotion-subtitle {
+    font-size: var(--font-size-lg);
+    opacity: 0.9;
+}
+
+/* 카테고리 아이콘 */
+.category-icons {
+    margin-bottom: var(--spacing-8);
+    background: var(--color-surface);
+    padding: var(--spacing-6) 0;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.category-icons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: var(--spacing-4);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.category-icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-2);
+    cursor: pointer;
+    transition: transform var(--transition-base);
+    padding: var(--spacing-2);
+}
+
+.category-icon-item:hover {
+    transform: translateY(-2px);
+}
+
+.category-icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-full);
+    background: var(--color-background);
+    border: 2px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-2xl);
+    transition: all var(--transition-base);
+}
+
+.category-icon-item:hover .category-icon-circle {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+}
+
+.category-icon-label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    text-align: center;
+}
+
+/* 메인 콘텐츠 레이아웃 */
+.main-content-section {
+    margin-bottom: var(--spacing-12);
+}
+
+.price-update-alert {
+    background: linear-gradient(135deg, var(--color-warning) 0%, hsl(45, 100%, 60%) 100%);
+    color: var(--color-text-primary);
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing-6);
+    font-weight: var(--font-weight-semibold);
+    text-align: center;
+    animation: slideDown var(--transition-base);
+    box-shadow: var(--shadow-md);
+}
+
+.content-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: var(--spacing-8);
+    align-items: start;
+}
+
+.filter-sidebar {
+    /* sticky는 ProductFilter 컴포넌트 내부에서 처리 */
+}
+
+.products-main {
+    min-height: 600px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-6);
+}
+
+.section-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.product-count {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-secondary);
+}
+
+/* 에러 메시지 */
+.error-message {
+    background: var(--color-warning);
+    color: var(--color-text-primary);
+    padding: var(--spacing-4);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing-6);
+    text-align: center;
+}
+
+.error-note {
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-2);
+    opacity: 0.8;
+}
+
+/* 타임딜 섹션 (제거됨) */
+
+/* 반응형 */
+@media (max-width: 1200px) {
+    .content-layout {
+        grid-template-columns: 250px 1fr;
+        gap: var(--spacing-6);
+    }
+}
+
+@media (max-width: 1024px) {
+    .content-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-sidebar {
+        order: 2;
+    }
+
+    .products-main {
+        order: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .promotion-title {
+        font-size: var(--font-size-xl);
+    }
+
+    .promotion-subtitle {
+        font-size: var(--font-size-base);
+    }
+
+    .category-icons-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-3);
+    }
+
+    .category-icon-circle {
+        width: 50px;
+        height: 50px;
+        font-size: var(--font-size-xl);
+    }
+
+    .category-icon-label {
+        font-size: 10px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-2);
+    }
+
+    .section-title {
+        font-size: var(--font-size-xl);
+    }
+}
