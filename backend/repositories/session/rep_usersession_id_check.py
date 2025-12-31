@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
-from models.user import UserSession
+from models.m_user import UserSession
 from fastapi import HTTPException, Request
 
 

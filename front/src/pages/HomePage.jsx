@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import { ProductGrid } from '../components/product/ProductGrid';
 import { ProductFilter } from '../components/product/ProductFilter';
 import { PriceDropTopN } from '../components/price-drop/PriceDropTopN';
@@ -9,6 +10,7 @@ import { useWebSocket } from '../hooks/useWebSocket';
 import './HomePage.css';
 
 export const HomePage = () => {
+    const { category } = useParams(); // URL에서 카테고리 파라미터 추출
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -98,13 +100,19 @@ export const HomePage = () => {
 
     useEffect(() => {
         loadProducts();
-    }, []);
+    }, [category]); // 카테고리 변경 시 다시 로드
 
     const loadProducts = async () => {
         try {
             setIsLoading(true);
             // 백엔드 상품 API가 아직 없으므로 목업 데이터 사용
-            const mockData = getMockProducts();
+            let mockData = getMockProducts();
+
+            // URL에 카테고리가 있으면 해당 카테고리만 필터링
+            if (category) {
+                mockData = mockData.filter(p => p.category === category);
+            }
+
             setProducts(mockData);
             setFilteredProducts(mockData);
 
@@ -129,112 +137,67 @@ export const HomePage = () => {
         }
     };
 
-    // 목업 데이터 (백엔드 준비 전까지)
+    // 목업 데이터 (백엔드 준비 전까지) - 10개 카테고리 × 4개 상품 = 40개
     const getMockProducts = () => [
-        {
-            id: 1,
-            name: '슬라이스 식빵 통밀, 65g, 1개',
-            price: 1550,
-            originalPrice: 2000,
-            discount: 450,
-            brand: 'R.LUX',
-            image: null,
-            rating: 4.8,
-            reviewCount: 1809,
-            freeShipping: true,
-            rocketShipping: false,
-            stock: 15
-        },
-        {
-            id: 2,
-            name: '삼립 호빵 밤앙금호빵 단팥, 92g, 12개',
-            price: 10980,
-            originalPrice: 12000,
-            discount: 1020,
-            brand: '삼립',
-            image: null,
-            rating: 4.5,
-            reviewCount: 58196,
-            freeShipping: true,
-            rocketShipping: true,
-            stock: 8
-        },
-        {
-            id: 3,
-            name: '곰표 우유 식빵, 660g, 1개',
-            price: 4050,
-            brand: '곰표',
-            image: null,
-            rating: 4.7,
-            reviewCount: 320530,
-            freeShipping: true,
-            rocketShipping: false,
-            stock: 25
-        },
-        {
-            id: 4,
-            name: '파스쾨르 슬라이스 브리오슈 (냉동), 500g, 1개',
-            price: 8980,
-            originalPrice: 10000,
-            discount: 1020,
-            brand: 'Pasquier',
-            image: null,
-            rating: 4.6,
-            reviewCount: 2692,
-            freeShipping: true,
-            rocketShipping: true,
-            stock: 50
-        },
-        {
-            id: 5,
-            name: '크루아상 플레인, 70g, 6개',
-            price: 4900,
-            brand: '베이커리',
-            image: null,
-            rating: 4.4,
-            reviewCount: 892,
-            freeShipping: false,
-            rocketShipping: false,
-            stock: 5
-        },
-        {
-            id: 6,
-            name: '바게트 프렌치, 300g, 2개',
-            price: 3200,
-            brand: '베이커리',
-            image: null,
-            rating: 4.7,
-            reviewCount: 1523,
-            freeShipping: false,
-            rocketShipping: false,
-            stock: 100
-        },
-        {
-            id: 7,
-            name: '호밀빵 통호밀, 500g, 1개',
-            price: 5800,
-            originalPrice: 6500,
-            discount: 700,
-            brand: 'R.LUX',
-            image: null,
-            rating: 4.9,
-            reviewCount: 3421,
-            freeShipping: true,
-            rocketShipping: true,
-            stock: 30
-        },
-        {
-            id: 8,
-            name: '단팥빵 앙버터, 100g, 4개',
-            price: 6200,
-            brand: '삼립',
-            image: null,
-            rating: 4.6,
-            reviewCount: 5234,
-            freeShipping: true,
-            rocketShipping: false,
-            stock: 12
-        }
+        // 식품 (food)
+        { id: 1, category: 'food', name: '곰표 우유 식빵 660g', price: 4050, originalPrice: 5000, discount: 950, brand: '곰표', image: null, rating: 4.7, reviewCount: 32053, freeShipping: true, rocketShipping: false, stock: 25 },
+        { id: 2, category: 'food', name: '신라면 멀티팩 5개입', price: 4480, originalPrice: 5500, discount: 1020, brand: '농심', image: null, rating: 4.8, reviewCount: 15234, freeShipping: true, rocketShipping: true, stock: 100 },
+        { id: 3, category: 'food', name: '제주 감귤 3kg', price: 19800, originalPrice: 25000, discount: 5200, brand: '제주농협', image: null, rating: 4.6, reviewCount: 8921, freeShipping: true, rocketShipping: false, stock: 50 },
+        { id: 4, category: 'food', name: '코카콜라 제로 500ml 24개', price: 22900, brand: '코카콜라', image: null, rating: 4.9, reviewCount: 45123, freeShipping: true, rocketShipping: true, stock: 200 },
+
+        // 생활용품 (living)
+        { id: 5, category: 'living', name: '다우니 섬유유연제 3.2L', price: 15900, originalPrice: 19900, discount: 4000, brand: '다우니', image: null, rating: 4.8, reviewCount: 28901, freeShipping: true, rocketShipping: true, stock: 150 },
+        { id: 6, category: 'living', name: '코멧 3겹 화장지 30롤', price: 18900, brand: '코멧', image: null, rating: 4.7, reviewCount: 52341, freeShipping: true, rocketShipping: true, stock: 200 },
+        { id: 7, category: 'living', name: '페리오 치약 클리닉 3개', price: 8900, originalPrice: 11900, discount: 3000, brand: 'LG생활건강', image: null, rating: 4.6, reviewCount: 15678, freeShipping: true, rocketShipping: false, stock: 100 },
+        { id: 8, category: 'living', name: '테크 세탁세제 리필 2.4L', price: 12900, brand: 'LG생활건강', image: null, rating: 4.5, reviewCount: 34521, freeShipping: true, rocketShipping: true, stock: 80 },
+
+        // 뷰티 (beauty)
+        { id: 9, category: 'beauty', name: '아이오페 레티놀 세럼 30ml', price: 52000, originalPrice: 65000, discount: 13000, brand: 'IOPE', image: null, rating: 4.8, reviewCount: 9234, freeShipping: true, rocketShipping: true, stock: 40 },
+        { id: 10, category: 'beauty', name: '라로슈포제 선크림 50ml', price: 24900, brand: '라로슈포제', image: null, rating: 4.7, reviewCount: 18567, freeShipping: true, rocketShipping: false, stock: 70 },
+        { id: 11, category: 'beauty', name: '메디힐 마스크팩 10매', price: 9900, originalPrice: 15000, discount: 5100, brand: '메디힐', image: null, rating: 4.6, reviewCount: 45678, freeShipping: true, rocketShipping: true, stock: 200 },
+        { id: 12, category: 'beauty', name: 'MAC 립스틱 레드', price: 33000, brand: 'MAC', image: null, rating: 4.9, reviewCount: 7821, freeShipping: false, rocketShipping: false, stock: 25 },
+
+        // 홈인테리어 (interior)
+        { id: 13, category: 'interior', name: '이케아 LED 스탠드', price: 29900, brand: 'IKEA', image: null, rating: 4.5, reviewCount: 4532, freeShipping: false, rocketShipping: false, stock: 30 },
+        { id: 14, category: 'interior', name: '무인양품 소파쿠션', price: 19900, originalPrice: 25000, discount: 5100, brand: 'MUJI', image: null, rating: 4.6, reviewCount: 3421, freeShipping: true, rocketShipping: false, stock: 45 },
+        { id: 15, category: 'interior', name: '자라홈 러그 150x200', price: 89000, brand: '자라홈', image: null, rating: 4.4, reviewCount: 1892, freeShipping: false, rocketShipping: false, stock: 15 },
+        { id: 16, category: 'interior', name: '모던하우스 벽시계', price: 24900, originalPrice: 32000, discount: 7100, brand: '모던하우스', image: null, rating: 4.3, reviewCount: 2341, freeShipping: true, rocketShipping: true, stock: 40 },
+
+        // 가전디지털 (electronics)
+        { id: 17, category: 'electronics', name: '애플 맥북 에어 M3', price: 1590000, originalPrice: 1690000, discount: 100000, brand: 'Apple', image: null, rating: 4.9, reviewCount: 8934, freeShipping: true, rocketShipping: false, stock: 15 },
+        { id: 18, category: 'electronics', name: '삼성 갤럭시 버즈 FE', price: 89000, brand: '삼성', image: null, rating: 4.7, reviewCount: 12456, freeShipping: true, rocketShipping: true, stock: 80 },
+        { id: 19, category: 'electronics', name: 'LG 울트라기어 27인치', price: 329000, originalPrice: 400000, discount: 71000, brand: 'LG', image: null, rating: 4.8, reviewCount: 5678, freeShipping: true, rocketShipping: false, stock: 25 },
+        { id: 20, category: 'electronics', name: '아이패드 10세대 64GB', price: 599000, brand: 'Apple', image: null, rating: 4.9, reviewCount: 23456, freeShipping: true, rocketShipping: true, stock: 30 },
+
+        // 주방용품 (kitchen)
+        { id: 21, category: 'kitchen', name: '휘슬러 압력솥 6L', price: 289000, originalPrice: 350000, discount: 61000, brand: '휘슬러', image: null, rating: 4.8, reviewCount: 3456, freeShipping: true, rocketShipping: false, stock: 20 },
+        { id: 22, category: 'kitchen', name: '테팔 프라이팬 28cm', price: 39900, brand: '테팔', image: null, rating: 4.6, reviewCount: 18234, freeShipping: true, rocketShipping: true, stock: 100 },
+        { id: 23, category: 'kitchen', name: '코렐 접시세트 16P', price: 79000, originalPrice: 99000, discount: 20000, brand: '코렐', image: null, rating: 4.7, reviewCount: 5678, freeShipping: true, rocketShipping: false, stock: 35 },
+        { id: 24, category: 'kitchen', name: '쿠쿠 전기밥솥 10인용', price: 189000, originalPrice: 250000, discount: 61000, brand: '쿠쿠', image: null, rating: 4.8, reviewCount: 8901, freeShipping: true, rocketShipping: false, stock: 25 },
+
+        // 반려동물 (pet)
+        { id: 25, category: 'pet', name: '로얄캐닌 사료 3kg', price: 32900, originalPrice: 39900, discount: 7000, brand: '로얄캐닌', image: null, rating: 4.8, reviewCount: 12345, freeShipping: true, rocketShipping: true, stock: 100 },
+        { id: 26, category: 'pet', name: '하림펫푸드 간식 300g', price: 8900, brand: '하림', image: null, rating: 4.6, reviewCount: 8765, freeShipping: true, rocketShipping: false, stock: 150 },
+        { id: 27, category: 'pet', name: '캣타워 대형 180cm', price: 89000, originalPrice: 120000, discount: 31000, brand: '펫모닝', image: null, rating: 4.7, reviewCount: 3456, freeShipping: false, rocketShipping: false, stock: 20 },
+        { id: 28, category: 'pet', name: '강아지 패드 100매', price: 19900, brand: '코멧', image: null, rating: 4.5, reviewCount: 23456, freeShipping: true, rocketShipping: true, stock: 200 },
+
+        // 스포츠/레저 (sports)
+        { id: 29, category: 'sports', name: '나이키 에어맥스 270', price: 169000, originalPrice: 199000, discount: 30000, brand: 'Nike', image: null, rating: 4.8, reviewCount: 12345, freeShipping: true, rocketShipping: false, stock: 40 },
+        { id: 30, category: 'sports', name: '요가매트 NBR 10mm', price: 19900, brand: '에바', image: null, rating: 4.6, reviewCount: 8765, freeShipping: true, rocketShipping: true, stock: 100 },
+        { id: 31, category: 'sports', name: '덤벨 세트 20kg', price: 89000, originalPrice: 120000, discount: 31000, brand: '헬스메이트', image: null, rating: 4.7, reviewCount: 5678, freeShipping: false, rocketShipping: false, stock: 30 },
+        { id: 32, category: 'sports', name: '캠핑 텐트 4인용', price: 159000, originalPrice: 200000, discount: 41000, brand: '코베아', image: null, rating: 4.8, reviewCount: 3456, freeShipping: true, rocketShipping: false, stock: 20 },
+
+        // 도서/음반 (books)
+        { id: 33, category: 'books', name: '트렌드 코리아 2025', price: 17100, originalPrice: 19000, discount: 1900, brand: '미래의창', image: null, rating: 4.9, reviewCount: 23456, freeShipping: true, rocketShipping: true, stock: 200 },
+        { id: 34, category: 'books', name: '아웃라이어', price: 15300, brand: '김영사', image: null, rating: 4.8, reviewCount: 34567, freeShipping: true, rocketShipping: false, stock: 150 },
+        { id: 35, category: 'books', name: 'BTS 앨범 정규 4집', price: 45000, originalPrice: 50000, discount: 5000, brand: 'HYBE', image: null, rating: 4.9, reviewCount: 67890, freeShipping: true, rocketShipping: true, stock: 100 },
+        { id: 36, category: 'books', name: '해리포터 전집 세트', price: 89000, brand: '문학수첩', image: null, rating: 4.9, reviewCount: 12345, freeShipping: true, rocketShipping: false, stock: 40 },
+
+        // 헬스/건강 (health)
+        { id: 37, category: 'health', name: '종근당 비타민C 1000', price: 19900, originalPrice: 25000, discount: 5100, brand: '종근당', image: null, rating: 4.7, reviewCount: 28901, freeShipping: true, rocketShipping: true, stock: 150 },
+        { id: 38, category: 'health', name: '락토핏 유산균 60포', price: 23900, brand: '종근당', image: null, rating: 4.8, reviewCount: 45678, freeShipping: true, rocketShipping: false, stock: 200 },
+        { id: 39, category: 'health', name: '홍삼정 에브리타임', price: 89000, originalPrice: 110000, discount: 21000, brand: '정관장', image: null, rating: 4.9, reviewCount: 12345, freeShipping: true, rocketShipping: true, stock: 60 },
+        { id: 40, category: 'health', name: '오메가3 120캡슐', price: 29900, brand: '뉴트리원', image: null, rating: 4.6, reviewCount: 8765, freeShipping: true, rocketShipping: false, stock: 100 }
     ];
 
     // 필터 적용 로직

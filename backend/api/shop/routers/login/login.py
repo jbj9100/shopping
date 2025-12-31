@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Response, Depends
-from schemas.user import Login
+from schemas.sc_user import Login
 from sqlalchemy.ext.asyncio import AsyncSession
 from db.db_conn import get_session
 from db.redis_conn import get_redis

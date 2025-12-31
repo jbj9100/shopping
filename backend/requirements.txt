@@ -9,3 +9,4 @@ alembic
 redis
 passlib[argon2]
 aiokafka
+sqlalchemy-utils

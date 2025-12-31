@@ -1,11 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-
-from models.user import User
+from models.m_user import User
 from core.password_hash import hash_password
 from fastapi import HTTPException
-from schemas.user import Signup
+from schemas.sc_user import Signup
+
 
 # 회원가입으로 DB에 추가하는 작업
 async def signup_user(session: AsyncSession, signup: Signup) -> User:

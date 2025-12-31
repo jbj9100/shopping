@@ -1,5 +1,5 @@
 from fastapi import Request, status, HTTPException
-from models.user import User
+from models.m_user import User
 from core.redis_session_context import SessionContext
 from typing import Callable
 

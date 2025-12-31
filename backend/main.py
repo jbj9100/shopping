@@ -9,6 +9,8 @@ from api.shop.routers import main_dashboard, login, signup, logout
 from api.shop.routers.orders import orders 
 from api.shop.routers.products import products
 from api.shop.routers.carts import carts
+from api.shop.routers.price_alerts import price_alerts
+from api.shop.routers.flash_sales import flash_sales
 
 # .env load
 load_dotenv()
@@ -39,3 +41,5 @@ app.include_router(logout.router)
 app.include_router(orders.router) 
 app.include_router(products.router) 
 app.include_router(carts.router) 
+app.include_router(price_alerts.router) 
+app.include_router(flash_sales.router) 

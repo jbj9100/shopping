@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field , EmailStr
+from .sc_common import APIModel
 
-class Login(BaseModel):
+class Login(APIModel):
     email: EmailStr = Field(
         ...,
         max_length=128,

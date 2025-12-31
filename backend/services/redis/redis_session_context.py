@@ -2,7 +2,7 @@ import logging
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Literal
-from models.user import User, UserSession
+from models.m_user import User, UserSession
 from db.redis_conn import redis_pool
 import redis.asyncio as redis
 from db.db_conn import AsyncSessionLocal

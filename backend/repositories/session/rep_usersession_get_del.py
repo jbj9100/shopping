@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timedelta
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session, joinedload
-from models.user import UserSession
+from models.m_user import UserSession
 
 #### ORM CURD만 
 
@@ -15,7 +15,7 @@ def _now() -> datetime:
 async def DB_create_session_id(db: Session, user_id: int, ttl_seconds: int = 60 * 60 * 24 * 7) -> UserSession:
     now = _now()
     sess = UserSession(
-        id=str(uuid.uuid4()),
+        id=uuid.uuid4(),
         user_id=user_id,                      
         created_at=now,
         expires_at=now + timedelta(seconds=ttl_seconds),

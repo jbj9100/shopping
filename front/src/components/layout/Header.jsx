@@ -100,14 +100,16 @@ export const Header = () => {
             <div className="header-categories">
                 <div className="container">
                     <nav className="categories-nav">
-                        <Link to="/category/electronics" className="category-item">전자기기</Link>
-                        <Link to="/category/fashion" className="category-item">패션</Link>
-                        <Link to="/category/beauty" className="category-item">뷰티</Link>
-                        <Link to="/category/home" className="category-item">홈/리빙</Link>
                         <Link to="/category/food" className="category-item">식품</Link>
-                        <Link to="/category/sports" className="category-item">스포츠</Link>
-                        <Link to="/category/books" className="category-item">도서</Link>
-                        <Link to="/category/toys" className="category-item">완구</Link>
+                        <Link to="/category/living" className="category-item">생활용품</Link>
+                        <Link to="/category/beauty" className="category-item">뷰티</Link>
+                        <Link to="/category/interior" className="category-item">홈인테리어</Link>
+                        <Link to="/category/electronics" className="category-item">가전디지털</Link>
+                        <Link to="/category/kitchen" className="category-item">주방용품</Link>
+                        <Link to="/category/pet" className="category-item">반려동물</Link>
+                        <Link to="/category/sports" className="category-item">스포츠/레저</Link>
+                        <Link to="/category/books" className="category-item">도서/음반</Link>
+                        <Link to="/category/health" className="category-item">헬스/건강</Link>
                     </nav>
                 </div>
             </div>
