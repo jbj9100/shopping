@@ -1,9 +1,9 @@
 from fastapi import APIRouter,Request, HTTPException, Depends , Response
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from db.db_conn import get_session
-from db.redis_conn import get_redis
-from services.svc_session import SessionService
+from db.conn_db import get_session
+from db.conn_redis import get_redis
+from services.cookie.svc_session import SessionService
 
 router = APIRouter(prefix="/api/shop/logout", tags=["logout"])
 

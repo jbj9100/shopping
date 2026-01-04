@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from models.m_user import User
-from core.password_hash import hash_password
+from core.auth.auth_password_hash import hash_password
 from fastapi import HTTPException
 from schemas.sc_user import Signup
 

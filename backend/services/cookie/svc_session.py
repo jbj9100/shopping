@@ -1,7 +1,7 @@
 
 from fastapi import Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from repositories.rep_usersession_get_del import DB_create_session_id, DB_revoke_session_id
+from repositories.session.rep_usersession_get_del import DB_create_session_id, DB_revoke_session_id
 
 
 # 로그인/로그아웃 같은 “행동(비즈니스 이벤트)”이 발생했을 때 DB 작업 + 쿠키 반영까지 한 번에 끝내는 곳

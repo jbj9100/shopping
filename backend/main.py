@@ -1,16 +1,17 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-from core.lifespan import lifespan
+from core.lifespan.lifespan import lifespan
 from core.middlewares.md_login_session import DBSessionMiddleware
 
 # router import
-from api.shop.routers import main_dashboard, login, signup, logout
+from api.shop.routers.login import main_dashboard, login, signup, logout
 from api.shop.routers.orders import orders 
 from api.shop.routers.products import products
 from api.shop.routers.carts import carts
 from api.shop.routers.price_alerts import price_alerts
 from api.shop.routers.flash_sales import flash_sales
+# from api.shop.routers.ai import ai_router
 
 # .env load
 load_dotenv()
@@ -43,3 +44,4 @@ app.include_router(products.router)
 app.include_router(carts.router) 
 app.include_router(price_alerts.router) 
 app.include_router(flash_sales.router) 
+# app.include_router(ai_router)

@@ -1,6 +1,6 @@
 from typing import Optional, List
 from datetime import datetime
-from .common import APIModel
+from .sc_common import APIModel
 
 
 class ProductOut(APIModel):

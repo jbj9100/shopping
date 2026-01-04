@@ -14,6 +14,7 @@ class User(Base, TimestampMixin):
     username: Mapped[str] = mapped_column(String(30), unique=True, nullable=False, index=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
+    role: Mapped[str] = mapped_column(String(10), nullable=False, default="normal-user")
 
     # relationships
     sessions: Mapped[List["UserSession"]] = relationship(

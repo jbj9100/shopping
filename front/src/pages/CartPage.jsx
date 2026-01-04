@@ -7,7 +7,7 @@ import { cartService } from '../services/cartService';
 import './CartPage.css';
 
 export const CartPage = () => {
-    const [cartItems, setCartItems] = useState([]);
+    const [cartData, setCartData] = useState(null); // CartOut 스키마: { items, total_price, total_items }
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -19,80 +19,93 @@ export const CartPage = () => {
         try {
             setIsLoading(true);
             const data = await cartService.getCart();
-            setCartItems(data);
+            setCartData(data);
         } catch (err) {
             console.error('Failed to load cart:', err);
             // 개발 중: 목업 데이터
-            setCartItems(getMockCartItems());
+            setCartData(getMockCartItems());
         } finally {
             setIsLoading(false);
         }
     };
 
-    const getMockCartItems = () => [
-        {
-            id: 1,
-            productId: 1,
-            name: '삼성 갤럭시 S24 Ultra 자급제',
-            price: 1590000,
-            quantity: 1,
-            image: null
-        },
-        {
-            id: 2,
-            productId: 3,
-            name: '다이슨 V15 무선청소기',
-            price: 890000,
-            quantity: 2,
-            image: null
-        }
-    ];
+    const getMockCartItems = () => ({
+        items: [
+            {
+                id: 1,
+                product_id: 1,
+                name: '삼성 갤럭시 S24 Ultra 자급제',
+                price: 1590000,
+                quantity: 1,
+                image: null
+            },
+            {
+                id: 2,
+                product_id: 3,
+                name: '다이슨 V15 무선청소기',
+                price: 890000,
+                quantity: 2,
+                image: null
+            }
+        ],
+        total_price: 3370000,
+        total_items: 3
+    });
 
     const updateQuantity = async (itemId, newQuantity) => {
         if (newQuantity < 1) return;
 
         try {
             await cartService.updateCartItem(itemId, newQuantity);
-            setCartItems(prev =>
-                prev.map(item =>
+            setCartData(prev => ({
+                ...prev,
+                items: prev.items.map(item =>
                     item.id === itemId
                         ? { ...item, quantity: newQuantity }
                         : item
                 )
-            );
+            }));
         } catch (err) {
             console.error('Failed to update quantity:', err);
             // 목업: 낙관적 업데이트
-            setCartItems(prev =>
-                prev.map(item =>
+            setCartData(prev => ({
+                ...prev,
+                items: prev.items.map(item =>
                     item.id === itemId
                         ? { ...item, quantity: newQuantity }
                         : item
                 )
-            );
+            }));
         }
     };
 
     const removeItem = async (itemId) => {
         try {
             await cartService.removeCartItem(itemId);
-            setCartItems(prev => prev.filter(item => item.id !== itemId));
+            setCartData(prev => ({
+                ...prev,
+                items: prev.items.filter(item => item.id !== itemId)
+            }));
         } catch (err) {
             console.error('Failed to remove item:', err);
             // 목업: 낙관적 업데이트
-            setCartItems(prev => prev.filter(item => item.id !== itemId));
+            setCartData(prev => ({
+                ...prev,
+                items: prev.items.filter(item => item.id !== itemId)
+            }));
         }
     };
 
-    const totalPrice = cartItems.reduce(
+    // 백엔드에서 total_price, total_items를 제공하지만, 없을 경우 계산
+    const totalPrice = cartData?.total_price || cartData?.items?.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0
-    );
+    ) || 0;
 
-    const totalItems = cartItems.reduce(
+    const totalItems = cartData?.total_items || cartData?.items?.reduce(
         (sum, item) => sum + item.quantity,
         0
-    );
+    ) || 0;
 
     if (isLoading) {
         return (
@@ -104,7 +117,7 @@ export const CartPage = () => {
         );
     }
 
-    if (cartItems.length === 0) {
+    if (!cartData || !cartData.items || cartData.items.length === 0) {
         return (
             <div className="cart-page">
                 <div className="container">
@@ -126,7 +139,7 @@ export const CartPage = () => {
 
                 <div className="cart-layout">
                     <div className="cart-items">
-                        {cartItems.map((item) => (
+                        {cartData.items.map((item) => (
                             <Card key={item.id} className="cart-item-card">
                                 <div className="cart-item">
                                     <div className="cart-item-image">

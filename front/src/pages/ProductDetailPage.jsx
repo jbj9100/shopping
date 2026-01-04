@@ -32,14 +32,12 @@ export const ProductDetailPage = () => {
                 id: Number(id),
                 name: '슬라이스 식빵 통밀, 65g, 1개',
                 price: 1550,
-                originalPrice: 2000,
-                discount: 450,
+                original_price: 2000,
                 brand: 'R.LUX',
                 image: null,
                 rating: 4.8,
-                reviewCount: 1809,
-                freeShipping: true,
-                rocketShipping: false,
+                review_count: 1809,
+                free_shipping: true,
                 stock: 15,
                 depletionEtaMinutes: 8,
                 description: '건강한 통밀로 만든 식빵입니다. 촉촉하고 부드러운 식감이 특징입니다.'
@@ -69,9 +67,9 @@ export const ProductDetailPage = () => {
         return <div className="product-error">상품을 찾을 수 없습니다.</div>;
     }
 
-    const discountPercent = product.discount
-        ? Math.round((product.discount / product.originalPrice) * 100)
-        : 0;
+    // discount 계산 (original_price - price)
+    const discount = product.original_price ? product.original_price - product.price : 0;
+    const discountPercent = discount > 0 ? Math.round((discount / product.original_price) * 100) : 0;
 
     return (
         <div className="product-detail-page">
@@ -93,12 +91,12 @@ export const ProductDetailPage = () => {
 
                         <h1 className="product-detail-title">{product.name}</h1>
 
-                        {(product.rating || product.reviewCount) && (
+                        {(product.rating || product.review_count) && (
                             <div className="product-rating-section">
                                 <span className="product-stars">⭐ {product.rating?.toFixed(1)}</span>
-                                {product.reviewCount > 0 && (
+                                {product.review_count > 0 && (
                                     <span className="product-reviews">
-                                        리뷰 {product.reviewCount.toLocaleString()}개
+                                        리뷰 {product.review_count.toLocaleString()}개
                                     </span>
                                 )}
                             </div>
@@ -119,7 +117,7 @@ export const ProductDetailPage = () => {
                                         <Badge variant="error" size="large">{discountPercent}% 할인</Badge>
                                     </div>
                                     <div className="product-original-price-large">
-                                        {product.originalPrice.toLocaleString()}원
+                                        {product.original_price.toLocaleString()}원
                                     </div>
                                 </>
                             )}
@@ -130,10 +128,7 @@ export const ProductDetailPage = () => {
 
                         {/* 배송 */}
                         <div className="product-shipping-section">
-                            {product.rocketShipping && (
-                                <Badge variant="primary">로켓배송</Badge>
-                            )}
-                            {product.freeShipping && !product.rocketShipping && (
+                            {product.free_shipping && (
                                 <Badge variant="success">무료배송</Badge>
                             )}
                         </div>

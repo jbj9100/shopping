@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from core.deps.dep_auth_session import require_user
+from core.deps.dep_session_rule import require_user
 from fastapi import Request, Depends
 
 router = APIRouter(prefix="/api/shop/main", tags=["main"])  

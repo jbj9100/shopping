@@ -1,4 +1,4 @@
-from core.password_hash import verify_password
+from .auth_password_hash import verify_password
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.m_user import User

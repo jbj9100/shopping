@@ -1,5 +1,12 @@
-from fastapi import APIRouter, Request, Response
-
+from fastapi import APIRouter, Request, Response, UploadFile, File 
+from typing import Optional 
+from core.deps.dep_session_rule import require_role
+from db.conn_db import get_session
+from schemas.sc_products import ProductCreateIn, ProductOut
+from models.m_user import User
+from fastapi import HTTPException
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 router = APIRouter(prefix="/api/shop/products", tags=["products"])
@@ -25,3 +32,13 @@ async def upload_image(
         raise HTTPException(status_code=400, detail=str(e))
     finally:
         await file.close()
+
+
+@router.post("/products", response_model=ProductOut)
+async def create_product(
+    product_data: ProductCreateIn,
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(require_role("admin")) 
+):
+    # 상품 생성 로직
+    pass        

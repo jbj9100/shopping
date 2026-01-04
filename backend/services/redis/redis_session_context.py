@@ -3,10 +3,10 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Literal
 from models.m_user import User, UserSession
-from db.redis_conn import redis_pool
+from db.conn_redis import redis_pool
 import redis.asyncio as redis
-from db.db_conn import AsyncSessionLocal
-from repositories import rep_usersession_id_check
+from db.conn_db import AsyncSessionLocal
+from repositories.session import rep_usersession_id_check
 
 logger = logging.getLogger(__name__)
 

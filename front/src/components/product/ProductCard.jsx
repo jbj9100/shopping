@@ -9,13 +9,11 @@ export const ProductCard = ({ product }) => {
         id,
         name,
         price,
-        originalPrice,
-        discount,
+        original_price,
         image,
         rating,
-        reviewCount,
-        freeShipping,
-        rocketShipping,
+        review_count,
+        free_shipping,
         stock,
         priceChanged,
         brand,
@@ -23,7 +21,9 @@ export const ProductCard = ({ product }) => {
         isAnomalous
     } = product;
 
-    const discountPercent = discount ? Math.round((discount / originalPrice) * 100) : 0;
+    // discount는 original_price - price로 계산
+    const discount = original_price ? original_price - price : 0;
+    const discountPercent = original_price && discount > 0 ? Math.round((discount / original_price) * 100) : 0;
 
     return (
         <Link
@@ -66,10 +66,10 @@ export const ProductCard = ({ product }) => {
                     <h3 className="product-card-title">{name}</h3>
 
                     <div className="product-card-price-wrapper">
-                        {originalPrice && discountPercent > 0 ? (
+                        {original_price && discountPercent > 0 ? (
                             <>
                                 <span className="product-card-original-price">
-                                    {originalPrice.toLocaleString()}원
+                                    {original_price.toLocaleString()}원
                                 </span>
                                 <span className="product-card-price">
                                     {price.toLocaleString()}원
@@ -82,20 +82,17 @@ export const ProductCard = ({ product }) => {
                         )}
                     </div>
 
-                    {(rating || reviewCount) && (
+                    {(rating || review_count) && (
                         <div className="product-card-rating">
                             <span className="product-card-stars">⭐ {rating?.toFixed(1)}</span>
-                            {reviewCount > 0 && (
-                                <span className="product-card-reviews">({reviewCount.toLocaleString()})</span>
+                            {review_count > 0 && (
+                                <span className="product-card-reviews">({review_count.toLocaleString()})</span>
                             )}
                         </div>
                     )}
 
                     <div className="product-card-shipping">
-                        {rocketShipping && (
-                            <Badge variant="primary" size="small">로켓배송</Badge>
-                        )}
-                        {freeShipping && !rocketShipping && (
+                        {free_shipping && (
                             <Badge variant="success" size="small">무료배송</Badge>
                         )}
                     </div>

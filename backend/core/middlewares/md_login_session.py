@@ -1,6 +1,6 @@
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-from core.redis_session_context import resolve_session
+from services.redis.redis_session_context import resolve_session
 
 class DBSessionMiddleware(BaseHTTPMiddleware):
     def __init__(

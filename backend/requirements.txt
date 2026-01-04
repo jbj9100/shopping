@@ -10,3 +10,5 @@ redis
 passlib[argon2]
 aiokafka
 sqlalchemy-utils
+google-generativeai
+python-multipart

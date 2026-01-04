@@ -37,7 +37,8 @@ CREATE TABLE users (
   password_hash VARCHAR(255) NOT NULL,
   email        VARCHAR(255) NOT NULL UNIQUE,
   created_at   TIMESTAMPTZ  NOT NULL DEFAULT now(),
-  updated_at   TIMESTAMPTZ  NOT NULL DEFAULT now()
+  updated_at   TIMESTAMPTZ  NOT NULL DEFAULT now(),
+  role         VARCHAR(10)  NOT NULL DEFAULT 'normal-user'
 );
 
 CREATE INDEX ix_users_username ON users (username);

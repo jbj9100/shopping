@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from db.db_conn import dispose_engine, ping_db
-from db.redis_conn import close_redis, ping_redis
+from db.conn_db import dispose_engine, ping_db
+from db.conn_redis import close_redis, ping_redis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
