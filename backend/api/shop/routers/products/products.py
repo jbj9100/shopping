@@ -17,6 +17,18 @@ def products_get():
     return {"message": "products page"}
 
 
+@router.post("/{product_id}", response_model=ProductOut)
+async def product_get_id(
+    product_id: pro,
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(require_role("admin")) 
+):
+    # 상품 생성 로직
+    pass       
+
+
+
+
 
 @router.post("/images/upload")
 async def upload_image(
@@ -33,12 +45,3 @@ async def upload_image(
     finally:
         await file.close()
 
-
-@router.post("/products", response_model=ProductOut)
-async def create_product(
-    product_data: ProductCreateIn,
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_role("admin")) 
-):
-    # 상품 생성 로직
-    pass        

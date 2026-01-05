@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from schemas.sc_user import Signup
+from schemas.sc_user import SignupIn
 from models.m_user import User
 from core.auth.auth_password_hash import hash_password
 from db.conn_db import get_session
@@ -16,9 +16,9 @@ def signup_get():
     return "signup"
 
 @router.post("/")
-async def signup_post(signup: Signup, session: AsyncSession = Depends(get_session)):
+async def signup_post(signup_in: SignupIn, session: AsyncSession = Depends(get_session)):
     try:
-        user = await signup_user(session, signup)
+        user = await signup_user(session, signup_in)
         return {"ok": True, "id": user.id, "username": user.username, "email": user.email}
     except HTTPException as e:
         if e.detail == "USERNAME_EXISTS":

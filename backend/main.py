@@ -5,7 +5,7 @@ from core.lifespan.lifespan import lifespan
 from core.middlewares.md_login_session import DBSessionMiddleware
 
 # router import
-from api.shop.routers.login import main_dashboard, login, signup, logout
+from api.shop.routers.login import main_dashboard, login, signup, logout, my_page
 from api.shop.routers.orders import orders 
 from api.shop.routers.products import products
 from api.shop.routers.carts import carts
@@ -39,6 +39,8 @@ app.include_router(main_dashboard.router)
 app.include_router(login.router) 
 app.include_router(signup.router) 
 app.include_router(logout.router) 
+app.include_router(my_page.router) 
+
 app.include_router(orders.router) 
 app.include_router(products.router) 
 app.include_router(carts.router) 
