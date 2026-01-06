@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Response, UploadFile, File
 from typing import Optional 
 from core.deps.dep_session_rule import require_role
 from db.conn_db import get_session
-from schemas.sc_products import ProductCreateIn, ProductOut
+from schemas.sc_products import ProductOut
 from models.m_user import User
 from fastapi import HTTPException
 from fastapi import Depends
@@ -19,9 +19,9 @@ def products_get():
 
 @router.post("/{product_id}", response_model=ProductOut)
 async def product_get_id(
-    product_id: pro,
-    db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_role("admin")) 
+        product_id: int,
+        db: AsyncSession = Depends(get_session),
+        current_user: User = Depends(require_role("admin")) 
 ):
     # 상품 생성 로직
     pass       

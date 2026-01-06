@@ -4,30 +4,30 @@
   --color-primary: hsl(15, 100%, 50%);
   --color-primary-dark: hsl(15, 100%, 45%);
   --color-primary-light: hsl(15, 100%, 95%);
-  
+
   --color-secondary: hsl(142, 76%, 36%);
   --color-secondary-dark: hsl(142, 76%, 30%);
   --color-secondary-light: hsl(142, 76%, 95%);
-  
+
   --color-accent: hsl(210, 100%, 50%);
-  
+
   --color-background: hsl(0, 0%, 98%);
   --color-surface: hsl(0, 0%, 100%);
   --color-surface-hover: hsl(0, 0%, 96%);
-  
+
   --color-text-primary: hsl(0, 0%, 13%);
   --color-text-secondary: hsl(0, 0%, 40%);
   --color-text-tertiary: hsl(0, 0%, 60%);
   --color-text-inverse: hsl(0, 0%, 100%);
-  
+
   --color-border: hsl(0, 0%, 90%);
   --color-border-light: hsl(0, 0%, 95%);
-  
+
   --color-success: hsl(142, 71%, 45%);
   --color-warning: hsl(45, 100%, 51%);
   --color-error: hsl(0, 84%, 60%);
   --color-info: hsl(210, 100%, 50%);
-  
+
   /* 타이포그래피 */
   --font-family-base: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-size-xs: 0.75rem;
@@ -38,17 +38,17 @@
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 1.875rem;
   --font-size-4xl: 2.25rem;
-  
+
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  
+
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
-  
+
   /* 간격 */
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
@@ -60,14 +60,14 @@
   --spacing-10: 2.5rem;
   --spacing-12: 3rem;
   --spacing-16: 4rem;
-  
+
   /* 그림자 */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  
+
   /* 보더 반경 */
   --radius-sm: 0.25rem;
   --radius: 0.375rem;
@@ -75,12 +75,12 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-full: 9999px;
-  
+
   /* 트랜지션 */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   /* 최대 너비 */
   --max-width-sm: 640px;
   --max-width-md: 768px;
@@ -90,7 +90,9 @@
 }
 
 /* ===== 리셋 ===== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -111,12 +113,19 @@ body {
   min-height: 100vh;
 }
 
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
 }
 
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
 }
 
@@ -131,18 +140,19 @@ a {
   text-decoration: none;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
 /* ===== 유틸리티 클래스 ===== */
 .container {
   width: 100%;
-  max-width: var(--max-width-xl);
+  max-width: var(--max-width-lg);
   margin-left: auto;
   margin-right: auto;
-  padding-left: var(--spacing-4);
-  padding-right: var(--spacing-4);
+  padding-left: var(--spacing-6);
+  padding-right: var(--spacing-6);
 }
 
 .container-wide {
@@ -190,12 +200,29 @@ ul, ol {
   justify-content: flex-end;
 }
 
-.gap-1 { gap: var(--spacing-1); }
-.gap-2 { gap: var(--spacing-2); }
-.gap-3 { gap: var(--spacing-3); }
-.gap-4 { gap: var(--spacing-4); }
-.gap-6 { gap: var(--spacing-6); }
-.gap-8 { gap: var(--spacing-8); }
+.gap-1 {
+  gap: var(--spacing-1);
+}
+
+.gap-2 {
+  gap: var(--spacing-2);
+}
+
+.gap-3 {
+  gap: var(--spacing-3);
+}
+
+.gap-4 {
+  gap: var(--spacing-4);
+}
+
+.gap-6 {
+  gap: var(--spacing-6);
+}
+
+.gap-8 {
+  gap: var(--spacing-8);
+}
 
 .flex-wrap {
   flex-wrap: wrap;
@@ -234,6 +261,7 @@ ul, ol {
 }
 
 @media (max-width: 768px) {
+
   .grid-cols-4,
   .grid-cols-5 {
     grid-template-columns: repeat(3, 1fr);
@@ -241,6 +269,7 @@ ul, ol {
 }
 
 @media (max-width: 480px) {
+
   .grid-cols-3,
   .grid-cols-4,
   .grid-cols-5 {
@@ -249,27 +278,77 @@ ul, ol {
 }
 
 /* 텍스트 유틸리티 */
-.text-xs { font-size: var(--font-size-xs); }
-.text-sm { font-size: var(--font-size-sm); }
-.text-base { font-size: var(--font-size-base); }
-.text-lg { font-size: var(--font-size-lg); }
-.text-xl { font-size: var(--font-size-xl); }
-.text-2xl { font-size: var(--font-size-2xl); }
-.text-3xl { font-size: var(--font-size-3xl); }
+.text-xs {
+  font-size: var(--font-size-xs);
+}
 
-.font-light { font-weight: var(--font-weight-light); }
-.font-normal { font-weight: var(--font-weight-normal); }
-.font-medium { font-weight: var(--font-weight-medium); }
-.font-semibold { font-weight: var(--font-weight-semibold); }
-.font-bold { font-weight: var(--font-weight-bold); }
+.text-sm {
+  font-size: var(--font-size-sm);
+}
 
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
+.text-base {
+  font-size: var(--font-size-base);
+}
 
-.text-primary { color: var(--color-text-primary); }
-.text-secondary { color: var(--color-text-secondary); }
-.text-tertiary { color: var(--color-text-tertiary); }
+.text-lg {
+  font-size: var(--font-size-lg);
+}
+
+.text-xl {
+  font-size: var(--font-size-xl);
+}
+
+.text-2xl {
+  font-size: var(--font-size-2xl);
+}
+
+.text-3xl {
+  font-size: var(--font-size-3xl);
+}
+
+.font-light {
+  font-weight: var(--font-weight-light);
+}
+
+.font-normal {
+  font-weight: var(--font-weight-normal);
+}
+
+.font-medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.font-semibold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-text-tertiary);
+}
 
 .text-truncate {
   overflow: hidden;
@@ -315,6 +394,7 @@ ul, ol {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -325,6 +405,7 @@ ul, ol {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -336,6 +417,7 @@ ul, ol {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

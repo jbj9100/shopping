@@ -3,13 +3,10 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.m_user import User
 from sqlalchemy import select
-
+from repositories.user.rep_user_table import get_user_by_email
 
 async def auth_verify(session: AsyncSession, email: str, password: str) -> User:
-    r = await session.execute(select(User).where(User.email == email))
-    user = r.scalar_one_or_none()  # User(id=7, email="a@test.com", password_hash="...", ...)
-    # print("user.id =", user.id)
-    # print("user.email =", user.email)
+    user = await get_user_by_email(session, email)
     if not user:
         raise HTTPException(status_code=401, detail="INVALID_CREDENTIALS(User)")
 

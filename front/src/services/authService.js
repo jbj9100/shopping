@@ -27,7 +27,7 @@ export const logout = async () => {
 
 // 현재 로그인 사용자 정보
 export const getMe = async () => {
-    const response = await api.get('/api/shop/login/me');
+    const response = await api.get('/api/shop/my_page/');  // ← slash 추가
     return response.data;
 };
 

@@ -6,7 +6,7 @@ from models.m_user import User, UserSession
 from db.conn_redis import redis_pool
 import redis.asyncio as redis
 from db.conn_db import AsyncSessionLocal
-from repositories.session import rep_usersession_id_check
+from repositories.usersession import rep_check
 
 logger = logging.getLogger(__name__)
 
@@ -51,8 +51,8 @@ async def resolve_session(sid: str) -> Optional[SessionContext]:
 
     # 2. Redis Miss -> DB Fallback ( & Warming)
     async with AsyncSessionLocal() as db:
-        sess = await rep_usersession_id_check.DB_get_by_session_id(db, sid, load_user=True)
-        if sess and rep_usersession_id_check.session_is_valid(sess):
+        sess = await rep_check.DB_get_by_session_id(db, sid, load_user=True)
+        if sess and rep_check.session_is_valid(sess):
             # Warming
             redis_c = redis.Redis(connection_pool=redis_pool)
             try:

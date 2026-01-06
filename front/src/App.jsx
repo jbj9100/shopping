@@ -7,6 +7,7 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { FlashSaleQueuePage } from './pages/FlashSaleQueuePage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
+import MyPage from './pages/MyPage';
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                         <Route path="/" element={<HomePage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/signup" element={<SignupPage />} />
+                        <Route path="/my-page" element={<MyPage />} />
                         <Route path="/products/:id" element={<ProductDetailPage />} />
                         <Route path="/cart" element={<CartPage />} />
                         <Route path="/flash-sale/:id" element={<FlashSaleQueuePage />} />

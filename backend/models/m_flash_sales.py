@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import (
-    String, Integer, DateTime, BigInteger, ForeignKey, CheckConstraint, UniqueConstraint, Index, func, Enum
+    String, Integer, DateTime, BigInteger, ForeignKey, CheckConstraint, UniqueConstraint, Index, func
 )
+from sqlalchemy import Enum as SQLEnum
 from typing import List
 from datetime import datetime
 from models.m_common import Base
@@ -47,7 +48,7 @@ class FlashSaleQueueEntry(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
 
     joined_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    status: Mapped[FlashQueueStatus] = mapped_column(Enum(FlashQueueStatus), nullable=False, default=FlashQueueStatus.WAITING)   
+    status: Mapped[FlashQueueStatus] = mapped_column(SQLEnum(FlashQueueStatus), nullable=False, default=FlashQueueStatus.WAITING)   
 
     # relationships
     flash_sale: Mapped["FlashSale"] = relationship(back_populates="queue_entries")

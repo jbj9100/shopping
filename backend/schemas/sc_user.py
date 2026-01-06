@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field , EmailStr
 from .sc_common import APIModel
-
+from typing import Optional
 
 class LoginIn(APIModel):
     email: EmailStr = Field(
