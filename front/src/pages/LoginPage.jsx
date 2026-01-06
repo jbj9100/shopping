@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import authService from '../services/authService';
+import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
 import './LoginPage.css';
 
 export const LoginPage = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();  // ← Context 사용!
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -28,8 +29,8 @@ export const LoginPage = () => {
         setIsLoading(true);
 
         try {
-            await authService.login(formData.email, formData.password);
-            // 로그인 성공 - 메인 페이지로 이동
+            await login(formData.email, formData.password);  // ← Context의 login 사용
+            // 로그인 성공 - 리로드 없이 navigate!
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.detail || '로그인에 실패했습니다.');
@@ -78,7 +79,7 @@ export const LoginPage = () => {
                                 onChange={handleChange}
                                 placeholder="비밀번호 입력"
                                 required
-                                minLength={6}
+                                minLength={5}
                                 className="form-input"
                             />
                         </div>

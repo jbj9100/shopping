@@ -32,20 +32,14 @@ def require_user(request: Request) -> User:
         )
     return sess.user
 
-# 로그인한 세션이고, 그 세션의 user의 role이 allowed_roles에 있는지
-def require_role(*allowed_roles: str) -> Callable[[Request], User]:
-    allowed = set(allowed_roles)
 
-    def _dep(request: Request) -> User:
-        user = require_user(request)
-        # SessionContext.user는 ORM 객체이거나 단순 객체일 수 있음. role 속성 접근
-        role = getattr(user, "role", None)
-        if role not in allowed:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Forbidden (role required: {sorted(allowed)}).",
-            )
-        return user
-
-    return _dep
-
+# Admin 전용 간편 함수
+def require_admin(request: Request) -> User:
+    """현재 로그인한 사용자가 admin인지 확인 request.state.auth.user.role 에서 가져옴"""
+    user = require_user(request)  # 현재 로그인한 사용자 (이미 role 포함)
+    if user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin 권한이 필요합니다.",
+        )
+    return user

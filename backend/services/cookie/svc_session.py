@@ -37,7 +37,7 @@ async def rotate_session(db: AsyncSession, user_id: int, old_sid: str, redis_cli
             cookie_settings.COOKIE_TTL_SECONDS,
             str(user_id)
         )
-
+    print("rotate_session 동작")
     return new_sess.id
 
 # 현재 sid 폐기 + 쿠키 삭제

@@ -8,28 +8,32 @@ import { FlashSaleQueuePage } from './pages/FlashSaleQueuePage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import MyPage from './pages/MyPage';
+import AdminPage from './pages/AdminPage';
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
     return (
-        <BrowserRouter>
-            <div className="app">
-                <Header />
-                <main className="main-content">
-                    <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/signup" element={<SignupPage />} />
-                        <Route path="/my-page" element={<MyPage />} />
-                        <Route path="/products/:id" element={<ProductDetailPage />} />
-                        <Route path="/cart" element={<CartPage />} />
-                        <Route path="/flash-sale/:id" element={<FlashSaleQueuePage />} />
-                        <Route path="/category/:category" element={<HomePage />} />
-                        <Route path="/search" element={<HomePage />} />
-                    </Routes>
-                </main>
-                <Footer />
-            </div>
-        </BrowserRouter>
+        <AuthProvider>
+            <BrowserRouter>
+                <div className="app">
+                    <Header />
+                    <main className="main-content">
+                        <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/login" element={<LoginPage />} />
+                            <Route path="/signup" element={<SignupPage />} />
+                            <Route path="/my-page" element={<MyPage />} />
+                            <Route path="/products/:id" element={<ProductDetailPage />} />
+                            <Route path="/cart" element={<CartPage />} />
+                            <Route path="/flash-sale/:id" element={<FlashSaleQueuePage />} />
+                            <Route path="/category/:category" element={<HomePage />} />
+                            <Route path="/search" element={<HomePage />} />
+                        </Routes>
+                    </main>
+                    <Footer />
+                </div>
+            </BrowserRouter>
+        </AuthProvider>
     );
 }
 

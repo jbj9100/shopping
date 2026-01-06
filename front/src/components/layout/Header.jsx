@@ -1,29 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import authService from '../../services/authService';
+import { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import './Header.css';
 
 export const Header = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [user, setUser] = useState(null);
+    const { user, logout, loading } = useAuth();
     const navigate = useNavigate();
-
-    // 로그인 상태 확인
-    useEffect(() => {
-        checkLoginStatus();
-    }, []);
-
-    const checkLoginStatus = async () => {
-        try {
-            const data = await authService.getMe();
-            if (data.username) {
-                setUser({ username: data.username });
-            }
-        } catch (err) {
-            // 로그인 안됨
-            setUser(null);
-        }
-    };
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -34,8 +17,7 @@ export const Header = () => {
 
     const handleLogout = async () => {
         try {
-            await authService.logout();
-            setUser(null);
+            await logout();
             navigate('/');
         } catch (err) {
             console.error('로그아웃 실패:', err);
@@ -75,12 +57,30 @@ export const Header = () => {
                                 <span className="header-nav-text">주문내역</span>
                             </Link>
 
-                            {user ? (
+                            {loading ? (
+                                // 로딩 중: 공간 유지 (투명)
                                 <>
-                                    <span className="header-nav-item header-user-info">
+                                    <div className="header-nav-item" style={{ opacity: 0, pointerEvents: 'none' }}>
+                                        <span className="header-nav-icon">👤</span>
+                                        <span className="header-nav-text">username님</span>
+                                    </div>
+                                    <div className="header-nav-item" style={{ opacity: 0, pointerEvents: 'none' }}>
+                                        <span className="header-nav-icon">🚪</span>
+                                        <span className="header-nav-text">로그아웃</span>
+                                    </div>
+                                </>
+                            ) : user ? (
+                                <>
+                                    {user.role === 'admin' && (
+                                        <Link to="/admin" className="header-nav-item">
+                                            <span className="header-nav-icon">🛡️</span>
+                                            <span className="header-nav-text">관리자</span>
+                                        </Link>
+                                    )}
+                                    <Link to="/my-page" className="header-nav-item">
                                         <span className="header-nav-icon">👤</span>
                                         <span className="header-nav-text">{user.username}님</span>
-                                    </span>
+                                    </Link>
                                     <button onClick={handleLogout} className="header-nav-item header-logout-btn">
                                         <span className="header-nav-icon">🚪</span>
                                         <span className="header-nav-text">로그아웃</span>

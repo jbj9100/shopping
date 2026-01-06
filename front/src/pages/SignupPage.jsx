@@ -115,9 +115,9 @@ export const SignupPage = () => {
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
-                                placeholder="최소 6자 이상"
+                                placeholder="최소 5자 이상"
                                 required
-                                minLength={6}
+                                minLength={5}
                                 maxLength={128}
                                 className="form-input"
                             />
@@ -133,7 +133,7 @@ export const SignupPage = () => {
                                 onChange={handleChange}
                                 placeholder="비밀번호 재입력"
                                 required
-                                minLength={6}
+                                minLength={5}
                                 className="form-input"
                             />
                         </div>

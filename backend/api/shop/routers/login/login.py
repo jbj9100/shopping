@@ -30,7 +30,8 @@ async def login(login_in: LoginIn, request: Request, response: Response,
         httponly=cookie_settings.COOKIE_HTTPONLY,
         samesite=cookie_settings.COOKIE_SAMESITE,
         path=cookie_settings.COOKIE_PATH,
+        domain=None,  # ← localhost에서 작동하도록
     )
 
-    print(user.username, "님이 로그인하셨습니다.")
+    print(f"로그인 성공: {user.username}, 세션 ID: {sess_id}")
     return { "ok": True }

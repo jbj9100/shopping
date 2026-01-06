@@ -10,9 +10,9 @@ class LoginIn(APIModel):
     )
     password: str = Field(
         ...,
-        min_length=6,          # 6자리 이상
+        min_length=4,       
         max_length=128,
-        description="비밀번호 (6자 이상)"
+        description="비밀번호 (4자 이상)"
     )
 
 
@@ -38,7 +38,14 @@ class UserUpdateIn(APIModel):
     )
     password: Optional[str] = Field(
         None,
-        min_length=6,
+        min_length=4,
         max_length=128,
-        description="비밀번호 (6자 이상)"
+        description="비밀번호 (4자 이상)"
     )
+
+class RoleUpdateIn(APIModel):
+    role: str = Field(
+        ...,
+        description="역할"
+    )
+        
