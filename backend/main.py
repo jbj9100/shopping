@@ -11,6 +11,7 @@ from api.shop.routers.products import products
 from api.shop.routers.carts import carts
 from api.shop.routers.price_alerts import price_alerts
 from api.shop.routers.flash_sales import flash_sales
+from api.shop.routers.admin import admin
 # from api.shop.routers.ai import ai_router
 
 # .env load
@@ -47,3 +48,4 @@ app.include_router(carts.router)
 app.include_router(price_alerts.router) 
 app.include_router(flash_sales.router) 
 # app.include_router(ai_router)
+app.include_router(admin.router)

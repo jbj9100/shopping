@@ -23,6 +23,7 @@ function App() {
                             <Route path="/login" element={<LoginPage />} />
                             <Route path="/signup" element={<SignupPage />} />
                             <Route path="/my-page" element={<MyPage />} />
+                            <Route path="/admin" element={<AdminPage />} />
                             <Route path="/products/:id" element={<ProductDetailPage />} />
                             <Route path="/cart" element={<CartPage />} />
                             <Route path="/flash-sale/:id" element={<FlashSaleQueuePage />} />
