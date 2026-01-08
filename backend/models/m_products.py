@@ -12,7 +12,7 @@ class Products(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), index=True, nullable=False)
     brand: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
-    category_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("categories.id"), nullable=False, index=True)
+    category_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("category.id"), nullable=False, index=True)
 
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     original_price: Mapped[int] = mapped_column(Integer, nullable=False)

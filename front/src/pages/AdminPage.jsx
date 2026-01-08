@@ -15,14 +15,18 @@ export const AdminPage = () => {
 
     // 카테고리 폼
     const [newCategory, setNewCategory] = useState({ name: '', display_name: '', description: '', icon: '' });
+    const [newCategoryImageFile, setNewCategoryImageFile] = useState(null);
     const [editingCategory, setEditingCategory] = useState(null);
+    const [editingCategoryImageFile, setEditingCategoryImageFile] = useState(null);
 
     // 제품 폼
     const [newProduct, setNewProduct] = useState({
         name: '', price: 0, original_price: 0, brand: '',
         category_id: '', image: '', free_shipping: false, stock: 0, description: ''
     });
+    const [newProductImageFile, setNewProductImageFile] = useState(null);
     const [editingProduct, setEditingProduct] = useState(null);
+    const [editingProductImageFile, setEditingProductImageFile] = useState(null);
     const [showCategoryForm, setShowCategoryForm] = useState(false);
     const [showProductForm, setShowProductForm] = useState(false);
 
@@ -72,7 +76,7 @@ export const AdminPage = () => {
             });
 
             // 기존 이미지가 있으면 삭제
-            if (oldUrl) {
+            if (oldUrl && !oldUrl.startsWith('blob:')) {
                 try {
                     const filename = oldUrl.split('/').pop();
                     await api.delete(`/api/shop/images/${filename}?bucket=${bucket}`);
@@ -115,8 +119,20 @@ export const AdminPage = () => {
             return;
         }
         try {
-            await api.post('/api/shop/categories', newCategory);
-            setNewCategory({ name: '', display_name: '', description: '' });
+            let iconUrl = newCategory.icon;
+
+            // 새 이미지 파일이 선택된 경우에만 업로드
+            if (newCategoryImageFile) {
+                iconUrl = await handleImageUpload(newCategoryImageFile, 'category');
+                if (!iconUrl) {
+                    alert('이미지 업로드에 실패했습니다.');
+                    return;
+                }
+            }
+
+            await api.post('/api/shop/categories', { ...newCategory, icon: iconUrl });
+            setNewCategory({ name: '', display_name: '', description: '', icon: '' });
+            setNewCategoryImageFile(null);
             setShowCategoryForm(false);
             fetchCategories();
             alert('카테고리가 생성되었습니다.');
@@ -127,8 +143,20 @@ export const AdminPage = () => {
 
     const handleUpdateCategory = async (categoryId) => {
         try {
-            await api.patch(`/api/shop/categories/${categoryId}`, editingCategory);
+            let iconUrl = editingCategory.icon;
+
+            // 새 이미지 파일이 선택된 경우에만 업로드 (기존 이미지 자동 삭제)
+            if (editingCategoryImageFile) {
+                iconUrl = await handleImageUpload(editingCategoryImageFile, 'category', editingCategory.icon);
+                if (!iconUrl) {
+                    alert('이미지 업로드에 실패했습니다.');
+                    return;
+                }
+            }
+
+            await api.patch(`/api/shop/categories/${categoryId}`, { ...editingCategory, icon: iconUrl });
             setEditingCategory(null);
+            setEditingCategoryImageFile(null);
             fetchCategories();
         } catch (err) {
             alert('카테고리 수정 실패');
@@ -162,8 +190,20 @@ export const AdminPage = () => {
             return;
         }
         try {
+            let imageUrl = newProduct.image;
+
+            // 새 이미지 파일이 선택된 경우에만 업로드
+            if (newProductImageFile) {
+                imageUrl = await handleImageUpload(newProductImageFile, 'product');
+                if (!imageUrl) {
+                    alert('이미지 업로드에 실패했습니다.');
+                    return;
+                }
+            }
+
             await api.post('/api/shop/products', {
                 ...newProduct,
+                image: imageUrl,
                 price: parseInt(newProduct.price),
                 original_price: parseInt(newProduct.original_price),
                 category_id: parseInt(newProduct.category_id),
@@ -173,6 +213,7 @@ export const AdminPage = () => {
                 name: '', price: 0, original_price: 0, brand: '',
                 category_id: '', image: '', free_shipping: false, stock: 0, description: ''
             });
+            setNewProductImageFile(null);
             setShowProductForm(false);
             fetchProducts();
             alert('제품이 생성되었습니다.');
@@ -183,14 +224,27 @@ export const AdminPage = () => {
 
     const handleUpdateProduct = async (productId) => {
         try {
+            let imageUrl = editingProduct.image;
+
+            // 새 이미지 파일이 선택된 경우에만 업로드 (기존 이미지 자동 삭제)
+            if (editingProductImageFile) {
+                imageUrl = await handleImageUpload(editingProductImageFile, 'product', editingProduct.image);
+                if (!imageUrl) {
+                    alert('이미지 업로드에 실패했습니다.');
+                    return;
+                }
+            }
+
             await api.patch(`/api/shop/products/${productId}`, {
                 ...editingProduct,
+                image: imageUrl,
                 price: parseInt(editingProduct.price),
                 original_price: parseInt(editingProduct.original_price),
                 category_id: parseInt(editingProduct.category_id),
                 stock: parseInt(editingProduct.stock)
             });
             setEditingProduct(null);
+            setEditingProductImageFile(null);
             fetchProducts();
         } catch (err) {
             alert('제품 수정 실패');
@@ -304,11 +358,13 @@ export const AdminPage = () => {
                                     <input
                                         type="file"
                                         accept="image/*"
-                                        onChange={async (e) => {
+                                        onChange={(e) => {
                                             const file = e.target.files[0];
                                             if (file) {
-                                                const url = await handleImageUpload(file, 'category');
-                                                if (url) setNewCategory({ ...newCategory, icon: url });
+                                                setNewCategoryImageFile(file);
+                                                // 미리보기용 로컬 URL 생성
+                                                const previewUrl = URL.createObjectURL(file);
+                                                setNewCategory({ ...newCategory, icon: previewUrl });
                                             }
                                         }}
                                     />
@@ -372,11 +428,13 @@ export const AdminPage = () => {
                                                 <input
                                                     type="file"
                                                     accept="image/*"
-                                                    onChange={async (e) => {
+                                                    onChange={(e) => {
                                                         const file = e.target.files[0];
                                                         if (file) {
-                                                            const url = await handleImageUpload(file, 'category', editingCategory.icon);
-                                                            if (url) setEditingCategory({ ...editingCategory, icon: url });
+                                                            setEditingCategoryImageFile(file);
+                                                            // 미리보기용 로컬 URL 생성
+                                                            const previewUrl = URL.createObjectURL(file);
+                                                            setEditingCategory({ ...editingCategory, icon: previewUrl });
                                                         }
                                                     }}
                                                     style={{ fontSize: '12px' }}
@@ -403,7 +461,10 @@ export const AdminPage = () => {
                                             {editingCategory?.id === cat.id ? (
                                                 <>
                                                     <button className="btn-save" onClick={() => handleUpdateCategory(cat.id)}>저장</button>
-                                                    <button className="btn-cancel" onClick={() => setEditingCategory(null)}>취소</button>
+                                                    <button className="btn-cancel" onClick={() => {
+                                                        setEditingCategory(null);
+                                                        setEditingCategoryImageFile(null);
+                                                    }}>취소</button>
                                                 </>
                                             ) : (
                                                 <>
@@ -501,11 +562,13 @@ export const AdminPage = () => {
                                     <input
                                         type="file"
                                         accept="image/*"
-                                        onChange={async (e) => {
+                                        onChange={(e) => {
                                             const file = e.target.files[0];
                                             if (file) {
-                                                const url = await handleImageUpload(file, 'product');
-                                                if (url) setNewProduct({ ...newProduct, image: url });
+                                                setNewProductImageFile(file);
+                                                // 미리보기용 로컬 URL 생성
+                                                const previewUrl = URL.createObjectURL(file);
+                                                setNewProduct({ ...newProduct, image: previewUrl });
                                             }
                                         }}
                                     />
@@ -554,11 +617,13 @@ export const AdminPage = () => {
                                                 <input
                                                     type="file"
                                                     accept="image/*"
-                                                    onChange={async (e) => {
+                                                    onChange={(e) => {
                                                         const file = e.target.files[0];
                                                         if (file) {
-                                                            const url = await handleImageUpload(file, 'product', editingProduct.image);
-                                                            if (url) setEditingProduct({ ...editingProduct, image: url });
+                                                            setEditingProductImageFile(file);
+                                                            // 미리보기용 로컬 URL 생성
+                                                            const previewUrl = URL.createObjectURL(file);
+                                                            setEditingProduct({ ...editingProduct, image: previewUrl });
                                                         }
                                                     }}
                                                     style={{ fontSize: '11px' }}
@@ -610,7 +675,10 @@ export const AdminPage = () => {
                                             {editingProduct?.id === prod.id ? (
                                                 <>
                                                     <button className="btn-save" onClick={() => handleUpdateProduct(prod.id)}>저장</button>
-                                                    <button className="btn-cancel" onClick={() => setEditingProduct(null)}>취소</button>
+                                                    <button className="btn-cancel" onClick={() => {
+                                                        setEditingProduct(null);
+                                                        setEditingProductImageFile(null);
+                                                    }}>취소</button>
                                                 </>
                                             ) : (
                                                 <>

@@ -341,12 +341,23 @@ export const HomePage = () => {
     );
 };
 
-const CategoryIcon = ({ icon, label, category }) => (
-    <a href={category ? `/category/${category}` : '/'} className="category-icon-item">
-        <div className="category-icon-circle">{icon}</div>
-        <span className="category-icon-label">{label}</span>
-    </a>
-);
+const CategoryIcon = ({ icon, label, category }) => {
+    // icon이 URL인지 확인 (http:// 또는 blob: 으로 시작)
+    const isImageUrl = icon && (icon.startsWith('http') || icon.startsWith('blob:'));
+
+    return (
+        <a href={category ? `/category/${category}` : '/'} className="category-icon-item">
+            <div className="category-icon-circle">
+                {isImageUrl ? (
+                    <img src={icon} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                ) : (
+                    icon
+                )}
+            </div>
+            <span className="category-icon-label">{label}</span>
+        </a>
+    );
+};
 
 // 카테고리 이름 매핑
 const getCategoryName = (category) => {

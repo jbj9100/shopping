@@ -34,10 +34,10 @@ def svc_get_minio_client():
 def svc_exist_or_make_minio_bucket(minio_client: Minio) -> bool:
     try:
         for bucket in BUCKET_LIST:
-            if minio_client.bucket_exists(bucket):  # 동기 메서드
+            if minio_client.bucket_exists(bucket):
                 print(f"{bucket} bucket exists")
             else:
-                minio_client.make_bucket(bucket)  # 동기 메서드
+                minio_client.make_bucket(bucket)
                 print(f"{bucket} bucket created")
         return True
     except Exception as e:

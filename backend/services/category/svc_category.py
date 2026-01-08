@@ -20,7 +20,7 @@ async def svc_get_category_by_products_id(db: AsyncSession, category_id: int) ->
 
 
 async def svc_create_category(db: AsyncSession, category: CategoryIn):
-    new_category = await rep_create_category(db, **category.model_dump())
+    new_category = await rep_create_category(db, **category.model_dump(exclude_unset=True))
     try:
         await db.commit()
     except ValueError as e:
@@ -29,13 +29,25 @@ async def svc_create_category(db: AsyncSession, category: CategoryIn):
     return new_category
 
 async def svc_update_category(db: AsyncSession, category_id: int, category: CategoryIn):
-    updated_category = await rep_update_category(db, category_id, **category.model_dump())
-    await db.commit()
+    existing = await rep_get_category_by_id(db, category_id)
+    if not existing:
+        raise ValueError("카테고리를 찾을 수 없습니다.")
+    updated_category = await rep_update_category(db, category_id, **category.model_dump(exclude_unset=True))
+    try:
+        await db.commit()
+    except ValueError as e:
+        raise ValueError("카테고리 수정에 실패했습니다.")
     await db.refresh(updated_category)
     return updated_category
 
 
 async def svc_delete_category(db: AsyncSession, category_id: int):
+    existing = await rep_get_category_by_id(db, category_id)
+    if not existing:
+        raise ValueError("카테고리를 찾을 수 없습니다.")
     deleted_category = await rep_delete_category(db, category_id)
-    await db.commit()
+    try:
+        await db.commit()
+    except ValueError as e:
+        raise ValueError("카테고리 삭제에 실패했습니다.")
     return deleted_category

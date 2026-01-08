@@ -32,13 +32,16 @@ async def rep_get_category_by_products_id(db: AsyncSession, category_id: int) ->
     return result.scalar() is not None
 
 async def rep_create_category(db: AsyncSession, **data) -> Category:
+    categories = await rep_get_category_by_name(db, data["name"])
+    if categories:
+        raise ValueError("카테고리가 존재합니다.")
     category = Category(**data)
     db.add(category)
     return category
 
 
-async def rep_update_category(db: AsyncSession, **data) -> Category:
-    category = await rep_get_category_by_name(db, data["name"])
+async def rep_update_category(db: AsyncSession, category_id: int, **data) -> Category:
+    category = await rep_get_category_by_id(db, category_id)
     if not category:
         raise ValueError("카테고리가 존재하지 않습니다.")
     for key, value in data.items():

@@ -41,7 +41,7 @@ async def create_category_endpoint(
     current_user: User = Depends(require_admin)):
     try:
         new_category = await svc_create_category(db, category)
-        return {"message": new_category.name + " 카테고리가 생성되었습니다."}
+        return new_category
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -54,8 +54,8 @@ async def update_category_endpoint(
     db: AsyncSession = Depends(get_session),
     current_user: User = Depends(require_admin)):
     try:
-        category = await svc_update_category(db, category_id, category.dict(exclude_unset=True))
-        return {"message": category.name + " 카테고리가 수정되었습니다."}
+        categories = await svc_update_category(db, category_id, category)
+        return categories
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

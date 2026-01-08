@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from services.products.svc_products import *
 
 
+
 router = APIRouter(prefix="/api/shop/products", tags=["products"])
 
 
@@ -46,7 +47,8 @@ async def product_update(
         db: AsyncSession = Depends(get_session),
         current_user: User = Depends(require_admin)):
     updated_product = await svc_update_product(db, product_id, product)
-    return {"message": f"{updated_product.name} 수정되었습니다."}
+    #print(updated_product.model_validate(updated_product).model_dump())
+    return updated_product
 
 
 @router.delete("/{product_id}")
