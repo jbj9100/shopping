@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from schemas.sc_user import UserUpdateIn
-from repositories.user.rep_user_table import get_user_by_email 
+from repositories.users.rep_common import get_user_by_email 
 from services.login.svc_mypage import change_name, change_password
 from db.conn_db import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,7 +22,6 @@ async def get_mypage(
         "role": current_user.role,
         "created_at": current_user.created_at
     }
-
 
 @router.put("/")
 async def change_mypage(user_update_in: UserUpdateIn,

@@ -145,15 +145,6 @@ export const ProductFilter = ({
                         />
                         <span className="filter-label">무료배송</span>
                     </label>
-                    <label className={`filter-option ${selectedShipping.includes('rocket') ? 'filter-option-active' : ''}`}>
-                        <input
-                            type="checkbox"
-                            checked={selectedShipping.includes('rocket')}
-                            onChange={() => handleShippingChange('rocket')}
-                            className="filter-checkbox"
-                        />
-                        <span className="filter-label">로켓배송</span>
-                    </label>
                 </div>
             </Card>
 

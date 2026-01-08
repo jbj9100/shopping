@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.m_user import User
 from sqlalchemy import select
-from repositories.user.rep_user_table import get_user_by_email
+from repositories.users.rep_common import get_user_by_email
 
 async def auth_verify(session: AsyncSession, email: str, password: str) -> User:
     user = await get_user_by_email(session, email)

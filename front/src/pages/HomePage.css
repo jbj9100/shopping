@@ -4,10 +4,11 @@
 
 /* 프로모션 배너 */
 .promotion-banner {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
     color: var(--color-text-inverse);
-    padding: var(--spacing-8) 0;
+    padding: var(--spacing-10) 0;
     margin-bottom: var(--spacing-6);
+    box-shadow: var(--shadow-lg);
 }
 
 .promotion-content {
@@ -105,7 +106,8 @@
 }
 
 .filter-sidebar {
-    /* sticky는 ProductFilter 컴포넌트 내부에서 처리 */
+    position: sticky;
+    top: 100px;
 }
 
 .products-main {

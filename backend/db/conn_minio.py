@@ -1,21 +1,21 @@
+from services.minio.svc_minio import get_minio_client, exist_or_make_minio_bucket
+from minio import Minio
+from minio.error import S3Error
+from dotenv import load_dotenv
+
+load_dotenv()
+
+async def ping_minio() -> bool:
+    try:
+        minio_client = get_minio_client()
+        return exist_or_make_minio_bucket(minio_client)
+    except S3Error as e:
+        return False
+    except Exception as e:
+        return False
 
 
+async def close_minio() -> None:
+    """MinIO 연결 종료 (MinIO는 stateless이므로 실제로는 아무것도 안 함)"""
+    print("MinIO connection closed (stateless)")
 
-
-
-
-
-    client = create_minio_client(
-        endpoint=settings.MINIO_ENDPOINT,
-        access_key=settings.MINIO_ACCESS_KEY,
-        secret_key=settings.MINIO_SECRET_KEY,
-        secure=settings.MINIO_SECURE,
-    )
-    minio_svc = MinioService(client=client, bucket=settings.MINIO_BUCKET)
-
-
-def ensure_bucket():
-    # 버킷 없으면 생성
-    found = minio_client.bucket_exists(MINIO_BUCKET)
-    if not found:
-        minio_client.make_bucket(MINIO_BUCKET)    

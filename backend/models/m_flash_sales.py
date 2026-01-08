@@ -29,7 +29,7 @@ class FlashSale(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # relationships
-    product: Mapped["Product"] = relationship()
+    product: Mapped["Products"] = relationship()
     queue_entries: Mapped[List["FlashSaleQueueEntry"]] = relationship(
         back_populates="flash_sale", cascade="all, delete-orphan"
     )

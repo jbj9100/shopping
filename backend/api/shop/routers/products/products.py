@@ -1,70 +1,66 @@
-from fastapi import APIRouter, Request, Response, UploadFile, File 
+from fastapi import APIRouter, Request, Response, UploadFile, File, Query
 from typing import Optional 
 from core.deps.dep_session_rule import require_admin
 from db.conn_db import get_session
-from schemas.sc_products import ProductOut
+from schemas.sc_products import ProductOut, ProductIn
 from models.m_user import User
 from fastapi import HTTPException
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from services.products.svc_products import *
 
 
 router = APIRouter(prefix="/api/shop/products", tags=["products"])
 
 
-@router.get("/")
-def products_get():
-    return {"message": "상품 목록 조회"}
+# 전체 제품 조회
+# GET /api/shop/products?category_id=1
+@router.get("/", response_model=list[ProductOut])
+async def products_get_all(
+        category_id: Optional[int] = None,
+        db: AsyncSession = Depends(get_session)):
+    return await svc_get_all_products(db, category_id)
 
-
+# id로 조회
 @router.get("/{product_id}", response_model=ProductOut)
 async def product_get_id(
         product_id: int,
         db: AsyncSession = Depends(get_session),
-        current_user: User = Depends(require_admin) 
-):
-    # 상품 생성 로직
-    pass       
+        current_user: User = Depends(require_admin)):
+    return await svc_get_product_by_id(db, product_id)
 
-@router.post("/")
+# 생성
+@router.post("/", response_model=ProductOut)
 async def product_create(
+        product: ProductIn,
         db: AsyncSession = Depends(get_session),
-        current_user: User = Depends(require_admin) 
-):
-    # 상품 생성 로직
-    pass       
-
-@router.put("/{product_id}")
+        current_user: User = Depends(require_admin)):
+    new_product = await svc_create_product(db, product)   
+    return {"message": f"{new_product.name} 생성되었습니다."}
+      
+# 수정
+@router.patch("/{product_id}", response_model=ProductOut)
 async def product_update(
         product_id: int,
+        product: ProductIn,
         db: AsyncSession = Depends(get_session),
-        current_user: User = Depends(require_admin) 
-):
-    # 상품 생성 로직
-    pass       
+        current_user: User = Depends(require_admin)):
+    updated_product = await svc_update_product(db, product_id, product)
+    return {"message": f"{updated_product.name} 수정되었습니다."}
+
 
 @router.delete("/{product_id}")
 async def product_delete(
         product_id: int,
         db: AsyncSession = Depends(get_session),
-        current_user: User = Depends(require_admin) 
-):
-    # 상품 생성 로직
-    pass       
+        current_user: User = Depends(require_admin)):
+    deleted_product = await svc_delete_product(db, product_id)
+    return {"message": f"{deleted_product.name} 삭제되었습니다."}
 
 
-@router.post("/images/upload")
-async def upload_image(
-    request: Request,
-    file: UploadFile = File(...),
-    product_id: Optional[int] = None,
-):
-    minio = get_minio(request)
-    try:
-        result = await upload_image_and_get_url(minio, file, product_id=product_id)
-        return {"url": result.url}
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    finally:
-        await file.close()
+# 필터
+@router.get("/filter", response_model=list[ProductOut])
+async def products_filter(
+        db: AsyncSession = Depends(get_session)):
+    return await svc_filter_products(db)
 

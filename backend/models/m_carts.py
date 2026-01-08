@@ -32,7 +32,7 @@ class CartItem(Base):
 
     # relationships
     cart: Mapped["Cart"] = relationship(back_populates="items")
-    product: Mapped["Product"] = relationship()
+    product: Mapped["Products"] = relationship()
 
     __table_args__ = (
         UniqueConstraint("cart_id", "product_id", name="uq_cart_items_cart_product"),

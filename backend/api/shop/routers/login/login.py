@@ -18,9 +18,13 @@ def login_get():
 async def login(login_in: LoginIn, request: Request, response: Response,
                 db: AsyncSession = Depends(get_session),
                 redis_client = Depends(get_redis)) -> dict:
+    print("성공1")
     user = await auth_login.auth_verify(db, login_in.email, login_in.password)
+    print("성공2")
     old_sid = request.cookies.get(cookie_settings.COOKIE_NAME)
+    print("성공3")
     sess_id = await rotate_session(db, user_id=user.id, old_sid=old_sid, redis_client=redis_client)
+    print("성공4")
 
     response.set_cookie(
         key=cookie_settings.COOKIE_NAME,

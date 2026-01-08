@@ -5,7 +5,8 @@ from models.m_user import User
 from core.auth.auth_password_hash import hash_password
 from schemas.sc_user import SignupIn
 from exceptions.user_exceptions import EmailAlreadyExistsError
-from repositories.user.rep_user_table import get_user_by_email, create_user
+from repositories.users.rep_admin import create_user
+from repositories.users.rep_common import get_user_by_email
 
 
 # 회원가입으로 DB에 추가하는 작업

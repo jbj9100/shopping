@@ -1,27 +1,24 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Integer, DateTime, BigInteger, Text, Float, Boolean, CheckConstraint
-from sqlalchemy import func
+from sqlalchemy import String, Integer, DateTime, BigInteger, Text, Boolean, CheckConstraint, ForeignKey
 from typing import Optional
 from datetime import datetime
 
 from models.m_common import Base, TimestampMixin
 
 
-class Product(Base, TimestampMixin):
+class Products(Base, TimestampMixin):
     __tablename__ = "products"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     name: Mapped[str] = mapped_column(String(200), index=True, nullable=False)
     brand: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
-    category: Mapped[Optional[str]] = mapped_column(String(50), index=True, nullable=True)
+    category_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("categories.id"), nullable=False, index=True)
 
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     original_price: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    image: Mapped[str] = mapped_column(Text, nullable=False)
-    rating: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
-    review_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-
+    image: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    view_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     free_shipping: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     stock: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 

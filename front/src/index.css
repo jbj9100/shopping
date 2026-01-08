@@ -1,30 +1,31 @@
 /* ===== CSS 변수 및 토큰 ===== */
 :root {
-  /* 컬러 팔레트 - 쿠팡/네이버쇼핑 스타일 */
-  --color-primary: hsl(15, 100%, 50%);
-  --color-primary-dark: hsl(15, 100%, 45%);
-  --color-primary-light: hsl(15, 100%, 95%);
+  /* 컨러 팔레트 - 모던 쇼핑몰 스타일 (Blue/Purple) */
+  --color-primary: hsl(225, 90%, 55%);
+  --color-primary-dark: hsl(225, 90%, 45%);
+  --color-primary-light: hsl(225, 90%, 96%);
 
-  --color-secondary: hsl(142, 76%, 36%);
-  --color-secondary-dark: hsl(142, 76%, 30%);
-  --color-secondary-light: hsl(142, 76%, 95%);
+  --color-secondary: hsl(160, 84%, 39%);
+  --color-secondary-dark: hsl(160, 84%, 30%);
+  --color-secondary-light: hsl(160, 84%, 95%);
 
-  --color-accent: hsl(210, 100%, 50%);
+  --color-accent: hsl(280, 85%, 55%);
+  --color-accent-light: hsl(280, 85%, 95%);
 
-  --color-background: hsl(0, 0%, 98%);
+  --color-background: hsl(225, 25%, 97%);
   --color-surface: hsl(0, 0%, 100%);
-  --color-surface-hover: hsl(0, 0%, 96%);
+  --color-surface-hover: hsl(225, 25%, 96%);
 
-  --color-text-primary: hsl(0, 0%, 13%);
-  --color-text-secondary: hsl(0, 0%, 40%);
-  --color-text-tertiary: hsl(0, 0%, 60%);
+  --color-text-primary: hsl(225, 25%, 15%);
+  --color-text-secondary: hsl(225, 10%, 45%);
+  --color-text-tertiary: hsl(225, 10%, 60%);
   --color-text-inverse: hsl(0, 0%, 100%);
 
-  --color-border: hsl(0, 0%, 90%);
-  --color-border-light: hsl(0, 0%, 95%);
+  --color-border: hsl(225, 20%, 88%);
+  --color-border-light: hsl(225, 20%, 94%);
 
-  --color-success: hsl(142, 71%, 45%);
-  --color-warning: hsl(45, 100%, 51%);
+  --color-success: hsl(160, 84%, 39%);
+  --color-warning: hsl(38, 92%, 50%);
   --color-error: hsl(0, 84%, 60%);
   --color-info: hsl(210, 100%, 50%);
 

@@ -12,7 +12,7 @@
 from models.m_common import Base, TimestampMixin
 from models.m_user import User, UserSession
 from models.m_carts import Cart, CartItem
-from models.m_products import Product
+from models.m_products import Products
 from models.m_orders import Order, OrderItem
 from models.m_price_alerts import PriceAlert
 from models.m_flash_sales import FlashSale, FlashSaleQueueEntry
@@ -24,7 +24,7 @@ __all__ = [
     "UserSession",
     "Cart",
     "CartItem",
-    "Product",
+    "Products",
     "Order",
     "OrderItem",
     "PriceAlert",

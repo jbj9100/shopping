@@ -49,7 +49,7 @@ class OrderItem(Base):
 
     # relationships
     order: Mapped["Order"] = relationship(back_populates="items")
-    product: Mapped["Product"] = relationship()
+    product: Mapped["Products"] = relationship()
 
     __table_args__ = (
         CheckConstraint("quantity > 0", name="qty_pos"),

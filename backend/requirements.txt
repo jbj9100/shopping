@@ -12,3 +12,4 @@ aiokafka
 sqlalchemy-utils
 google-generativeai
 python-multipart
+minio

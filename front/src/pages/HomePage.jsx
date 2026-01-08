@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import { ProductGrid } from '../components/product/ProductGrid';
 import { ProductFilter } from '../components/product/ProductFilter';
 import { PriceDropTopN } from '../components/price-drop/PriceDropTopN';
@@ -10,9 +11,10 @@ import { useWebSocket } from '../hooks/useWebSocket';
 import './HomePage.css';
 
 export const HomePage = () => {
-    const { category } = useParams(); // URL에서 카테고리 파라미터 추출
+    const { category } = useParams();
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
+    const [categories, setCategories] = useState([]);  // 카테고리 목록
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentFilters, setCurrentFilters] = useState({});
@@ -98,37 +100,69 @@ export const HomePage = () => {
         }
     });
 
+    // 카테고리 목록 로드
+    useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                const { data } = await axios.get('/api/shop/categories/all');
+                setCategories(data);  // 배열 직접 반환
+            } catch (err) {
+                console.error('카테고리 로딩 실패:', err);
+            }
+        };
+        loadCategories();
+    }, []);
+
     useEffect(() => {
         loadProducts();
-    }, [category]); // 카테고리 변경 시 다시 로드
+    }, [category, categories]); // 카테고리 변경 시 다시 로드
 
     const loadProducts = async () => {
         try {
             setIsLoading(true);
-            // 백엔드 상품 API가 아직 없으므로 목업 데이터 사용
-            let mockData = getMockProducts();
 
-            // URL에 카테고리가 있으면 해당 카테고리만 필터링
-            if (category) {
-                mockData = mockData.filter(p => p.category === category);
+            // 실제 API 호출
+            try {
+                // category 이름으로 category_id 찾기
+                let categoryId = null;
+                if (category && categories.length > 0) {
+                    const foundCategory = categories.find(c => c.name === category);
+                    categoryId = foundCategory?.id;
+                }
+
+                const { data } = await axios.get('/api/shop/products', {
+                    params: categoryId ? { category_id: categoryId } : {}
+                });
+                setProducts(data);
+                setFilteredProducts(data);
+            } catch (apiErr) {
+                console.error('API 호출 실패, Mock 데이터 사용:', apiErr);
+
+                // API 실패 시 목업 데이터 사용
+                let mockData = getMockProducts();
+
+                // URL에 카테고리가 있으면 해당 카테고리만 필터링
+                if (category) {
+                    mockData = mockData.filter(p => p.category === category);
+                }
+
+                setProducts(mockData);
+                setFilteredProducts(mockData);
             }
-
-            setProducts(mockData);
-            setFilteredProducts(mockData);
 
             // 목업 가격 하락 TOP N 데이터
             setPriceTopDrops([
-                { productId: 1, name: '슬라이스 식빵 통밀', dropPercent: 22, oldPrice: 2000, newPrice: 1550 },
-                { productId: 2, name: '삼립 호빵', dropPercent: 8, oldPrice: 12000, newPrice: 10980 },
-                { productId: 7, name: '호밀빵 통호밀', dropPercent: 10, oldPrice: 6500, newPrice: 5800 },
+                { productId: 17, name: '애플 맥북 에어 M3', dropPercent: 6, oldPrice: 1690000, newPrice: 1590000 },
+                { productId: 21, name: '휘슬러 압력솥 6L', dropPercent: 17, oldPrice: 350000, newPrice: 289000 },
+                { productId: 39, name: '홍삼정 에브리타임', dropPercent: 19, oldPrice: 110000, newPrice: 89000 },
             ]);
 
             // 목업 추천 데이터
             setRecommendations([
-                { id: 3, name: '곰표 우유 식빵, 660g', price: 4050, reason: 'co-viewed', image: null },
-                { id: 4, name: '파스쾨르 슬라이스 브리오슈', price: 8980, reason: 'co-viewed', image: null },
-                { id: 5, name: '크루아상 플레인', price: 4900, reason: 'similar', image: null },
-                { id: 6, name: '바게트 프렌치', price: 3200, reason: 'similar', image: null },
+                { id: 1, name: '곰표 우유 식빵 660g', price: 4050, reason: 'co-viewed', image: null },
+                { id: 18, name: '삼성 갤럭시 버즈 FE', price: 89000, reason: 'co-viewed', image: null },
+                { id: 29, name: '나이키 에어맥스 270', price: 169000, reason: 'similar', image: null },
+                { id: 37, name: '종근당 비타민C 1000', price: 19900, reason: 'similar', image: null },
             ]);
         } catch (err) {
             setError(err.message);
@@ -216,18 +250,9 @@ export const HomePage = () => {
 
         // 배송 필터
         if (filters.shipping && filters.shipping.length > 0) {
-            filtered = filtered.filter(p => {
-                if (filters.shipping.includes('free') && filters.shipping.includes('rocket')) {
-                    return p.freeShipping || p.rocketShipping;
-                }
-                if (filters.shipping.includes('free')) {
-                    return p.freeShipping;
-                }
-                if (filters.shipping.includes('rocket')) {
-                    return p.rocketShipping;
-                }
-                return true;
-            });
+            if (filters.shipping.includes('free')) {
+                filtered = filtered.filter(p => p.free_shipping);
+            }
         }
 
         // 브랜드 필터
@@ -249,8 +274,8 @@ export const HomePage = () => {
             <section className="promotion-banner">
                 <div className="container">
                     <div className="promotion-content">
-                        <h2 className="promotion-title">🎉 베이커리 특가 세일!</h2>
-                        <p className="promotion-subtitle">신선한 빵, 매일 최저가 + 무료배송</p>
+                        <h2 className="promotion-title">⚡ 실시간 가격 변동 쇼핑몰</h2>
+                        <p className="promotion-subtitle">Kafka로 실시간 가격 업데이트! 최저가를 놓치지 마세요</p>
                     </div>
                 </div>
             </section>
@@ -259,14 +284,14 @@ export const HomePage = () => {
             <section className="category-icons">
                 <div className="container">
                     <div className="category-icons-grid">
-                        <CategoryIcon icon="🍞" label="식빵/곡물빵" />
-                        <CategoryIcon icon="🥖" label="양빵/일반빵" />
-                        <CategoryIcon icon="🥐" label="샌드위치/버거" />
-                        <CategoryIcon icon="🍰" label="쿠키/파이" />
-                        <CategoryIcon icon="🧁" label="케이크/제과" />
-                        <CategoryIcon icon="🍪" label="생지" />
-                        <CategoryIcon icon="🍩" label="베이커리 선물세트" />
-                        <CategoryIcon icon="🥧" label="잼/꿀/시럽" />
+                        {categories.map(cat => (
+                            <CategoryIcon
+                                key={cat.id}
+                                icon={cat.icon || cat.name[0].toUpperCase()}
+                                label={cat.display_name}
+                                category={cat.name}
+                            />
+                        ))}
                     </div>
                 </div>
             </section>
@@ -294,10 +319,10 @@ export const HomePage = () => {
                         <main className="products-main">
                             <div className="section-header">
                                 <h2 className="section-title">
-                                    베이커리 카테고리
+                                    {category ? getCategoryName(category) : '전체 상품'}
                                     <span className="product-count">({filteredProducts.length}개 상품)</span>
                                 </h2>
-                                <Badge variant="primary">실시간 업데이트</Badge>
+                                <Badge variant="primary">⚡ 실시간 가격</Badge>
                             </div>
 
                             {error && (
@@ -316,9 +341,26 @@ export const HomePage = () => {
     );
 };
 
-const CategoryIcon = ({ icon, label }) => (
-    <div className="category-icon-item">
+const CategoryIcon = ({ icon, label, category }) => (
+    <a href={category ? `/category/${category}` : '/'} className="category-icon-item">
         <div className="category-icon-circle">{icon}</div>
         <span className="category-icon-label">{label}</span>
-    </div>
+    </a>
 );
+
+// 카테고리 이름 매핑
+const getCategoryName = (category) => {
+    const names = {
+        food: '식품',
+        living: '생활용품',
+        beauty: '뷰티',
+        interior: '홈인테리어',
+        electronics: '가전/디지털',
+        kitchen: '주방용품',
+        pet: '반려동물',
+        sports: '스포츠/레저',
+        books: '도서/음반',
+        health: '헬스/건강'
+    };
+    return names[category] || category;
+};

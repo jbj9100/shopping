@@ -19,7 +19,7 @@ class PriceAlert(Base):
 
     # relationships
     user: Mapped["User"] = relationship(back_populates="price_alerts")
-    product: Mapped["Product"] = relationship()
+    product: Mapped["Products"] = relationship()
 
     __table_args__ = (
         UniqueConstraint("user_id", "product_id", name="uq_price_alerts_user_product"),
