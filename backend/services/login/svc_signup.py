@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from models.m_user import User
 from core.auth.auth_password_hash import hash_password
 from schemas.sc_user import SignupIn
-from exceptions.user_exceptions import EmailAlreadyExistsError
+from exceptions.ep_user import EmailAlreadyExistsError
 from repositories.users.rep_admin import create_user
 from repositories.users.rep_common import get_user_by_email
 

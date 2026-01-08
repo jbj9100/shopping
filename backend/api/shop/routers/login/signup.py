@@ -5,7 +5,7 @@ from services.login.svc_signup import signup_user
 from fastapi import HTTPException
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from exceptions.user_exceptions import EmailAlreadyExistsError
+from exceptions.ep_user import EmailAlreadyExistsError
 from sqlalchemy.exc import IntegrityError
 
 router = APIRouter(prefix="/api/shop/signup", tags=["signup"])  

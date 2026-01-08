@@ -14,7 +14,7 @@ export const AdminPage = () => {
     const [error, setError] = useState('');
 
     // 카테고리 폼
-    const [newCategory, setNewCategory] = useState({ name: '', display_name: '', description: '' });
+    const [newCategory, setNewCategory] = useState({ name: '', display_name: '', description: '', icon: '' });
     const [editingCategory, setEditingCategory] = useState(null);
 
     // 제품 폼
@@ -58,6 +58,33 @@ export const AdminPage = () => {
             fetchUsers();
         } catch (err) {
             alert('권한 변경에 실패했습니다.');
+        }
+    };
+
+    // 이미지 업로드 함수 (기존 이미지 자동 삭제)
+    const handleImageUpload = async (file, bucket, oldUrl = null) => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await api.post(`/api/shop/images/upload?bucket=${bucket}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            // 기존 이미지가 있으면 삭제
+            if (oldUrl) {
+                try {
+                    const filename = oldUrl.split('/').pop();
+                    await api.delete(`/api/shop/images/${filename}?bucket=${bucket}`);
+                } catch (err) {
+                    console.error('기존 이미지 삭제 실패:', err);
+                }
+            }
+
+            return response.data.url;
+        } catch (err) {
+            setError('이미지 업로드 실패: ' + (err.response?.data?.detail || err.message));
+            return null;
         }
     };
 
@@ -273,6 +300,25 @@ export const AdminPage = () => {
                                     />
                                 </div>
                                 <div className="form-group">
+                                    <label>아이콘 (이미지 파일)</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                const url = await handleImageUpload(file, 'category');
+                                                if (url) setNewCategory({ ...newCategory, icon: url });
+                                            }
+                                        }}
+                                    />
+                                    {newCategory.icon && (
+                                        <div style={{ marginTop: '8px' }}>
+                                            <img src={newCategory.icon} alt="preview" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="form-group">
                                     <label>설명</label>
                                     <input
                                         type="text"
@@ -294,6 +340,7 @@ export const AdminPage = () => {
                                 <th>번호</th>
                                 <th>이름</th>
                                 <th>표시명</th>
+                                <th>아이콘</th>
                                 <th>설명</th>
                                 <th>생성일</th>
                                 <th>관리</th>
@@ -318,6 +365,29 @@ export const AdminPage = () => {
                                                 onChange={(e) => setEditingCategory({ ...editingCategory, display_name: e.target.value })}
                                             />
                                         ) : cat.display_name}
+                                    </td>
+                                    <td>
+                                        {editingCategory?.id === cat.id ? (
+                                            <div>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files[0];
+                                                        if (file) {
+                                                            const url = await handleImageUpload(file, 'category', editingCategory.icon);
+                                                            if (url) setEditingCategory({ ...editingCategory, icon: url });
+                                                        }
+                                                    }}
+                                                    style={{ fontSize: '12px' }}
+                                                />
+                                                {editingCategory.icon && (
+                                                    <img src={editingCategory.icon} alt="icon" style={{ width: '30px', height: '30px', marginTop: '4px', display: 'block' }} />
+                                                )}
+                                            </div>
+                                        ) : (
+                                            cat.icon ? <img src={cat.icon} alt="icon" style={{ width: '30px', height: '30px' }} /> : '-'
+                                        )}
                                     </td>
                                     <td>
                                         {editingCategory?.id === cat.id ? (
@@ -427,12 +497,23 @@ export const AdminPage = () => {
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <label>이미지 URL</label>
+                                    <label>이미지 파일</label>
                                     <input
-                                        type="text"
-                                        value={newProduct.image}
-                                        onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                const url = await handleImageUpload(file, 'product');
+                                                if (url) setNewProduct({ ...newProduct, image: url });
+                                            }
+                                        }}
                                     />
+                                    {newProduct.image && (
+                                        <div style={{ marginTop: '8px' }}>
+                                            <img src={newProduct.image} alt="preview" style={{ width: '80px', height: '80px', objectFit: 'cover' }} />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <button type="submit" className="btn-create">등록</button>
@@ -446,6 +527,7 @@ export const AdminPage = () => {
                             <tr>
                                 <th>번호</th>
                                 <th>제품명</th>
+                                <th>이미지</th>
                                 <th>가격</th>
                                 <th>브랜드</th>
                                 <th>카테고리</th>
@@ -465,6 +547,29 @@ export const AdminPage = () => {
                                                 onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
                                             />
                                         ) : prod.name}
+                                    </td>
+                                    <td>
+                                        {editingProduct?.id === prod.id ? (
+                                            <div>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files[0];
+                                                        if (file) {
+                                                            const url = await handleImageUpload(file, 'product', editingProduct.image);
+                                                            if (url) setEditingProduct({ ...editingProduct, image: url });
+                                                        }
+                                                    }}
+                                                    style={{ fontSize: '11px' }}
+                                                />
+                                                {editingProduct.image && (
+                                                    <img src={editingProduct.image} alt="product" style={{ width: '50px', height: '50px', marginTop: '4px', objectFit: 'cover', display: 'block' }} />
+                                                )}
+                                            </div>
+                                        ) : (
+                                            prod.image ? <img src={prod.image} alt="product" style={{ width: '50px', height: '50px', objectFit: 'cover' }} /> : '-'
+                                        )}
                                     </td>
                                     <td>
                                         {editingProduct?.id === prod.id ? (

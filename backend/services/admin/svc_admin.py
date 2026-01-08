@@ -19,12 +19,12 @@ async def create_admin():
         existing = await get_user_by_email(db, email)
         
         if existing:
-            print(f"❌ {email}은 이미 존재합니다.")
+            print(f"{email} is exists")
             return
         
         user = await create_user(db, username, email, hash_password(password), role)
         await db.commit()
-        print(f"✅ Admin 계정 생성 완료: {user.email}")
+        print(f"Admin created: {user.email}")
 
 
 

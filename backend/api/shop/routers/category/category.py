@@ -75,18 +75,4 @@ async def delete_category_endpoint(
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-# 이미지 업로드
-@router.post("/images/upload")
-async def upload_image(
-    request: Request,
-    file: UploadFile = File(...),
-    product_id: Optional[int] = None,
-    current_user: User = Depends(require_admin)):
-    minio = get_minio(request)
-    try:
-        result = await upload_image_and_get_url(minio, file, product_id=product_id)
-        return {"url": result.url}
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    finally:
-        await file.close()
+

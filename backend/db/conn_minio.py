@@ -1,18 +1,17 @@
-from services.minio.svc_minio import get_minio_client, exist_or_make_minio_bucket
+from services.minio.svc_minio import svc_get_minio_client, svc_exist_or_make_minio_bucket
 from minio import Minio
 from minio.error import S3Error
 from dotenv import load_dotenv
 
-load_dotenv()
-
 async def ping_minio() -> bool:
     try:
-        minio_client = get_minio_client()
-        return exist_or_make_minio_bucket(minio_client)
+        minio_client = svc_get_minio_client()
+        return svc_exist_or_make_minio_bucket(minio_client)
     except S3Error as e:
         return False
     except Exception as e:
         return False
+
 
 
 async def close_minio() -> None:
