@@ -7,7 +7,7 @@ from models.m_common import Base, TimestampMixin
 import uuid
 
 
-class User(Base, TimestampMixin):
+class Users(Base, TimestampMixin):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -20,10 +20,10 @@ class User(Base, TimestampMixin):
     sessions: Mapped[List["UserSession"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    cart: Mapped[Optional["Cart"]] = relationship(
+    carts: Mapped[Optional["Carts"]] = relationship(
         back_populates="user", uselist=False, cascade="all, delete-orphan"
     )
-    orders: Mapped[List["Order"]] = relationship(
+    orders: Mapped[List["Orders"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
     price_alerts: Mapped[List["PriceAlert"]] = relationship(
@@ -43,7 +43,7 @@ class UserSession(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    user: Mapped["User"] = relationship(back_populates="sessions")
+    user: Mapped["Users"] = relationship(back_populates="sessions")
 
     __table_args__ = (
         Index("ix_user_sessions_valid", "user_id", "expires_at", "revoked_at"),

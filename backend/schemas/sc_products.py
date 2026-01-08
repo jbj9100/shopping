@@ -27,11 +27,11 @@ class ProductIn(APIModel):
     price: int
     original_price: int
     brand: str
-    category_id: int  # 추가
+    category_id: int
     image: str
     free_shipping: bool
     stock: int
-    description: Optional[str] = None  # 추가
+    description: Optional[str] = None
     depletion_eta_minutes: Optional[int] = None
 
 

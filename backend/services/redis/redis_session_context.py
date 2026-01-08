@@ -2,7 +2,7 @@ import logging
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Literal
-from models.m_user import User, UserSession
+from models.m_user import Users, UserSession
 from db.conn_redis import redis_pool
 import redis.asyncio as redis
 from db.conn_db import AsyncSessionLocal
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class SessionContext:
     session_id: str
     user_id: int
-    user: Optional[User] = None
+    user: Optional[Users] = None
     expires_at: Optional[datetime] = None
     source: Literal["redis", "db"] = "redis"
 
@@ -39,7 +39,7 @@ async def resolve_session(sid: str) -> Optional[SessionContext]:
     if user_id_str:
         # Redis Hit
         async with AsyncSessionLocal() as db:
-            user = await db.get(User, int(user_id_str))
+            user = await db.get(Users, int(user_id_str))
             if user:
                 return SessionContext(
                     session_id=sid,

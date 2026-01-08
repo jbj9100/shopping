@@ -6,7 +6,7 @@ from datetime import datetime
 from models.m_common import Base, TimestampMixin
 
 
-class Cart(Base, TimestampMixin):
+class Carts(Base, TimestampMixin):
     __tablename__ = "carts"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -15,13 +15,13 @@ class Cart(Base, TimestampMixin):
     )
 
     # relationships
-    user: Mapped["User"] = relationship(back_populates="cart")
-    items: Mapped[List["CartItem"]] = relationship(
+    user: Mapped["Users"] = relationship(back_populates="carts")
+    items: Mapped[List["CartItems"]] = relationship(
         back_populates="cart", cascade="all, delete-orphan"
     )
 
 
-class CartItem(Base):
+class CartItems(Base):
     __tablename__ = "cart_items"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -31,7 +31,7 @@ class CartItem(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # relationships
-    cart: Mapped["Cart"] = relationship(back_populates="items")
+    cart: Mapped["Carts"] = relationship(back_populates="items")
     product: Mapped["Products"] = relationship()
 
     __table_args__ = (

@@ -1,12 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from models.m_user import User
+from models.m_user import Users
 from typing import Optional
 
 
-async def create_user(db: AsyncSession, username: str, email: str, password_hash: str, role: str = "normal-user") -> User:
+async def create_user(db: AsyncSession, username: str, email: str, password_hash: str, role: str = "normal-user") -> Users:
     """새 사용자 생성 (DB에 add만, commit은 Service에서)"""
-    user = User(
+    user = Users(
         username=username,
         email=email,
         password_hash=password_hash,
@@ -16,16 +16,16 @@ async def create_user(db: AsyncSession, username: str, email: str, password_hash
     return user
 
 
-async def get_all_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[User]:
+async def get_all_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[Users]:
     result = await db.execute(
-        select(User)
+        select(Users)
         .offset(skip)
         .limit(limit)
-        .order_by(User.created_at.desc())
+        .order_by(Users.created_at.desc())
     )
     return result.scalars().all()
 
-async def update_user_role(db: AsyncSession, user_id: int, new_role: str) -> Optional[User]:
+async def update_user_role(db: AsyncSession, user_id: int, new_role: str) -> Optional[Users]:
     user = await get_user_by_id(db, user_id)
     if user:
         user.role = new_role

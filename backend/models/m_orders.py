@@ -6,7 +6,7 @@ from datetime import datetime
 from models.m_common import Base, TimestampMixin
 
 
-class Order(Base, TimestampMixin):
+class Orders(Base, TimestampMixin):
     __tablename__ = "orders"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -25,8 +25,8 @@ class Order(Base, TimestampMixin):
     payment_status: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
 
     # relationships
-    user: Mapped["User"] = relationship(back_populates="orders")
-    items: Mapped[List["OrderItem"]] = relationship(
+    user: Mapped["Users"] = relationship(back_populates="orders")
+    items: Mapped[List["OrderItems"]] = relationship(
         back_populates="order", cascade="all, delete-orphan"
     )
 
@@ -36,7 +36,7 @@ class Order(Base, TimestampMixin):
     )
 
 
-class OrderItem(Base):
+class OrderItems(Base):
     __tablename__ = "order_items"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -48,7 +48,7 @@ class OrderItem(Base):
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
 
     # relationships
-    order: Mapped["Order"] = relationship(back_populates="items")
+    order: Mapped["Orders"] = relationship(back_populates="items")
     product: Mapped["Products"] = relationship()
 
     __table_args__ = (

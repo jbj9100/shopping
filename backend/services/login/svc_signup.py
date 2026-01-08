@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from models.m_user import User
+from models.m_user import Users
 from core.auth.auth_password_hash import hash_password
 from schemas.sc_user import SignupIn
 from exceptions.ep_user import EmailAlreadyExistsError
@@ -10,7 +10,7 @@ from repositories.users.rep_common import get_user_by_email
 
 
 # 회원가입으로 DB에 추가하는 작업
-async def signup_user(session: AsyncSession, signup: SignupIn) -> User:
+async def signup_user(session: AsyncSession, signup: SignupIn) -> Users:
     # 1) 중복 체크(친절한 에러를 주기 위해)
 
     email = await get_user_by_email(session, signup.email)

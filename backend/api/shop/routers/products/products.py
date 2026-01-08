@@ -3,7 +3,7 @@ from typing import Optional
 from core.deps.dep_session_rule import require_admin
 from db.conn_db import get_session
 from schemas.sc_products import ProductOut, ProductIn
-from models.m_user import User
+from models.m_user import Users
 from fastapi import HTTPException
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,7 +27,7 @@ async def products_get_all(
 async def product_get_id(
         product_id: int,
         db: AsyncSession = Depends(get_session),
-        current_user: User = Depends(require_admin)):
+        current_user: Users = Depends(require_admin)):
     return await svc_get_product_by_id(db, product_id)
 
 # 생성
@@ -35,7 +35,7 @@ async def product_get_id(
 async def product_create(
         product: ProductIn,
         db: AsyncSession = Depends(get_session),
-        current_user: User = Depends(require_admin)):
+        current_user: Users = Depends(require_admin)):
     new_product = await svc_create_product(db, product)   
     return {"message": f"{new_product.name} 생성되었습니다."}
       
@@ -45,7 +45,7 @@ async def product_update(
         product_id: int,
         product: ProductIn,
         db: AsyncSession = Depends(get_session),
-        current_user: User = Depends(require_admin)):
+        current_user: Users = Depends(require_admin)):
     updated_product = await svc_update_product(db, product_id, product)
     #print(updated_product.model_validate(updated_product).model_dump())
     return updated_product
@@ -55,7 +55,7 @@ async def product_update(
 async def product_delete(
         product_id: int,
         db: AsyncSession = Depends(get_session),
-        current_user: User = Depends(require_admin)):
+        current_user: Users = Depends(require_admin)):
     deleted_product = await svc_delete_product(db, product_id)
     return {"message": f"{deleted_product.name} 삭제되었습니다."}
 

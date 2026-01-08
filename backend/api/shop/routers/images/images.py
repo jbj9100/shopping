@@ -7,7 +7,7 @@ router = APIRouter(prefix="/api/shop/images", tags=["images"])
 @router.post("/upload")
 async def upload_image(
     file: UploadFile = File(...),
-    bucket: str = Query(..., regex="^(category|product)$")
+    bucket: str = Query(..., pattern="^(category|product)$")
 ):
     try:
         result = await svc_upload_image(file, bucket)
@@ -23,7 +23,7 @@ async def upload_image(
 @router.delete("/{filename}")
 async def delete_image(
     filename: str,
-    bucket: str = Query(..., regex="^(category|product)$")
+    bucket: str = Query(..., pattern="^(category|product)$")
 ):
     try:
         client = svc_get_minio_client()

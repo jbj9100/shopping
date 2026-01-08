@@ -52,7 +52,7 @@ class FlashSaleQueueEntry(Base):
 
     # relationships
     flash_sale: Mapped["FlashSale"] = relationship(back_populates="queue_entries")
-    user: Mapped["User"] = relationship(back_populates="flash_queue_entries")
+    user: Mapped["Users"] = relationship(back_populates="flash_queue_entries")
 
     __table_args__ = (
         UniqueConstraint("flash_sale_id", "user_id", name="uq_flash_queue_sale_user"),

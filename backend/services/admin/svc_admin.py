@@ -5,7 +5,7 @@ from repositories.users.rep_admin import (
     create_user, get_all_users, update_user_role, delete_user
 )
 from repositories.users.rep_common import get_user_by_email
-from models.m_user import User
+from models.m_user import Users
 from os import getenv
 from typing import Optional
 
@@ -28,12 +28,12 @@ async def create_admin():
 
 
 
-async def get_users_list(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[User]:
+async def get_users_list(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[Users]:
     return await get_all_users(db, skip, limit)
 
 
 
-async def change_user_role(db: AsyncSession, user_id: int, new_role: str) -> Optional[User]:
+async def change_user_role(db: AsyncSession, user_id: int, new_role: str) -> Optional[Users]:
 
     if new_role not in ["admin", "normal-user"]:
         raise ValueError("Role은 'admin' 또는 'normal-user'만 가능합니다.")

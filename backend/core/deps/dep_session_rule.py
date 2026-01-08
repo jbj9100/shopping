@@ -1,5 +1,5 @@
 from fastapi import Request, status, HTTPException
-from models.m_user import User
+from models.m_user import Users
 from services.redis.redis_session_context import SessionContext
 from typing import Callable
 
@@ -20,7 +20,7 @@ def require_session(request: Request) -> SessionContext:
 
 
 # 로그인한 user가 있는지 ( user_id와 user가 있는지)
-def require_user(request: Request) -> User:
+def require_user(request: Request) -> Users:
     sess = require_session(request)
     # SessionContext에는 user_id와 user가 항상 세팅되어 있음 (user가 None이면 resolve_session이 반환을 안하므로)
     
@@ -34,7 +34,7 @@ def require_user(request: Request) -> User:
 
 
 # Admin 전용 간편 함수
-def require_admin(request: Request) -> User:
+def require_admin(request: Request) -> Users:
     """현재 로그인한 사용자가 admin인지 확인 request.state.auth.user.role 에서 가져옴"""
     user = require_user(request)  # 현재 로그인한 사용자 (이미 role 포함)
     if user.role != "admin":

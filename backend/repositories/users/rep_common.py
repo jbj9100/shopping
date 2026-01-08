@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from models.m_user import User
+from models.m_user import Users
 from typing import Optional
 
 
@@ -46,21 +46,21 @@ from typing import Optional
 # user.username = "testuser"
 
 #--------------------------------------------------------------------
-async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
-    result = await db.execute(select(User).where(User.email == email))
+async def get_user_by_email(db: AsyncSession, email: str) -> Optional[Users]:
+    result = await db.execute(select(Users).where(Users.email == email))
     return result.scalar_one_or_none()
 
 
-async def get_user_by_id(db: AsyncSession, user_id: int) -> Optional[User]:
-    result = await db.execute(select(User).where(User.id == user_id))
+async def get_user_by_id(db: AsyncSession, user_id: int) -> Optional[Users]:
+    result = await db.execute(select(Users).where(Users.id == user_id))
     return result.scalar_one_or_none()
 
 async def get_user_by_username(db: AsyncSession, user_id: int) -> Optional[str]:
-    result = await db.execute(select(User.username).where(User.id == user_id))
+    result = await db.execute(select(Users.username).where(Users.id == user_id))
     return result.scalar_one_or_none()
 
-async def get_user_by_role(db: AsyncSession, role: str) -> Optional[User]:
-    result = await db.execute(select(User).where(User.role == role))
+async def get_user_by_role(db: AsyncSession, role: str) -> Optional[Users]:
+    result = await db.execute(select(Users).where(Users.role == role))
     return result.scalar_one_or_none()
 
 async def update_username(db: AsyncSession, user_id: int, new_username: str) -> None:

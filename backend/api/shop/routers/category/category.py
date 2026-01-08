@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from db.conn_db import get_session
 from core.deps.dep_session_rule import require_admin
-from models.m_user import User
+from models.m_user import Users
 from schemas.sc_category import CategoryIn, CategoryOut
 from services.category.svc_category import (
     svc_get_all_categories,
@@ -38,7 +38,7 @@ async def category_info(
 async def create_category_endpoint(
     category: CategoryIn,
     db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_admin)):
+    current_user: Users = Depends(require_admin)):
     try:
         new_category = await svc_create_category(db, category)
         return new_category
@@ -52,7 +52,7 @@ async def update_category_endpoint(
     category_id: int,
     category: CategoryIn,
     db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_admin)):
+    current_user: Users = Depends(require_admin)):
     try:
         categories = await svc_update_category(db, category_id, category)
         return categories
@@ -65,7 +65,7 @@ async def update_category_endpoint(
 async def delete_category_endpoint(
     category_id: int,
     db: AsyncSession = Depends(get_session),
-    current_user: User = Depends(require_admin)):
+    current_user: Users = Depends(require_admin)):
     try:
         category_exists = await svc_get_category_by_products_id(db, category_id)
         if category_exists:

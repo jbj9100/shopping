@@ -10,23 +10,23 @@
 
 
 from models.m_common import Base, TimestampMixin
-from models.m_user import User, UserSession
-from models.m_carts import Cart, CartItem
+from models.m_user import Users, UserSession
+from models.m_carts import Carts, CartItems
 from models.m_products import Products
-from models.m_orders import Order, OrderItem
+from models.m_orders import Orders, OrderItems
 from models.m_price_alerts import PriceAlert
 from models.m_flash_sales import FlashSale, FlashSaleQueueEntry
 
 __all__ = [
     "Base",
     "TimestampMixin",
-    "User",
+    "Users",
     "UserSession",
-    "Cart",
-    "CartItem",
+    "Carts",
+    "CartItems",
     "Products",
-    "Order",
-    "OrderItem",
+    "Orders",
+    "OrderItems",
     "PriceAlert",
     "FlashSale",
     "FlashSaleQueueEntry",

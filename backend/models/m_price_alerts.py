@@ -18,7 +18,7 @@ class PriceAlert(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # relationships
-    user: Mapped["User"] = relationship(back_populates="price_alerts")
+    user: Mapped["Users"] = relationship(back_populates="price_alerts")
     product: Mapped["Products"] = relationship()
 
     __table_args__ = (
