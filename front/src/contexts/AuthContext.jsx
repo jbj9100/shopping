@@ -19,6 +19,10 @@ export const AuthProvider = ({ children }) => {
                 setUser(data);
             }
         } catch (err) {
+            // 401 에러는 정상 동작 (비로그인 상태)
+            if (err.response?.status !== 401) {
+                console.error('인증 확인 실패:', err);
+            }
             setUser(null);
         } finally {
             setLoading(false);

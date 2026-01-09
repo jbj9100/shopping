@@ -7,6 +7,7 @@ import { StockDepletionBadge } from '../components/stock/StockDepletionBadge';
 import { PriceAlertModal } from '../components/price-alert/PriceAlertModal';
 import { RecommendationSection } from '../components/recommendation/RecommendationSection';
 import { productService } from '../services/productService';
+import { cartService } from '../services/cartService';
 import './ProductDetailPage.css';
 
 export const ProductDetailPage = () => {
@@ -82,6 +83,16 @@ export const ProductDetailPage = () => {
             }
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleAddToCart = async () => {
+        try {
+            await cartService.addToCart(product.id, quantity);
+            alert(`${product.name} ${quantity}개가 장바구니에 담겼습니다!`);
+        } catch (err) {
+            console.error('장바구니 추가 실패:', err);
+            alert('장바구니 추가에 실패했습니다.');
         }
     };
 
@@ -179,7 +190,7 @@ export const ProductDetailPage = () => {
                             <Button variant="outline" size="large" onClick={() => setShowAlertModal(true)}>
                                 🔔 가격 알림 설정
                             </Button>
-                            <Button variant="primary" size="large" fullWidth>
+                            <Button variant="primary" size="large" fullWidth onClick={handleAddToCart}>
                                 장바구니 담기
                             </Button>
                             <Button variant="secondary" size="large" fullWidth>

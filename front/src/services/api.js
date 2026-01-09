@@ -25,19 +25,13 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        console.error('API Error:', error);
-
-        if (error.response) {
-            // 서버 응답이 있는 경우
-            const message = error.response.data?.message || '요청 처리 중 오류가 발생했습니다.';
-            return Promise.reject(new Error(message));
-        } else if (error.request) {
-            // 요청은 보냈지만 응답이 없는 경우
-            return Promise.reject(new Error('서버에 연결할 수 없습니다.'));
-        } else {
-            // 요청 설정 중 오류가 발생한 경우
-            return Promise.reject(error);
+        // 401 에러(Unauthorized)는 조용히 처리 (비로그인 상태는 정상)
+        if (error.response?.status !== 401) {
+            console.error('API Error:', error);
         }
+
+        // 원래 에러 객체를 그대로 전달 (AuthContext에서 status 확인 가능)
+        return Promise.reject(error);
     }
 );
 

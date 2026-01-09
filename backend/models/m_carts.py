@@ -10,6 +10,7 @@ class Carts(Base, TimestampMixin):
     __tablename__ = "carts"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    # user
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False, unique=True
     )

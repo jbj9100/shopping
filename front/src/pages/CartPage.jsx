@@ -4,12 +4,15 @@ import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { cartService } from '../services/cartService';
+import { useAuth } from '../contexts/AuthContext';
 import './CartPage.css';
 
 export const CartPage = () => {
-    const [cartData, setCartData] = useState(null); // CartOut 스키마: { items, total_price, total_items }
+    const [cartData, setCartData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const { user, loading: authLoading } = useAuth();
 
     useEffect(() => {
         loadCart();
@@ -18,12 +21,22 @@ export const CartPage = () => {
     const loadCart = async () => {
         try {
             setIsLoading(true);
+            setError(null);
             const data = await cartService.getCart();
             setCartData(data);
         } catch (err) {
             console.error('Failed to load cart:', err);
-            // 개발 중: 목업 데이터
-            setCartData(getMockCartItems());
+
+            // 401 에러: 로그인 필요
+            if (err.response?.status === 401) {
+                setError('로그인이 필요합니다.');
+                // 2초 후 로그인 페이지로 이동
+                setTimeout(() => {
+                    navigate('/login');
+                }, 2000);
+            } else {
+                setError('장바구니를 불러오는데 실패했습니다.');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -56,43 +69,26 @@ export const CartPage = () => {
         if (newQuantity < 1) return;
 
         try {
-            await cartService.updateCartItem(itemId, newQuantity);
-            setCartData(prev => ({
-                ...prev,
-                items: prev.items.map(item =>
-                    item.id === itemId
-                        ? { ...item, quantity: newQuantity }
-                        : item
-                )
-            }));
+            const result = await cartService.updateCartItem(itemId, newQuantity);
+            // API가 전체 장바구니를 반환하므로 그것을 사용
+            setCartData(result);
         } catch (err) {
             console.error('Failed to update quantity:', err);
-            // 목업: 낙관적 업데이트
-            setCartData(prev => ({
-                ...prev,
-                items: prev.items.map(item =>
-                    item.id === itemId
-                        ? { ...item, quantity: newQuantity }
-                        : item
-                )
-            }));
+            alert('수량 변경에 실패했습니다: ' + (err.response?.data?.detail || err.message));
         }
     };
 
     const removeItem = async (itemId) => {
+        console.log('🗑️ 삭제 시도:', itemId);
         try {
-            await cartService.removeCartItem(itemId);
-            setCartData(prev => ({
-                ...prev,
-                items: prev.items.filter(item => item.id !== itemId)
-            }));
+            const result = await cartService.removeCartItem(itemId);
+            console.log('✅ 삭제 성공:', result);
+            // API가 전체 장바구니를 반환하므로 그것을 사용
+            setCartData(result);
         } catch (err) {
-            console.error('Failed to remove item:', err);
-            // 목업: 낙관적 업데이트
-            setCartData(prev => ({
-                ...prev,
-                items: prev.items.filter(item => item.id !== itemId)
-            }));
+            console.error('❌ 삭제 실패:', err);
+            console.error('에러 응답:', err.response?.data);
+            alert('삭제에 실패했습니다: ' + (err.response?.data?.detail || err.message));
         }
     };
 
@@ -107,11 +103,27 @@ export const CartPage = () => {
         0
     ) || 0;
 
-    if (isLoading) {
+    if (isLoading || authLoading) {
         return (
             <div className="cart-page">
                 <div className="container">
                     <div className="cart-loading">로딩 중...</div>
+                </div>
+            </div>
+        );
+    }
+
+    // 에러 상태 (로그인 필요 등)
+    if (error) {
+        return (
+            <div className="cart-page">
+                <div className="container">
+                    <div className="cart-empty">
+                        <div className="cart-empty-icon">⚠️</div>
+                        <h2>{error}</h2>
+                        <p>잠시 후 로그인 페이지로 이동합니다...</p>
+                        <Button onClick={() => navigate('/login')}>지금 로그인하기</Button>
+                    </div>
                 </div>
             </div>
         );

@@ -11,7 +11,6 @@ from repositories.products.rep_common import (
 from repositories.products.rep_filter import rep_filter_products
 
 
-
 async def svc_get_all_products(db: AsyncSession, category_id: Optional[int] = None):
     if category_id:
         # 카테고리별 조회
@@ -62,3 +61,11 @@ async def svc_delete_product(db: AsyncSession, product_id: int):
         raise ValueError("제품 삭제에 실패했습니다.")
     return product
 
+
+async def svc_get_products_stock(db: AsyncSession, product_id: int) -> int:
+    product = await rep_get_product_detail_by_id(db, product_id)
+    if not product:
+        raise ValueError("제품을 찾을 수 없습니다.")
+    if product.stock < 0:
+        raise ValueError("제품 재고가 없습니다.")
+    return product.stock

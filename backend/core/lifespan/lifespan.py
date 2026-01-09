@@ -19,9 +19,9 @@ async def lifespan(app: FastAPI):
             print("Redis connection successfully")
 
         if not await ping_minio():
-            raise Exception("MinIO connection failed")
+            raise Exception("Minio connection failed")
         else:
-            print("MinIO connection successfully")
+            print("Minio connection successfully")
         await create_admin()
         yield
     finally:

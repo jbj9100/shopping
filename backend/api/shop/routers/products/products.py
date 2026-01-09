@@ -14,7 +14,7 @@ from services.products.svc_products import *
 router = APIRouter(prefix="/api/shop/products", tags=["products"])
 
 
-# 전체 제품 조회
+# 카테고리별 전체 제품 조회
 # GET /api/shop/products?category_id=1
 @router.get("/", response_model=list[ProductOut])
 async def products_get_all(
@@ -22,12 +22,11 @@ async def products_get_all(
         db: AsyncSession = Depends(get_session)):
     return await svc_get_all_products(db, category_id)
 
-# id로 조회
+# 상세페이지 조회
 @router.get("/{product_id}", response_model=ProductOut)
 async def product_get_id(
         product_id: int,
-        db: AsyncSession = Depends(get_session),
-        current_user: Users = Depends(require_admin)):
+        db: AsyncSession = Depends(get_session)):
     return await svc_get_product_by_id(db, product_id)
 
 # 생성
@@ -50,7 +49,7 @@ async def product_update(
     #print(updated_product.model_validate(updated_product).model_dump())
     return updated_product
 
-
+#삭제
 @router.delete("/{product_id}")
 async def product_delete(
         product_id: int,
