@@ -5,7 +5,7 @@ from typing import Optional
 
 
 async def rep_get_all_products(db: AsyncSession, category_id: int) -> list[Products]:
-    result = await db.execute(select(Products).where(Products.category_id == category_id))
+    result = await db.execute(select(Products).where(Products.category_id == category_id).order_by(Products.id))
     return result.scalars().all()
 
 async def rep_get_product_detail_by_id(db: AsyncSession, product_id: int) -> Optional[Products]:
@@ -20,6 +20,7 @@ async def rep_get_products_paginated(
 ) -> list[Products]:
     result = await db.execute(
         select(Products)
+        .order_by(Products.id)
         .offset(skip)
         .limit(limit)
     )
@@ -47,3 +48,8 @@ async def rep_count_products_by_category(db: AsyncSession, category_id: int) -> 
     from sqlalchemy import func
     result = await db.execute(select(func.count(Products.id)).where(Products.category_id == category_id))
     return result.scalar_one()
+
+
+async def rep_increment_view_count(db: AsyncSession, product: Products) -> None:
+    """상품 조회수 1 증가"""
+    product.view_count += 1

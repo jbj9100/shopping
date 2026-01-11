@@ -6,7 +6,7 @@ const transformCartData = (backendData) => ({
         id: item.id,
         product_id: item.product_id,
         name: item.product_name,       // product_name → name
-        price: item.product_price,     // product_price → price
+        price: item.discount_price,    // discount_price → price (백엔드 스키마 변경됨)
         quantity: item.quantity,
         image: item.product_image       // product_image → image
     })),

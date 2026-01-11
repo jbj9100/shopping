@@ -5,7 +5,7 @@ from datetime import datetime
 
 from models.m_common import Base, TimestampMixin
 
-
+# 장바구니에서 주문을 생성할 때 생성
 class Orders(Base, TimestampMixin):
     __tablename__ = "orders"
 
@@ -13,16 +13,12 @@ class Orders(Base, TimestampMixin):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
 
     order_number: Mapped[str] = mapped_column(String(36), unique=True, index=True, nullable=False)
-    status: Mapped[str] = mapped_column(String(20), nullable=False)
 
     items_amount: Mapped[int] = mapped_column(Integer, nullable=False)
-    shipping_fee: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     total_amount: Mapped[int] = mapped_column(Integer, nullable=False)
 
+    shipping_fee: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     shipping_address: Mapped[str] = mapped_column(Text, nullable=False)
-
-    payment_method: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
-    payment_status: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
 
     # relationships
     user: Mapped["Users"] = relationship(back_populates="orders")
@@ -36,6 +32,7 @@ class Orders(Base, TimestampMixin):
     )
 
 
+# 사용자가 주문한 상품 이력
 class OrderItems(Base):
     __tablename__ = "order_items"
 

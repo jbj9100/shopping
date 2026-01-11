@@ -14,11 +14,22 @@ from models.m_user import Users, UserSession
 from models.m_carts import Carts, CartItems
 from models.m_products import Products
 from models.m_orders import Orders, OrderItems
-from models.m_price_alerts import PriceAlert
-from models.m_flash_sales import FlashSale, FlashSaleQueueEntry
+
+from models.kafka.m_analytics import DailySales, ProductDailyStats
+from models.kafka.m_outbox import OutboxEvent
+from models.kafka.m_processed_events import ProcessedEvent
+from models.kafka.m_flash_sales import FlashSale, FlashSaleQueueEntry
+from models.kafka.m_price_alerts import PriceAlert
 
 __all__ = [
-    "Base",
+    "DailySales",
+    "ProductDailyStats",
+    "OutboxEvent",
+    "ProcessedEvent",
+    "FlashSale",
+    "FlashSaleQueueEntry",
+    "PriceAlert",
+    "Base", 
     "TimestampMixin",
     "Users",
     "UserSession",

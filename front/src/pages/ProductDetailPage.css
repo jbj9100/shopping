@@ -38,7 +38,7 @@
     justify-content: center;
     background: var(--color-background);
     border-radius: var(--radius-xl);
-    font-size: 8rem;
+    font-size: 6rem;
 }
 
 .product-info-section {
@@ -54,7 +54,7 @@
 }
 
 .product-detail-title {
-    font-size: var(--font-size-3xl);
+    font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
     line-height: var(--line-height-tight);
     color: var(--color-text-primary);
@@ -99,7 +99,7 @@
 }
 
 .product-current-price {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: var(--font-weight-bold);
     color: var(--color-primary);
 }

@@ -52,7 +52,7 @@ export const Header = () => {
                                 <span className="header-nav-icon">🛒</span>
                                 <span className="header-nav-text">장바구니</span>
                             </Link>
-                            <Link to="/orders" className="header-nav-item">
+                            <Link to="/orders/history" className="header-nav-item">
                                 <span className="header-nav-icon">📦</span>
                                 <span className="header-nav-text">주문내역</span>
                             </Link>

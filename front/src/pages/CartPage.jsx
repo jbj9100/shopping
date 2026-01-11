@@ -165,7 +165,7 @@ export const CartPage = () => {
                                     <div className="cart-item-info">
                                         <h3 className="cart-item-name">{item.name}</h3>
                                         <p className="cart-item-price">
-                                            {item.price.toLocaleString()}원
+                                            {item.price?.toLocaleString() || '0'}원
                                         </p>
                                     </div>
 
@@ -187,7 +187,7 @@ export const CartPage = () => {
 
                                     <div className="cart-item-total">
                                         <p className="cart-item-total-price">
-                                            {(item.price * item.quantity).toLocaleString()}원
+                                            {((item.price || 0) * item.quantity).toLocaleString()}원
                                         </p>
                                     </div>
 

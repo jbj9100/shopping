@@ -9,6 +9,9 @@ import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import MyPage from './pages/MyPage';
 import AdminPage from './pages/AdminPage';
+import { OrderPage } from './pages/OrderPage';
+import { OrderHistoryPage } from './pages/OrderHistoryPage';
+import { OrderDetailPage } from './pages/OrderDetailPage';
 import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -26,6 +29,9 @@ function App() {
                             <Route path="/admin" element={<AdminPage />} />
                             <Route path="/products/:id" element={<ProductDetailPage />} />
                             <Route path="/cart" element={<CartPage />} />
+                            <Route path="/order" element={<OrderPage />} />
+                            <Route path="/orders/history" element={<OrderHistoryPage />} />
+                            <Route path="/orders/:orderId" element={<OrderDetailPage />} />
                             <Route path="/flash-sale/:id" element={<FlashSaleQueuePage />} />
                             <Route path="/category/:category" element={<HomePage />} />
                             <Route path="/search" element={<HomePage />} />

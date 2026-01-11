@@ -14,7 +14,7 @@ class CartItemOut(APIModel):
     id: int                # CartItems.id
     product_id: int        # CartItems.product_id
     product_name: str      # Products.name (join 필요)
-    product_price: int     # Products.price
+    discount_price: int    # 할인 적용된 가격
     product_image: str     # Products.image
     quantity: int          # CartItems.quantity
 

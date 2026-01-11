@@ -6,7 +6,8 @@ from repositories.products.rep_common import (
     rep_get_product_detail_by_id, 
     rep_create_product,
     rep_update_product,
-    rep_delete_product
+    rep_delete_product,
+    rep_increment_view_count
 )
 from repositories.products.rep_filter import rep_filter_products
 
@@ -22,7 +23,16 @@ async def svc_get_all_products(db: AsyncSession, category_id: Optional[int] = No
 
 
 async def svc_get_product_by_id(db: AsyncSession, product_id: int):
+    """상품 상세 조회 (조회수 자동 증가)"""
     product = await rep_get_product_detail_by_id(db, product_id)
+    if not product:
+        raise ValueError("제품을 찾을 수 없습니다.")
+    
+    # 조회수 증가
+    await rep_increment_view_count(db, product)
+    await db.commit()
+    await db.refresh(product)
+    
     return product
 
 
@@ -67,5 +77,15 @@ async def svc_get_products_stock(db: AsyncSession, product_id: int) -> int:
     if not product:
         raise ValueError("제품을 찾을 수 없습니다.")
     if product.stock < 0:
-        raise ValueError("제품 재고가 없습니다.")
+        raise ValueError("제품 재고가 부족합니다.")
     return product.stock
+
+async def svc_update_product_stock(db: AsyncSession, product_id: int, stock: int):
+    product = await rep_get_product_detail_by_id(db, product_id)
+    if not product:
+        raise ValueError("제품을 찾을 수 없습니다.")
+    if stock < 0:
+        raise ValueError("제품 재고가 부족합니다.")
+    product.stock = stock
+    await db.commit()
+    return product

@@ -10,9 +10,11 @@ export const ProductCard = ({ product }) => {
         name,
         price,
         original_price,
+        discount_percent, // 백엔드에서 계산된 값 사용
         image,
         rating,
         review_count,
+        view_count,  // 조회수 추가
         free_shipping,
         stock,
         priceChanged,
@@ -20,10 +22,6 @@ export const ProductCard = ({ product }) => {
         depletionEtaMinutes,
         isAnomalous
     } = product;
-
-    // discount는 original_price - price로 계산
-    const discount = original_price ? original_price - price : 0;
-    const discountPercent = original_price && discount > 0 ? Math.round((discount / original_price) * 100) : 0;
 
     return (
         <Link
@@ -38,20 +36,18 @@ export const ProductCard = ({ product }) => {
                     ) : (
                         <div className="product-card-image-placeholder">🍞</div>
                     )}
-                    {discountPercent > 0 && !isAnomalous && (
-                        <Badge variant="error" className="product-card-discount-badge">
-                            {discountPercent}%
-                        </Badge>
-                    )}
                     {isAnomalous && (
                         <Badge variant="default" className="product-card-status-badge">
                             일시 품절
                         </Badge>
                     )}
-                    {stock < 10 && stock > 0 && !isAnomalous && (
-                        <Badge variant="warning" className="product-card-stock-badge">
-                            재고 {stock}개
-                        </Badge>
+                    {/* 재고 0개일 때 OUT OF STOCK 오버레이 */}
+                    {stock === 0 && !isAnomalous && (
+                        <div className="product-card-out-of-stock-overlay">
+                            <div className="out-of-stock-stamp">
+                                OUT OF STOCK
+                            </div>
+                        </div>
                     )}
                 </div>
 
@@ -66,14 +62,19 @@ export const ProductCard = ({ product }) => {
                     <h3 className="product-card-title">{name}</h3>
 
                     <div className="product-card-price-wrapper">
-                        {original_price && discountPercent > 0 ? (
+                        {original_price && discount_percent > 0 ? (
                             <>
                                 <span className="product-card-original-price">
                                     {original_price.toLocaleString()}원
                                 </span>
-                                <span className="product-card-price">
-                                    {price.toLocaleString()}원
-                                </span>
+                                <div className="product-card-sale-price">
+                                    <span className="product-card-price">
+                                        {price.toLocaleString()}원
+                                    </span>
+                                    <Badge variant="error" size="small" className="product-card-discount-chip">
+                                        {discount_percent}%
+                                    </Badge>
+                                </div>
                             </>
                         ) : (
                             <span className="product-card-price">
@@ -95,6 +96,22 @@ export const ProductCard = ({ product }) => {
                         {free_shipping && (
                             <Badge variant="success" size="small">무료배송</Badge>
                         )}
+                        {/* 재고 정보 항상 표시 */}
+                        {!isAnomalous && (
+                            <Badge
+                                variant={stock === 0 ? 'error' : stock < 10 ? 'warning' : 'default'}
+                                size="small"
+                            >
+                                재고 {stock}개
+                            </Badge>
+                        )}
+                    </div>
+
+                    {/* 조회수 표시 */}
+                    <div className="product-card-meta">
+                        <span className="product-card-view-count">
+                            👁️ {view_count?.toLocaleString() || 0}
+                        </span>
                     </div>
 
                     {isAnomalous && (

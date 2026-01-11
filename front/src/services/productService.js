@@ -8,8 +8,8 @@ export const productService = {
     },
 
     // 상품 상세 조회
-    getProductById: async (id) => {
-        const response = await api.get(`/api/shop/products/${id}`);
+    getProductById: async (id, config = {}) => {
+        const response = await api.get(`/api/shop/products/${id}`, config);
         return response.data;
     },
 

@@ -41,6 +41,9 @@ async def rep_filter_products(
     if conditions:
         query = query.where(and_(*conditions))
     
+    # 정렬 (ID 순)
+    query = query.order_by(Products.id)
+    
     # 페이징
     query = query.offset(skip).limit(limit)
     

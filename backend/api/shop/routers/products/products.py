@@ -1,11 +1,9 @@
-from fastapi import APIRouter, Request, Response, UploadFile, File, Query
+from fastapi import APIRouter, Request, Response, UploadFile, File, Query, Depends, HTTPException
 from typing import Optional 
 from core.deps.dep_session_rule import require_admin
 from db.conn_db import get_session
 from schemas.sc_products import ProductOut, ProductIn
 from models.m_user import Users
-from fastapi import HTTPException
-from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from services.products.svc_products import *
 

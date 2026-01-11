@@ -19,29 +19,34 @@ export const ProductDetailPage = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        loadProduct();
-    }, [id]);
+        const abortController = new AbortController();
 
-    const loadProduct = async () => {
-        try {
-            setIsLoading(true);
-            const data = await productService.getProductById(id);
-            setProduct(data);
-        } catch (err) {
-            // 곰표 우유식빵 660g Mock 데이터
-            if (id === '1') {
-                setProduct({
-                    id: 1,
-                    name: '곰표 우유 식빵 660g',
-                    price: 4050,
-                    original_price: 5000,
-                    brand: '곰표',
-                    category_id: 1,
-                    image: null,
-                    free_shipping: true,
-                    stock: 25,
-                    depletionEtaMinutes: 12,
-                    description: `촉촉하고 부드러운 곰표 우유 식빵입니다.
+        const loadProduct = async () => {
+            try {
+                setIsLoading(true);
+                const data = await productService.getProductById(id, { signal: abortController.signal });
+                setProduct(data);
+            } catch (err) {
+                // AbortError는 정상적인 cleanup이므로 무시
+                if (err.name === 'AbortError' || err.code === 'ERR_CANCELED') {
+                    console.log('API 요청이 취소되었습니다 (정상)');
+                    return;
+                }
+
+                // 곰표 우유식빵 660g Mock 데이터
+                if (id === '1') {
+                    setProduct({
+                        id: 1,
+                        name: '곰표 우유 식빵 660g',
+                        price: 4050,
+                        original_price: 5000,
+                        brand: '곰표',
+                        category_id: 1,
+                        image: null,
+                        free_shipping: true,
+                        stock: 25,
+                        depletionEtaMinutes: 12,
+                        description: `촉촉하고 부드러운 곰표 우유 식빵입니다.
 
 **제품 특징**
 - 신선한 우유를 듬뿍 넣어 더욱 촉촉하고 부드러워요
@@ -54,37 +59,45 @@ export const ProductDetailPage = () => {
 - 원재료: 밀가루, 우유, 설탕, 버터, 이스트, 소금
 - 보관방법: 실온보관 (개봉 후 냉장보관)
 - 유통기한: 제조일로부터 7일`,
-                    additionalInfo: {
-                        nutrition: '1회 제공량(33g) 기준 - 열량 90kcal, 나트륨 190mg, 탄수화물 17g, 당류 3g, 지방 1.5g, 단백질 3g',
-                        origin: '국내산',
-                        manufacturer: '곰표제과',
-                        customerService: '1588-0000'
-                    }
-                });
+                        additionalInfo: {
+                            nutrition: '1회 제공량(33g) 기준 - 열량 90kcal, 나트륨 190mg, 탄수화물 17g, 당류 3g, 지방 1.5g, 단백질 3g',
+                            origin: '국내산',
+                            manufacturer: '곰표제과',
+                            customerService: '15880000'
+                        }
+                    });
 
-                setRecommendations([
-                    { id: 2, name: '신라면 멀티팩 5개입', price: 4480, reason: 'co-viewed', brand: '농심', image: null },
-                    { id: 3, name: '제주 감귤 3kg', price: 19800, reason: 'similar', brand: '제주농협', image: null },
-                    { id: 4, name: '코카콜라 제로 500ml 24개', price: 22900, reason: 'co-viewed', brand: '코카콜라', image: null }
-                ]);
-            } else {
-                // 다른 상품 기본 Mock
-                setProduct({
-                    id: Number(id),
-                    name: '상품 이름',
-                    price: 10000,
-                    original_price: 15000,
-                    brand: '브랜드명',
-                    image: null,
-                    free_shipping: true,
-                    stock: 50,
-                    description: '상품 설명입니다.'
-                });
+                    setRecommendations([
+                        { id: 2, name: '신라면 멀티팩 5개입', price: 4480, reason: 'co-viewed', brand: '농심', image: null },
+                        { id: 3, name: '제주 감귤 3kg', price: 19800, reason: 'similar', brand: '제주농협', image: null },
+                        { id: 4, name: '코카콜라 제로 500ml 24개', price: 22900, reason: 'co-viewed', brand: '코카콜라', image: null }
+                    ]);
+                } else {
+                    // 다른 상품 기본 Mock
+                    setProduct({
+                        id: Number(id),
+                        name: '상품 이름',
+                        price: 10000,
+                        original_price: 15000,
+                        brand: '브랜드명',
+                        image: null,
+                        free_shipping: true,
+                        stock: 50,
+                        description: '상품 설명입니다.'
+                    });
+                }
+            } finally {
+                setIsLoading(false);
             }
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        };
+
+        loadProduct();
+
+        // Cleanup: 진행 중인 API 요청 취소
+        return () => {
+            abortController.abort();
+        };
+    }, [id]);
 
     const handleAddToCart = async () => {
         try {
@@ -192,9 +205,6 @@ export const ProductDetailPage = () => {
                             </Button>
                             <Button variant="primary" size="large" fullWidth onClick={handleAddToCart}>
                                 장바구니 담기
-                            </Button>
-                            <Button variant="secondary" size="large" fullWidth>
-                                바로 구매
                             </Button>
                         </div>
                     </div>

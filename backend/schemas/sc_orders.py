@@ -1,14 +1,17 @@
-from typing import List, Optional
+from typing import List
 from datetime import datetime
-from .common import APIModel
+from .sc_common import APIModel
 
 class OrderItemIn(APIModel):
     product_id: int
     quantity: int
 
+
 class OrderCreateIn(APIModel):
     items: List[OrderItemIn]
     shipping_address: str
+    
+
 
 class OrderItemOut(APIModel):
     product_id: int
@@ -19,9 +22,9 @@ class OrderItemOut(APIModel):
 class OrderOut(APIModel):
     id: int
     order_number: str
-    status: str
     items_amount: int
     shipping_fee: int
-    total_amount: int
+    total_price: int
     created_at: datetime
     items: List[OrderItemOut]
+

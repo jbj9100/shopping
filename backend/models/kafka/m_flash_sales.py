@@ -2,6 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import (
     String, Integer, DateTime, BigInteger, ForeignKey, CheckConstraint, UniqueConstraint, Index, func
 )
+from typing import Optional
 from sqlalchemy import Enum as SQLEnum
 from typing import List
 from datetime import datetime
@@ -48,14 +49,21 @@ class FlashSaleQueueEntry(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
 
     joined_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    status: Mapped[FlashQueueStatus] = mapped_column(SQLEnum(FlashQueueStatus), nullable=False, default=FlashQueueStatus.WAITING)   
+    status: Mapped[FlashQueueStatus] = mapped_column(SQLEnum(FlashQueueStatus), nullable=False, default=FlashQueueStatus.WAITING)
+    
+    # 대기열 시간 추적 (Kafka Consumer용)
+    admitted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    left_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)   
 
     # relationships
     flash_sale: Mapped["FlashSale"] = relationship(back_populates="queue_entries")
     user: Mapped["Users"] = relationship(back_populates="flash_queue_entries")
 
     __table_args__ = (
-        UniqueConstraint("flash_sale_id", "user_id", name="uq_flash_queue_sale_user"),
+        # UniqueConstraint는 Partial UNIQUE로 대체 (Alembic 마이그레이션에서 생성)
+        # UniqueConstraint("flash_sale_id", "user_id", name="uq_flash_queue_sale_user"),
         CheckConstraint("status IN ('WAITING','ADMITTED','EXPIRED','LEFT')", name="status_allowed"),
         Index("ix_flash_queue_sale_joined", "flash_sale_id", "joined_at"),
+        Index("ix_flash_queue_status", "flash_sale_id", "status", "joined_at"),
     )

@@ -94,11 +94,44 @@
     right: var(--spacing-2);
 }
 
+/* 품절 오버레이 */
+.product-card-out-of-stock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+/* OUT OF STOCK 스탬프 스타일 */
+.out-of-stock-stamp {
+    background: rgba(220, 38, 38, 0.95);
+    color: white;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    padding: var(--spacing-3) var(--spacing-6);
+    border: 4px solid rgba(220, 38, 38, 1);
+    border-radius: var(--spacing-1);
+    transform: rotate(-15deg);
+    text-align: center;
+    letter-spacing: 3px;
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.2);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+
 .product-card-content {
-    padding: var(--spacing-4);
+    padding: var(--spacing-3);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
+    gap: var(--spacing-1);
     flex: 1;
 }
 
@@ -107,7 +140,7 @@
 }
 
 .product-card-title {
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
     color: var(--color-text-primary);
     display: -webkit-box;
@@ -115,7 +148,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: var(--line-height-normal);
-    min-height: calc(var(--font-size-base) * var(--line-height-normal) * 2);
+    min-height: calc(var(--font-size-sm) * var(--line-height-normal) * 2);
 }
 
 .product-card-price-wrapper {
@@ -130,11 +163,29 @@
     text-decoration: line-through;
 }
 
+/* 판매가와 할인율을 나란히 배치 */
+.product-card-sale-price {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
 .product-card-price {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     color: var(--color-primary);
     transition: all var(--transition-base);
+}
+
+/* 할인율 칩 - 빨강/오렌지 배경 + 흰 글자 */
+.product-card-discount-chip {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%) !important;
+    color: white !important;
+    font-weight: var(--font-weight-bold);
+    padding: 2px 8px !important;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+    font-size: var(--font-size-sm) !important;
 }
 
 /* 가격 변동 시 강조 */
@@ -176,9 +227,25 @@
 }
 
 .product-card-shipping {
-    margin-top: auto;
     display: flex;
     gap: var(--spacing-2);
+}
+
+/* 조회수 표시 - 카드 하단 */
+.product-card-meta {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--spacing-2);
+    padding-top: var(--spacing-2);
+    border-top: 1px solid var(--color-border);
+}
+
+.product-card-view-count {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
 }
 
 .product-card-anomaly-notice {

@@ -1,18 +1,21 @@
 import api from './api';
 
 export const orderService = {
-    // 주문 생성
+    // 주문 생성 (장바구니 기반)
     createOrder: async (orderData) => {
-        return await api.post('/orders', orderData);
+        const response = await api.post('/api/shop/orders', orderData);
+        return response.data;
     },
 
-    // 주문 목록 조회
-    getOrders: async () => {
-        return await api.get('/orders');
+    // 모든 주문 조회
+    getAllOrders: async () => {
+        const response = await api.get('/api/shop/orders');
+        return response.data;
     },
 
-    // 주문 상세 조회
-    getOrderById: async (id) => {
-        return await api.get(`/orders/${id}`);
+    // 특정 주문 상세 조회
+    getOrderById: async (orderId) => {
+        const response = await api.get(`/api/shop/orders/${orderId}`);
+        return response.data;
     }
 };
