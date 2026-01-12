@@ -107,9 +107,32 @@ async def svc_update_cartItems_quantity(db: AsyncSession, user_id: int, cartItem
     if not cart or item.cart_id != cart.id:
         raise ValueError("권한이 없습니다.")
     
+    # 장바구니에 담긴 요청수량
+    # 10
+    old_quantity = item.quantity
+    # 재고확인
+    # 20
+    stock = await svc_get_products_stock(db, item.product_id)
+    
+    # quantity front에서 계산되서 들어온값이고 0이나 -1로 들어오는 경우는 없지만 혹시 모르는 방어코드
     if quantity <= 0:
+        # 요청 수량이 0 이하면 삭제하고 전체 재고 복구
+        await svc_update_product_stock(db, item.product_id, stock + old_quantity)
         await db.delete(item)
     else:
+        # 요청 수량이 0 이상이면 수량 변경에 따른 재고 조정
+        # +1     11            10       수량 증가
+        # -1     9             10       수량 감수
+        diff = quantity - old_quantity
+        if diff > 0:
+            # 요청했던 수량보다 더 많은 수량 증가: 재고 차감
+            if diff > stock:
+                raise ValueError("재고가 부족합니다.")
+            await svc_update_product_stock(db, item.product_id, stock - diff)  # 20 - (+1) = 19
+        elif diff < 0:
+            # 요청했던 수량보다 더 적은 수량 감소: 재고 복구
+            await svc_update_product_stock(db, item.product_id, stock - diff)  # 20 - (-1) = 21
+        
         item.quantity = quantity
     
     await db.commit()
@@ -126,6 +149,9 @@ async def svc_delete_cartItems(db: AsyncSession, user_id: int, cartItem_id: int)
     if not cart or item.cart_id != cart.id:
         raise ValueError("권한이 없습니다.")
     
+    # 삭제 전에 재고 복구
+    stock = await svc_get_products_stock(db, item.product_id)
+    await svc_update_product_stock(db, item.product_id, stock + item.quantity)
 
     await db.delete(item)
     await db.commit()
@@ -139,6 +165,12 @@ async def svc_clear_cartItems(db: AsyncSession, user_id: int):
     if not cart:
         raise ValueError("장바구니가 존재하지 않습니다.")
     
+    # 삭제 전에 모든 아이템의 재고 복구
+    items_data = await rep_get_cartItems_with_all_products(db, cart.id)
+    for cart_item, product in items_data:
+        stock = await svc_get_products_stock(db, cart_item.product_id)
+        await svc_update_product_stock(db, cart_item.product_id, stock + cart_item.quantity)
+
     items = await rep_clear_cartItems(db, cart.id)
     await db.commit()
     return await svc_get_cart_with_items(db, user_id)
