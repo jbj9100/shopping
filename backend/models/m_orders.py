@@ -4,6 +4,14 @@ from typing import List, Optional
 from datetime import datetime
 
 from models.m_common import Base, TimestampMixin
+from enum import Enum
+
+
+# 주문 상태 (Kafka 이벤트 추적용)
+class OrderStatus(str, Enum):
+    PENDING = "PENDING"
+    PAID = "PAID"
+    CANCELED = "CANCELED"
 
 # 장바구니에서 주문을 생성할 때 생성
 class Orders(Base, TimestampMixin):
@@ -20,6 +28,11 @@ class Orders(Base, TimestampMixin):
     shipping_fee: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     shipping_address: Mapped[str] = mapped_column(Text, nullable=False)
 
+    # Kafka 이벤트 추적용 (ORDER_PAID, ORDER_CANCELED)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default=OrderStatus.PENDING.value, index=True)
+    paid_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    canceled_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
     # relationships
     user: Mapped["Users"] = relationship(back_populates="orders")
     items: Mapped[List["OrderItems"]] = relationship(
@@ -29,6 +42,7 @@ class Orders(Base, TimestampMixin):
     __table_args__ = (
         CheckConstraint("items_amount >= 0 AND shipping_fee >= 0 AND total_amount >= 0", name="amounts_nonneg"),
         CheckConstraint("total_amount = items_amount + shipping_fee", name="total_eq_sum"),
+        CheckConstraint("status IN ('PENDING','PAID','CANCELED')", name="chk_order_status"),
     )
 
 

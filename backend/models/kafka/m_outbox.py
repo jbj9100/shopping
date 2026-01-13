@@ -39,6 +39,11 @@ class OutboxEvent(Base):
 
     __table_args__ = (
         CheckConstraint("status IN ('PENDING','PROCESSING','PUBLISHED','FAILED')", name='chk_outbox_status'),
-        # Partial Index는 Alembic 마이그레이션에서 생성
         Index('ix_outbox_aggregate', 'aggregate_type', 'aggregate_id'),
+        # Publisher 재시도용: PENDING + FAILED 상태의 이벤트를 next_attempt_at 순으로 조회
+        Index(
+            'ix_outbox_status_next_attempt',
+            'status', 'next_attempt_at',
+            postgresql_where="status IN ('PENDING','FAILED')"  # Partial Index
+        ),
     )
