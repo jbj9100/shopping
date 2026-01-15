@@ -43,13 +43,19 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
             raise
 
 
-async def ping_db() -> bool:
+async def ping_db() -> tuple[bool, str | None]:
+    """
+    데이터베이스 연결 테스트
+    
+    Returns:
+        (성공 여부, 에러 메시지 또는 None)
+    """
     try:
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
-        return True
-    except SQLAlchemyError:
-        return False
+        return True, None
+    except SQLAlchemyError as e:
+        return False, f"Database connection error: {str(e)}"
 
 
 async def dispose_engine() -> None:

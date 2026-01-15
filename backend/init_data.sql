@@ -58,16 +58,16 @@ CREATE INDEX ix_category_name ON category (name);
 
 -- 기본 카테고리 데이터 (icon은 나중에 MinIO 업로드 후 추가)
 INSERT INTO category (name, display_name, icon) VALUES
-('food',        '식품',         'http://192.168.19.143:30222/category/food.jpeg'),
-('living',      '생활용품',      'http://192.168.19.143:30222/category/living.jpeg'),
-('beauty',      '뷰티',         'http://192.168.19.143:30222/category/beauty.jpeg'),
-('interior',    '인테리어',      'http://192.168.19.143:30222/category/interior.jpeg'),
-('electronics', '가전/디지털',    'http://192.168.19.143:30222/category/electronics.jpeg'),
-('kitchen',     '주방용품',      'http://192.168.19.143:30222/category/kitchen.jpeg'),
-('pet',         '반려동물',      'http://192.168.19.143:30222/category/pet.jpeg'),
-('sports',      '스포츠',        'http://192.168.19.143:30222/category/sports.jpeg'),
-('books',       '도서/음반',     'http://192.168.19.143:30222/category/books.jpeg'),
-('health',      '헬스/건강',     'http://192.168.19.143:30222/category/health.jpeg');
+('food',        '식품',         'http://192.168.154.179:30222/category/food.jpeg'),
+('living',      '생활용품',      'http://192.168.154.179:30222/category/living.jpeg'),
+('beauty',      '뷰티',         'http://192.168.154.179:30222/category/beauty.jpeg'),
+('interior',    '인테리어',      'http://192.168.154.179:30222/category/interior.jpeg'),
+('electronics', '가전/디지털',    'http://192.168.154.179:30222/category/electronics.jpeg'),
+('kitchen',     '주방용품',      'http://192.168.154.179:30222/category/kitchen.jpeg'),
+('pet',         '반려동물',      'http://192.168.154.179:30222/category/pet.jpeg'),
+('sports',      '스포츠',        'http://192.168.154.179:30222/category/sports.jpeg'),
+('books',       '도서/음반',     'http://192.168.154.179:30222/category/books.jpeg'),
+('health',      '헬스/건강',     'http://192.168.154.179:30222/category/health.jpeg');
 
 -- 3) products
 CREATE TABLE products (
@@ -383,7 +383,8 @@ CREATE TABLE daily_sales (
   date             DATE PRIMARY KEY,
   total_orders     INT NOT NULL DEFAULT 0,
   total_revenue    BIGINT NOT NULL DEFAULT 0,
-  unique_customers INT NOT NULL DEFAULT 0,
+  -- unique_customers 제거: 같은 유저가 하루에 여러 주문 시 중복 카운트 문제
+  -- 필요하면 쿼리로 계산: SELECT date, COUNT(DISTINCT user_id) FROM orders GROUP BY date
   updated_at       TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -413,60 +414,60 @@ CREATE INDEX ix_product_daily_stats_product_id ON product_daily_stats (product_i
 -- Products 샘플 데이터
 -- 식품 (category_id = 1)
 INSERT INTO products (name, original_price, discount_percent, brand, category_id, image, view_count, free_shipping, stock) VALUES
-('곰표 우유 식빵 660g', 5000, 19, '곰표', 1, 'http://192.168.19.143:30222/products/1_gompyo_milk.jpeg', 0, true, 3),
-('신라면 멀티팩 5개입', 5500, 19, '농심', 1, 'http://192.168.19.143:30222/products/2_shin_ramyun.jpeg', 0, true, 5),
-('제주 감귤 3kg', 25000, 21, '제주농협', 1, 'http://192.168.19.143:30222/products/3_3kg_jeju.jpeg', 0, true, 50);
+('곰표 우유 식빵 660g', 5000, 19, '곰표', 1, 'http://192.168.154.179:30222/products/1_gompyo_milk.jpeg', 0, true, 3),
+('신라면 멀티팩 5개입', 5500, 19, '농심', 1, 'http://192.168.154.179:30222/products/2_shin_ramyun.jpeg', 0, true, 5),
+('제주 감귤 3kg', 25000, 21, '제주농협', 1, 'http://192.168.154.179:30222/products/3_3kg_jeju.jpeg', 0, true, 50);
 
 -- 생활용품 (category_id = 2)
 INSERT INTO products (name, original_price, discount_percent, brand, category_id, image, view_count, free_shipping, stock) VALUES
-('다우니 섬유유연제 3.2L', 19900, 20, '다우니', 2, 'http://192.168.19.143:30222/products/4_downy_fabric.jpeg', 0, true, 150),
-('코멧 3겹 화장지 30롤', 18900, 0, '코멧', 2, 'http://192.168.19.143:30222/products/5_comet_3ply.jpeg', 0, true, 200),
-('페리오 치약 클리닉 3개', 11900, 25, 'LG생활건강', 2, 'http://192.168.19.143:30222/products/6_perio_toothpaste.jpeg', 0, true, 100);
+('다우니 섬유유연제 3.2L', 19900, 20, '다우니', 2, 'http://192.168.154.179:30222/products/4_downy_fabric.jpeg', 0, true, 150),
+('코멧 3겹 화장지 30롤', 18900, 0, '코멧', 2, 'http://192.168.154.179:30222/products/5_comet_3ply.jpeg', 0, true, 200),
+('페리오 치약 클리닉 3개', 11900, 25, 'LG생활건강', 2, 'http://192.168.154.179:30222/products/6_perio_toothpaste.jpeg', 0, true, 100);
 
 -- 뷰티 (category_id = 3)
 INSERT INTO products (name, original_price, discount_percent, brand, category_id, image, view_count, free_shipping, stock) VALUES
-('아이오페 레티놀 세럼 30ml', 65000, 20, 'IOPE', 3, 'http://192.168.19.143:30222/products/7_iope_retinol.jpeg', 0, true, 40),
-('라로슈포제 선크림 50ml', 24900, 0, '라로슈포제', 3, 'http://192.168.19.143:30222/products/8_la_rocheposay.jpeg', 0, true, 70);
+('아이오페 레티놀 세럼 30ml', 65000, 20, 'IOPE', 3, 'http://192.168.154.179:30222/products/7_iope_retinol.jpeg', 0, true, 40),
+('라로슈포제 선크림 50ml', 24900, 0, '라로슈포제', 3, 'http://192.168.154.179:30222/products/8_la_rocheposay.jpeg', 0, true, 70);
 
 -- 홈인테리어 (category_id = 4)
 INSERT INTO products (name, original_price, discount_percent, brand, category_id, image, view_count, free_shipping, stock) VALUES
-('이케아 LED 스탠드', 29900, 0, 'IKEA', 4, 'http://192.168.19.143:30222/products/9_ikea_led.jpeg', 0, false, 30),
-('무인양품 소파쿠션', 25000, 20, 'MUJI', 4, 'http://192.168.19.143:30222/products/10_muji_sofa.jpeg', 0, true, 45);
+('이케아 LED 스탠드', 29900, 0, 'IKEA', 4, 'http://192.168.154.179:30222/products/9_ikea_led.jpeg', 0, false, 30),
+('무인양품 소파쿠션', 25000, 20, 'MUJI', 4, 'http://192.168.154.179:30222/products/10_muji_sofa.jpeg', 0, true, 45);
 
 -- 가전디지털 (category_id = 5)
 INSERT INTO products (name, original_price, discount_percent, brand, category_id, image, view_count, free_shipping, stock) VALUES
-('애플 맥북 에어 M3', 1690000, 6, 'Apple', 5, 'http://192.168.19.143:30222/products/11_apple_macbook.jpeg', 0, true, 15),
-('삼성 갤럭시 버즈 FE', 89000, 0, '삼성', 5, 'http://192.168.19.143:30222/products/12_samsung_galaxy.jpeg', 0, true, 80);
+('애플 맥북 에어 M3', 1690000, 6, 'Apple', 5, 'http://192.168.154.179:30222/products/11_apple_macbook.jpeg', 0, true, 15),
+('삼성 갤럭시 버즈 FE', 89000, 0, '삼성', 5, 'http://192.168.154.179:30222/products/12_samsung_galaxy.jpeg', 0, true, 80);
 
 -- 주방용품 (category_id = 6)
 INSERT INTO products (name, original_price, discount_percent, brand, category_id, image, view_count, free_shipping, stock) VALUES
-('휘슬러 압력솥 6L', 350000, 17, '휘슬러', 6, 'http://192.168.19.143:30222/products/13_fissler_pressure.jpeg', 0, true, 20),
-('테팔 프라이팬 28cm', 39900, 0, '테팔', 6, 'http://192.168.19.143:30222/products/14_tefal_28cm.jpeg', 0, true, 100),
-('코렐 접시세트 16P', 99000, 20, '코렐', 6, 'http://192.168.19.143:30222/products/15_corelle_plate.jpeg', 0, true, 35);
+('휘슬러 압력솥 6L', 350000, 17, '휘슬러', 6, 'http://192.168.154.179:30222/products/13_fissler_pressure.jpeg', 0, true, 20),
+('테팔 프라이팬 28cm', 39900, 0, '테팔', 6, 'http://192.168.154.179:30222/products/14_tefal_28cm.jpeg', 0, true, 100),
+('코렐 접시세트 16P', 99000, 20, '코렐', 6, 'http://192.168.154.179:30222/products/15_corelle_plate.jpeg', 0, true, 35);
 
 -- 반려동물 (category_id = 7)
 INSERT INTO products (name, original_price, discount_percent, brand, category_id, image, view_count, free_shipping, stock) VALUES
-('로얄캐닌 사료 3kg', 39900, 18, '로얄캐닌', 7, 'http://192.168.19.143:30222/products/16_royal_canin.jpeg', 0, true, 100),
-('하림펫푸드 간식 300g', 8900, 0, '하림', 7, 'http://192.168.19.143:30222/products/17_harim_pet.jpeg', 0, true, 150),
-('캣타워 대형 180cm', 120000, 26, '펫모닝', 7, 'http://192.168.19.143:30222/products/18_large_cat.jpeg', 0, false, 20);
+('로얄캐닌 사료 3kg', 39900, 18, '로얄캐닌', 7, 'http://192.168.154.179:30222/products/16_royal_canin.jpeg', 0, true, 100),
+('하림펫푸드 간식 300g', 8900, 0, '하림', 7, 'http://192.168.154.179:30222/products/17_harim_pet.jpeg', 0, true, 150),
+('캣타워 대형 180cm', 120000, 26, '펫모닝', 7, 'http://192.168.154.179:30222/products/18_large_cat.jpeg', 0, false, 20);
 
 -- 스포츠/레저 (category_id = 8)
 INSERT INTO products (name, original_price, discount_percent, brand, category_id, image, view_count, free_shipping, stock) VALUES
-('나이키 에어맥스 270', 199000, 15, 'Nike', 8, 'http://192.168.19.143:30222/products/19_nike_air.jpeg', 0, true, 40),
-('요가매트 NBR 10mm', 19900, 0, '에바', 8, 'http://192.168.19.143:30222/products/20_yoga_mat.jpeg', 0, true, 100),
-('캠핑 텐트 4인용', 200000, 21, '코베아', 8, 'http://192.168.19.143:30222/products/21_camping_tent.jpeg', 0, true, 20);
+('나이키 에어맥스 270', 199000, 15, 'Nike', 8, 'http://192.168.154.179:30222/products/19_nike_air.jpeg', 0, true, 40),
+('요가매트 NBR 10mm', 19900, 0, '에바', 8, 'http://192.168.154.179:30222/products/20_yoga_mat.jpeg', 0, true, 100),
+('캠핑 텐트 4인용', 200000, 21, '코베아', 8, 'http://192.168.154.179:30222/products/21_camping_tent.jpeg', 0, true, 20);
 
 -- 도서/음반 (category_id = 9)
 INSERT INTO products (name, original_price, discount_percent, brand, category_id, image, view_count, free_shipping, stock) VALUES
-('트렌드 코리아 2025', 19000, 10, '미래의창', 9, 'http://192.168.19.143:30222/products/22_trend_korea.jpeg', 0, true, 200),
-('아웃라이어', 15300, 0, '김영사', 9, 'http://192.168.19.143:30222/products/23_outliers.jpeg', 0, true, 150),
-('BTS 앨범 정규 4집', 50000, 10, 'HYBE', 9, 'http://192.168.19.143:30222/products/24_bts_4th.jpeg', 0, true, 100);
+('트렌드 코리아 2025', 19000, 10, '미래의창', 9, 'http://192.168.154.179:30222/products/22_trend_korea.jpeg', 0, true, 200),
+('아웃라이어', 15300, 0, '김영사', 9, 'http://192.168.154.179:30222/products/23_outliers.jpeg', 0, true, 150),
+('BTS 앨범 정규 4집', 50000, 10, 'HYBE', 9, 'http://192.168.154.179:30222/products/24_bts_4th.jpeg', 0, true, 100);
 
 -- 헬스/건강 (category_id = 10)
 INSERT INTO products (name, original_price, discount_percent, brand, category_id, image, view_count, free_shipping, stock) VALUES
-('종근당 비타민C 1000', 25000, 20, '종근당', 10, 'http://192.168.19.143:30222/products/25_chong_kun.jpeg', 0, true, 150),
-('락토핏 유산균 60포', 23900, 0, '종근당', 10, 'http://192.168.19.143:30222/products/26_lactofit_lactic.jpeg', 0, true, 200),
-('홍삼정 에브리타임', 110000, 19, '정관장', 10, 'http://192.168.19.143:30222/products/27_hongsamjeong_everytime.jpeg', 0, true, 60);
+('종근당 비타민C 1000', 25000, 20, '종근당', 10, 'http://192.168.154.179:30222/products/25_chong_kun.jpeg', 0, true, 150),
+('락토핏 유산균 60포', 23900, 0, '종근당', 10, 'http://192.168.154.179:30222/products/26_lactofit_lactic.jpeg', 0, true, 200),
+('홍삼정 에브리타임', 110000, 19, '정관장', 10, 'http://192.168.154.179:30222/products/27_hongsamjeong_everytime.jpeg', 0, true, 60);
 
 COMMIT;
 

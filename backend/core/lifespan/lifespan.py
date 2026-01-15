@@ -5,40 +5,38 @@ from db.conn_redis import close_redis, ping_redis
 from db.conn_minio import ping_minio, close_minio
 from db.conn_kafka import ping_kafka
 from services.admin.svc_admin import create_admin
-from kafka.publisher.outbox_publisher import start_publisher, stop_publisher
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        if not await ping_db():
-            raise Exception("Database connection failed")
-        else:
-            print("Database connection successfully")
+        # Database 연결 확인
+        success, error = await ping_db()
+        if not success:
+            raise Exception(f"❌ Database connection failed: {error}")
+        print("✅ Database connection successfully")
 
-        if not await ping_redis():
-            raise Exception("Redis connection failed")
-        else:
-            print("Redis connection successfully")
-
-        if not await ping_minio():
-            raise Exception("Minio connection failed")
-        else:
-            print("Minio connection successfully")
+        # Redis 연결 확인
+        success, error = await ping_redis()
+        if not success:
+            raise Exception(f"❌ Redis connection failed: {error}")
+        print("✅ Redis connection successfully")
+    
+        # MinIO 연결 확인
+        success, error = await ping_minio()
+        if not success:
+            raise Exception(f"❌ MinIO connection failed: {error}")
+        print("✅ MinIO connection successfully")
         
-        if not await ping_kafka():
-            raise Exception("Kafka connection failed")
-        else:
-            print("Kafka connection successfully")
-            await start_publisher()
-            print("Kafka OutBox Publisher started")
+        # Kafka 연결 확인
+        success, error = await ping_kafka()
+        if not success:
+            raise Exception(f"❌ Kafka connection failed: {error}")
+        print("✅ Kafka connection successfully")
         
         await create_admin()
         
         yield
     finally:
-        await stop_publisher()
-        print("Kafka OutBox Publisher stopped")
-        
         await close_redis()
         await close_minio()
         await dispose_engine()

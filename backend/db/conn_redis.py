@@ -24,13 +24,19 @@ async def get_redis() -> redis.Redis:
     finally:
         await client.close()
 
-async def ping_redis() -> bool:
+async def ping_redis() -> tuple[bool, str | None]:
+    """
+    Redis 연결 테스트
+    
+    Returns:
+        (성공 여부, 에러 메시지 또는 None)
+    """
     try:
         client = redis.Redis(connection_pool=redis_pool)
-        return bool(await client.ping())
+        await client.ping()
+        return True, None
     except Exception as e:
-        print("Redis ping error:", repr(e))
-        return False
+        return False, f"Redis connection error: {str(e)}"
 
 async def close_redis() -> None:
     try:

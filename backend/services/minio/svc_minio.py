@@ -35,13 +35,13 @@ def svc_exist_or_make_minio_bucket(minio_client: Minio) -> bool:
     try:
         for bucket in BUCKET_LIST:
             if minio_client.bucket_exists(bucket):
-                print(f"Minio {bucket} bucket exists")
+                print(f"✅ Minio {bucket} bucket exists")
             else:
                 minio_client.make_bucket(bucket)
-                print(f"Minio {bucket} bucket created")
+                print(f"✅ Minio {bucket} bucket created")
         return True
     except Exception as e:
-        print(f"Minio bucket processing failed: {e}")
+        print(f"❌ Minio bucket processing failed: {e}")
         return False
 
 

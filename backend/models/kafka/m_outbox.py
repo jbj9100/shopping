@@ -40,6 +40,7 @@ class OutboxEvent(Base):
     __table_args__ = (
         CheckConstraint("status IN ('PENDING','PROCESSING','PUBLISHED','FAILED')", name='chk_outbox_status'),
         Index('ix_outbox_aggregate', 'aggregate_type', 'aggregate_id'),
+        Index('ix_outbox_created_at', 'created_at'),  # 생성 시간순 조회용
         # Publisher 재시도용: PENDING + FAILED 상태의 이벤트를 next_attempt_at 순으로 조회
         Index(
             'ix_outbox_status_next_attempt',

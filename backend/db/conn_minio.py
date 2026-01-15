@@ -3,14 +3,24 @@ from minio import Minio
 from minio.error import S3Error
 from dotenv import load_dotenv
 
-async def ping_minio() -> bool:
+async def ping_minio() -> tuple[bool, str | None]:
+    """
+    MinIO 연결 테스트 및 버킷 생성
+    
+    Returns:
+        (성공 여부, 에러 메시지 또는 None)
+    """
     try:
         minio_client = svc_get_minio_client()
-        return svc_exist_or_make_minio_bucket(minio_client)
+        result = svc_exist_or_make_minio_bucket(minio_client)
+        if result:
+            return True, None
+        else:
+            return False, "MinIO bucket creation/verification failed"
     except S3Error as e:
-        return False
+        return False, f"MinIO S3 error: {str(e)}"
     except Exception as e:
-        return False
+        return False, f"MinIO connection error: {str(e)}"
 
 
 

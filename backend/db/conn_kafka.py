@@ -1,124 +1,88 @@
 import os
-import json
 from dotenv import load_dotenv
-from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
-from typing import Optional, List
+from aiokafka import AIOKafkaProducer
+from aiokafka.errors import KafkaConnectionError
 import logging
+import asyncio
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Kafka 서버 주소
+# Kafka 서버 주소 (콤마로 구분된 여러 브로커 지원)
 KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
+KAFKA_USER = os.getenv("KAFKA_USER")
+KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
+KAFKA_SASL_MECHANISM = os.getenv("KAFKA_SASL_MECHANISM")
 
 
-class KafkaProducerSingleton:
-    """Kafka Producer 싱글톤 인스턴스 관리"""
-    _instance: Optional[AIOKafkaProducer] = None
-    _started: bool = False
-
-    @classmethod
-    async def get_producer(cls) -> AIOKafkaProducer:
-        """Kafka Producer 인스턴스 반환 (재사용)"""
-        if cls._instance is None:
-            cls._instance = AIOKafkaProducer(
-                bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
-                value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-                key_serializer=lambda k: k.encode('utf-8') if k else None,
-                compression_type='gzip',
-                acks='all',  # 모든 replica 확인
-                retries=3,
-                max_in_flight_requests_per_connection=1,  # 순서 보장
+async def ping_kafka() -> tuple[bool, str | None]:
+    """
+    Kafka 브로커 연결 테스트 (간단한 헬스체크)
+    
+    Returns:
+        (성공 여부, 에러 메시지 또는 None)
+    
+    Note:
+        - FastAPI 앱 시작 시 Kafka 연결 확인용
+        - Producer/Consumer는 별도 프로세스에서 실행되므로 여기서는 생성하지 않음
+        - SASL 인증이 설정되어 있으면 자동으로 사용
+    """
+    producer = None
+    
+    # Bootstrap 서버 파싱
+    if not KAFKA_BOOTSTRAP_SERVERS:
+        return False, "KAFKA_BOOTSTRAP_SERVERS 환경변수가 설정되지 않았습니다"
+    
+    bootstrap_servers = [s.strip() for s in KAFKA_BOOTSTRAP_SERVERS.split(",") if s.strip()]
+    
+    if not bootstrap_servers:
+        return False, "유효한 Kafka 브로커 주소가 없습니다"
+    
+    logger.info(f"Kafka 브로커 연결 시도: {bootstrap_servers}")
+    
+    try:
+        # SASL 인증 사용 여부 확인
+        if KAFKA_USER and KAFKA_PASSWORD:
+            logger.info(f"SASL 인증 사용: mechanism={KAFKA_SASL_MECHANISM}, user={KAFKA_USER}")
+            producer = AIOKafkaProducer(
+                bootstrap_servers=bootstrap_servers,
+                security_protocol="SASL_PLAINTEXT",
+                sasl_mechanism=KAFKA_SASL_MECHANISM,
+                sasl_plain_username=KAFKA_USER,
+                sasl_plain_password=KAFKA_PASSWORD,
+                request_timeout_ms=10000,
+            )
+        else:
+            logger.info("SASL 인증 없이 연결 시도")
+            producer = AIOKafkaProducer(
+                bootstrap_servers=bootstrap_servers,
+                request_timeout_ms=10000,
             )
         
-        if not cls._started:
-            await cls._instance.start()
-            cls._started = True
-            logger.info(f"Kafka Producer started: {KAFKA_BOOTSTRAP_SERVERS}")
+        # Producer 시작 (타임아웃 15초)
+        await asyncio.wait_for(producer.start(), timeout=15.0)
+        logger.info("✅ Kafka connection successfully")
+        return True, None
         
-        return cls._instance
-
-    @classmethod
-    async def close_producer(cls) -> None:
-        """Producer 종료"""
-        if cls._instance is not None and cls._started:
-            await cls._instance.stop()
-            cls._started = False
-            cls._instance = None
-            logger.info("Kafka Producer stopped")
-
-
-async def get_kafka_producer() -> AIOKafkaProducer:
-    """
-    Kafka Producer 반환 (싱글톤)
-    
-    Usage:
-        producer = await get_kafka_producer()
-        await producer.send('topic-name', value={'key': 'value'}, key='partition-key')
-    """
-    return await KafkaProducerSingleton.get_producer()
-
-
-async def create_kafka_consumer(
-    topics: List[str],
-    group_id: str,
-    auto_offset_reset: str = 'earliest',
-    enable_auto_commit: bool = False
-) -> AIOKafkaConsumer:
-    """
-    Kafka Consumer 생성 및 시작
-    
-    Args:
-        topics: 구독할 토픽 리스트
-        group_id: Consumer Group ID
-        auto_offset_reset: 'earliest' | 'latest'
-        enable_auto_commit: 자동 커밋 여부 (일반적으로 False로 수동 관리)
-    
-    Returns:
-        시작된 AIOKafkaConsumer 인스턴스
-    
-    Usage:
-        consumer = await create_kafka_consumer(['topic-1'], 'my-consumer-group')
-        try:
-            async for msg in consumer:
-                # 처리 로직
-                await consumer.commit()
-        finally:
-            await consumer.stop()
-    """
-    consumer = AIOKafkaConsumer(
-        *topics,
-        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
-        group_id=group_id,
-        auto_offset_reset=auto_offset_reset,
-        enable_auto_commit=enable_auto_commit,
-        value_deserializer=lambda m: json.loads(m.decode('utf-8')) if m else None,
-        key_deserializer=lambda k: k.decode('utf-8') if k else None,
-    )
-    
-    await consumer.start()
-    logger.info(f"Kafka Consumer started: group_id={group_id}, topics={topics}")
-    
-    return consumer
-
-
-async def close_kafka_producer() -> None:
-    """Producer 종료 (애플리케이션 종료 시 호출)"""
-    await KafkaProducerSingleton.close_producer()
-
-
-async def ping_kafka() -> bool:
-    """
-    Kafka 연결 테스트
-    
-    Returns:
-        연결 성공 여부
-    """
-    try:
-        producer = await get_kafka_producer()
-        # Producer가 시작되었으면 연결 성공으로 간주
-        return True
+    except KafkaConnectionError as e:
+        error_msg = f"Kafka connection failed: {str(e)}"
+        logger.error(error_msg)
+        return False, error_msg
+        
+    except asyncio.TimeoutError:
+        error_msg = f"Kafka 연결 타임아웃 (15s): {bootstrap_servers}"
+        logger.error(error_msg)
+        return False, error_msg
+        
     except Exception as e:
-        logger.error(f"Kafka ping failed: {e}")
-        return False
+        error_msg = f"Kafka 예상치 못한 에러: {type(e).__name__}: {str(e)}"
+        logger.error(error_msg)
+        return False, error_msg
+        
+    finally:
+        if producer is not None:
+            try:
+                await producer.stop()
+            except Exception as e:
+                logger.warning(f"Producer 종료 실패 (무시): {str(e)}")

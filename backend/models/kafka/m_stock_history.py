@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Integer, BigInteger, DateTime, ForeignKey, CheckConstraint, Index
+from sqlalchemy import String, Integer, BigInteger, DateTime, ForeignKey, CheckConstraint, Index, text
 from sqlalchemy.dialects.postgresql import UUID
 from typing import Optional
 from datetime import datetime
@@ -31,7 +31,14 @@ class StockHistory(Base):
 
     __table_args__ = (
         CheckConstraint('stock_after = stock_before + delta', name='chk_stock_delta'),
+        Index('ix_stock_history_product_id', 'product_id'),  # 상품별 이력 조회용
         Index('ix_stock_history_product_created', 'product_id', 'created_at'),
         Index('ix_stock_history_order', 'order_id'),
-        # Partial UNIQUE Index는 Alembic에서 생성
+        # Consumer 멱등성: 같은 이벤트로 중복 이력 생성 방지 (event_id가 NULL이 아닌 경우만 UNIQUE)
+        Index(
+            'ix_stock_history_event_idempotency',
+            'event_id',
+            unique=True,
+            postgresql_where=text("event_id IS NOT NULL")  # Partial Unique Index
+        ),
     )

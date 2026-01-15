@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, DateTime, BigInteger, Text, ForeignKey, CheckConstraint, UniqueConstraint
+from sqlalchemy import String, Integer, DateTime, BigInteger, Text, ForeignKey, CheckConstraint, UniqueConstraint, Index
 from typing import List, Optional
 from datetime import datetime
 
@@ -43,6 +43,7 @@ class Orders(Base, TimestampMixin):
         CheckConstraint("items_amount >= 0 AND shipping_fee >= 0 AND total_amount >= 0", name="amounts_nonneg"),
         CheckConstraint("total_amount = items_amount + shipping_fee", name="total_eq_sum"),
         CheckConstraint("status IN ('PENDING','PAID','CANCELED')", name="chk_order_status"),
+        Index('ix_orders_status', 'status', 'created_at'),  # 주문 상태별 조회 + 시간순 정렬용
     )
 
 
