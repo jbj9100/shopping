@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from core.lifespan.lifespan import lifespan
 from core.middlewares.md_login_session import DBSessionMiddleware
+import os
+import logging
 
 # router import
 from api.shop.routers.login import login, signup, logout, my_page
@@ -17,10 +19,17 @@ from api.shop.routers.images import images
 # from api.shop.routers.ai import ai_router
 
 
+
 load_dotenv()
 
 app = FastAPI(lifespan=lifespan)
 
+LOG_LEVEL = os.getenv("LOG_LEVEL").upper()
+LOG_FORMAT = os.getenv("LOG_FORMAT")
+logging.basicConfig(
+    level=getattr(logging, LOG_LEVEL),
+    format=LOG_FORMAT
+)
 
 app.add_middleware(
     DBSessionMiddleware,

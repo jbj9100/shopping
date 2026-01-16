@@ -6,6 +6,10 @@ from models.m_user import Users
 from datetime import datetime
 import uuid
 
+# Outbox Pattern
+from models.kafka.m_outbox import OutboxEvent
+from constants.kafka_topics import AggregateType, KafkaTopic, OrderEvent
+
 async def svc_create_order(db: AsyncSession, order_create_in: OrderCreateIn, user: Users):
     cartItems = await svc_get_cart_with_items(db, user.id)
     if cartItems.total_items == 0:
@@ -33,6 +37,34 @@ async def svc_create_order(db: AsyncSession, order_create_in: OrderCreateIn, use
     shipping_fee = 0
     total_price = items_amount + shipping_fee
     
+    # OutboxEvent 생성 (Kafka 이벤트 발행)
+    outbox_event = OutboxEvent(
+        aggregate_type=AggregateType.ORDER,
+        aggregate_id=order_db.id,
+        event_type=OrderEvent.CREATED,
+        topic=KafkaTopic.ORDER_EVENTS,
+        payload={
+            "order_id": order_db.id,
+            "user_id": user.id,
+            "order_number": order_number,
+            "items_amount": items_amount,
+            "shipping_fee": shipping_fee,
+            "total_amount": total_price,
+            "items": [
+                {
+                    "product_id": item.product_id,
+                    "name": item.name,
+                    "quantity": item.quantity,
+                    "price": item.price
+                }
+                for item in order_items
+            ],
+            "shipping_address": order_create_in.shipping_address
+        },
+        status="PENDING"
+    )
+    db.add(outbox_event)
+    
     # Pydantic OrderOut 생성
     order = OrderOut(
         id=order_db.id,
@@ -46,7 +78,7 @@ async def svc_create_order(db: AsyncSession, order_create_in: OrderCreateIn, use
     
     # 장바구니 비우기
     await svc_clear_cartItems(db, user.id)
-    await db.commit()
+    await db.commit()  # 주문 + outbox_event 함께 커밋
     
     return order
 

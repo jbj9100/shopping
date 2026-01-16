@@ -11,6 +11,10 @@ from repositories.products.rep_common import (
 )
 from repositories.products.rep_filter import rep_filter_products
 
+# Outbox Pattern
+from models.kafka.m_outbox import OutboxEvent
+from constants.kafka_topics import AggregateType, KafkaTopic, ProductEvent
+
 
 async def svc_get_all_products(db: AsyncSession, category_id: Optional[int] = None):
     if category_id:
@@ -86,6 +90,28 @@ async def svc_update_product_stock(db: AsyncSession, product_id: int, stock: int
         raise ValueError("제품을 찾을 수 없습니다.")
     if stock < 0:
         raise ValueError("제품 재고가 부족합니다.")
+    
+    # 재고 변경 전 old_stock 저장
+    old_stock = product.stock
     product.stock = stock
-    await db.commit()
+    
+    # OutboxEvent 생성 (Kafka 이벤트 발행)
+    outbox_event = OutboxEvent(
+        aggregate_type=AggregateType.PRODUCT,
+        aggregate_id=product_id,
+        event_type=ProductEvent.STOCK_CHANGED,
+        topic=KafkaTopic.PRODUCT_EVENTS,
+        payload={
+            "product_id": product_id,
+            "product_name": product.name,
+            "old_stock": old_stock,
+            "new_stock": stock,
+            "delta": stock - old_stock,
+            "is_out_of_stock": stock == 0
+        },
+        status="PENDING"
+    )
+    db.add(outbox_event)
+    
+    await db.commit()  # 재고 + outbox_event 함께 커밋
     return product

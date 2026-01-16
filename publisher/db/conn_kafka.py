@@ -86,3 +86,79 @@ async def ping_kafka() -> tuple[bool, str | None]:
                 await producer.stop()
             except Exception as e:
                 logger.warning(f"Producer 종료 실패 (무시): {str(e)}")
+
+
+async def list_kafka_topics() -> tuple[bool, list[str] | None, str | None]:
+    """
+    Kafka 토픽 목록 조회
+    
+    Returns:
+        (성공 여부, 토픽 목록, 에러 메시지)
+    
+    Note:
+        - Publisher 시작 시 필요한 토픽이 존재하는지 확인용
+        - AdminClient를 사용하여 토픽 메타데이터 조회
+    """
+    from aiokafka.admin import AIOKafkaAdminClient
+    
+    admin_client = None
+    
+    # Bootstrap 서버 파싱
+    if not KAFKA_BOOTSTRAP_SERVERS:
+        return False, None, "KAFKA_BOOTSTRAP_SERVERS 환경변수가 설정되지 않았습니다"
+    
+    bootstrap_servers = [s.strip() for s in KAFKA_BOOTSTRAP_SERVERS.split(",") if s.strip()]
+    
+    if not bootstrap_servers:
+        return False, None, "유효한 Kafka 브로커 주소가 없습니다"
+    
+    try:
+        # SASL 인증 사용 여부 확인
+        if KAFKA_USER and KAFKA_PASSWORD:
+            admin_client = AIOKafkaAdminClient(
+                bootstrap_servers=bootstrap_servers,
+                security_protocol="SASL_PLAINTEXT",
+                sasl_mechanism=KAFKA_SASL_MECHANISM,
+                sasl_plain_username=KAFKA_USER,
+                sasl_plain_password=KAFKA_PASSWORD,
+                request_timeout_ms=10000,
+            )
+        else:
+            admin_client = AIOKafkaAdminClient(
+                bootstrap_servers=bootstrap_servers,
+                request_timeout_ms=10000,
+            )
+        
+        # AdminClient 시작
+        await asyncio.wait_for(admin_client.start(), timeout=15.0)
+        
+        # 토픽 메타데이터 조회
+        metadata = await admin_client.list_topics()
+        topics = list(metadata)
+        
+        logger.info(f"📋 Kafka 토픽 목록 ({len(topics)}개): {', '.join(topics) if topics else '(없음)'}")
+        
+        return True, topics, None
+        
+    except KafkaConnectionError as e:
+        error_msg = f"Kafka 연결 실패: {str(e)}"
+        logger.error(error_msg)
+        return False, None, error_msg
+        
+    except asyncio.TimeoutError:
+        error_msg = f"Kafka 연결 타임아웃 (15s): {bootstrap_servers}"
+        logger.error(error_msg)
+        return False, None, error_msg
+        
+    except Exception as e:
+        error_msg = f"토픽 목록 조회 실패: {type(e).__name__}: {str(e)}"
+        logger.error(error_msg)
+        return False, None, error_msg
+        
+    finally:
+        if admin_client is not None:
+            try:
+                await admin_client.close()
+            except Exception as e:
+                logger.warning(f"AdminClient 종료 실패 (무시): {str(e)}")
+

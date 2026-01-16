@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from db.conn_db import dispose_engine, ping_db
 from db.conn_redis import close_redis, ping_redis
 from db.conn_minio import ping_minio, close_minio
-from db.conn_kafka import ping_kafka
 from services.admin.svc_admin import create_admin
 
 @asynccontextmanager
@@ -26,12 +25,6 @@ async def lifespan(app: FastAPI):
         if not success:
             raise Exception(f"❌ MinIO connection failed: {error}")
         print("✅ MinIO connection successfully")
-        
-        # Kafka 연결 확인
-        success, error = await ping_kafka()
-        if not success:
-            raise Exception(f"❌ Kafka connection failed: {error}")
-        print("✅ Kafka connection successfully")
         
         await create_admin()
         
