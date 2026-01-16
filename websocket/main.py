@@ -1,6 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from core.websocket.websocket_manager import manager
+from websocket_manager import manager
 from kafka_consumer import consume_realtime_events
 import asyncio
 import logging
@@ -31,7 +31,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.websocket("/websocket/ws/{channel}")
+
+@app.websocket("/websocket/ws/{channel}")    # 채널선택
 async def websocket_endpoint(websocket: WebSocket, channel: str):
     """
     WebSocket 엔드포인트 (Frontend 연결)
@@ -52,10 +53,12 @@ async def websocket_endpoint(websocket: WebSocket, channel: str):
         manager.disconnect(websocket, channel)
         logger.info(f"Client disconnected from {channel}")
 
+# ============ 1단계: 맨처음 실행 ============
 @app.on_event("startup")
 async def startup_event():
     """애플리케이션 시작 시 Kafka Consumer 시작"""
     logger.info("🚀 WebSocket Server 시작")
+    # ============ 2단계: kafka_consumer.py 백그라운드로 실행 ============
     asyncio.create_task(consume_realtime_events())
 
 @app.get("/health")

@@ -29,28 +29,33 @@ class ConnectionManager:
                 logger.info(f"❌ WebSocket 연결 해제: channel={channel}, 남은 {len(self.active_connections[channel])}명")
     
     async def broadcast(self, channel: str, message: dict):
-        """
-        특정 채널의 모든 클라이언트에게 메시지 전송 (Backpressure 처리)
         
-        - asyncio.gather로 병렬 전송 (순차보다 빠름)
-        - 3초 타임아웃 (느린 클라이언트 격리)
-        - 실패한 연결 자동 제거
-        """
+        # ============ 7단계: 브로드캐스트 (병렬 전송) ============
+        # 특정 채널의 모든 클라이언트에게 메시지 전송 (Backpressure 처리)
+        
         if channel not in self.active_connections:
             logger.warning(f"⚠️ 채널 '{channel}'에 연결된 클라이언트 없음")
             return
-        
+        # channel="stock"이면 해당 채널에 있는 사람들을 찾음
+        # connections = [사용자A, 사용자B, 사용자C]       
         connections = self.active_connections[channel]
+
         if not connections:
             return
         
-        # 병렬 전송 태스크 생성
+        # 병렬 전송 태스크(할일) 생성하고 아직 보내진 않음
+        # tasks = [
+        #     "A에게 보내는 작업",
+        #     "B에게 보내는 작업",
+        #     "C에게 보내는 작업"
+        # ]
         tasks = [
             self._send_with_timeout(ws, message)
             for ws in connections
         ]
         
         # 모든 전송 동시 실행 (gather)
+        # 채널에 있는 모든 사람들에게 동시에 메시지 전송
         results = await asyncio.gather(*tasks, return_exceptions=True)
         
         # 실패한 연결 제거
@@ -67,7 +72,10 @@ class ConnectionManager:
         logger.info(f"📤 브로드캐스트: channel={channel}, 성공={success_count}/{len(connections)}명")
     
     async def _send_with_timeout(self, ws: WebSocket, message: dict):
-        """타임아웃 적용한 메시지 전송"""
+       
+        # ============ 8단계: Frontend로 JSON 전송! ============
+        # 타임아웃 적용한 메시지 전송
+        
         try:
             await asyncio.wait_for(
                 ws.send_json(message),

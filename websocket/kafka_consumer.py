@@ -6,7 +6,7 @@ import uuid
 import time
 from collections import OrderedDict
 from aiokafka import AIOKafkaConsumer
-from core.websocket.websocket_manager import manager
+from websocket_manager import manager
 
 logger = logging.getLogger(__name__)
 
@@ -16,38 +16,33 @@ MAX_CACHE_SIZE = 10000
 CACHE_TTL = 300  # 5분 (초)
 
 async def consume_realtime_events():
-    """
-    Kafka realtime.events 토픽 구독 및 WebSocket 브로드캐스트
-    
-    HPA 대응:
-    - group_id를 unique하게 설정 → 모든 WS 인스턴스가 같은 메시지 받음
-    - 각 인스턴스가 자기 연결 클라이언트에게만 전송
-    
-    Dedupe:
-    - event_id 기반으로 중복 메시지 필터링
-    - LRU 캐시로 메모리 관리
-    """
-    # Kafka Consumer 설정
+   
+     # ============ 3단계: Kafka Consumer 설정 ============
     bootstrap_servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
     unique_group_id = f"websocket-server-{uuid.uuid4().hex[:8]}"
     
     consumer = AIOKafkaConsumer(
-        "realtime.events",
+        "realtime.events",       # 3. 구독할 토픽
         bootstrap_servers=bootstrap_servers,
         group_id=unique_group_id,  # ✅ HPA: 각 인스턴스 다른 ID
         value_deserializer=lambda v: json.loads(v.decode('utf-8')),
         auto_offset_reset='latest'
     )
+    # 여기까지는 그냥 설정만! 아직 연결 안 됨
     
-    await consumer.start()
+     # ============ 4단계: Kafka 연결 시작 ============
+    await consumer.start() # ← Kafka 서버에 연결!
     logger.info(f"✅ Kafka Consumer 시작: group_id={unique_group_id}")
     
-    try:
-        async for msg in consumer:
-            try:
-                event_data = msg.value
+    try:         
+        async for msg in consumer: 
+            # 무한 루프: Kafka에 메시지 올 때까지 계속 기다림...
+            # 메시지 없으면 여기서 계속 대기!
+            try: 
+                # ============ 5단계: 메시지 받음! ============
+                event_data = msg.value # ← 메시지 도착하면 여기 실행!
+            
                 event_id = event_data.get("event_id")
-                
                 # Dedupe: 중복 이벤트 필터링
                 if event_id and event_id in recent_events:
                     logger.debug(f"⏭️ 중복 이벤트 무시: {event_id}")
@@ -64,11 +59,13 @@ async def consume_realtime_events():
                 # 채널 추출
                 channel = event_data.get("channel", "stock")
                 
-                # WebSocket 브로드캐스트
+                # ============ 6단계: Frontend로 전송하는데 websocket_manager.py의 broadcast 함수를 사용하는것
+                # 그래서 이 함수를 실행하면 7,8단계 실행한다. 그다음 끝나면 다시 5단계로 돌아감
                 await manager.broadcast(channel, event_data)
                 
                 logger.debug(f"📤 브로드캐스트 완료: channel={channel}, event_id={event_id}")
-                
+                # ============ 다시 5단계로 돌아감 ============
+                # async for 루프가 다시 돌면서 다음 메시지 대기
             except Exception as e:
                 logger.error(f"❌ 메시지 처리 실패: {e}", exc_info=True)
     
