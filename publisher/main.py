@@ -9,6 +9,7 @@ from db.conn_kafka import (
     KAFKA_USER, 
     KAFKA_PASSWORD, 
     KAFKA_SASL_MECHANISM,
+    KAFKA_SECURITY_PROTOCOL,
     list_kafka_topics  # 토픽 목록 조회
 )
 from repositories.rep_outbox import OutboxRepository
@@ -47,7 +48,7 @@ class OutboxPublisher:
         logger.info(f"SASL 인증 사용: mechanism={KAFKA_SASL_MECHANISM}, user={KAFKA_USER}")
         self.producer = AIOKafkaProducer(
             bootstrap_servers=bootstrap_servers,
-            security_protocol="SASL_PLAINTEXT",
+            security_protocol=KAFKA_SECURITY_PROTOCOL,
             sasl_mechanism=KAFKA_SASL_MECHANISM,
             sasl_plain_username=KAFKA_USER,
             sasl_plain_password=KAFKA_PASSWORD,
@@ -82,9 +83,19 @@ class OutboxPublisher:
             # 2. Kafka로 전송
             topic = event.topic or f"{event.aggregate_type.lower()}-events"
             
+            # payload에 event_id와 event_type 추가
+            enriched_payload = {
+                "event_id": str(event.id),
+                "event_type": event.event_type,  # 추가!
+                **event.payload
+            }
+            
+            # 디버깅: payload 확인
+            logger.info(f"🔍 발행할 payload: {enriched_payload}")
+            
             await self.producer.send_and_wait(
                 topic=topic,
-                value=event.payload,
+                value=enriched_payload,
                 key=str(event.aggregate_id).encode('utf-8')
             )
             

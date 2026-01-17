@@ -15,8 +15,12 @@ export const useWebSocket = (url, options = {}) => {
     const reconnectTimeoutRef = useRef(null);
     const [isConnected, setIsConnected] = useState(false);
     const [lastMessage, setLastMessage] = useState(null);
+    const isUnmountedRef = useRef(false);  // 언마운트 추적
 
     const connect = useCallback(() => {
+        // 언마운트된 경우 연결하지 않음
+        if (isUnmountedRef.current) return;
+
         if (wsRef.current?.readyState === WebSocket.OPEN) {
             return;
         }
@@ -49,10 +53,11 @@ export const useWebSocket = (url, options = {}) => {
             ws.onclose = (event) => {
                 console.log('WebSocket disconnected');
                 setIsConnected(false);
+                wsRef.current = null;  // 참조 정리
                 onClose?.(event);
 
-                // 재연결 시도
-                if (reconnectAttemptsRef.current < maxReconnectAttempts) {
+                // 언마운트되지 않은 경우에만 재연결 시도
+                if (!isUnmountedRef.current && reconnectAttemptsRef.current < maxReconnectAttempts) {
                     reconnectAttemptsRef.current += 1;
                     console.log(`Reconnecting... Attempt ${reconnectAttemptsRef.current}`);
                     reconnectTimeoutRef.current = setTimeout(connect, reconnectInterval);
@@ -66,14 +71,24 @@ export const useWebSocket = (url, options = {}) => {
     }, [url, onOpen, onMessage, onError, onClose, reconnectInterval, maxReconnectAttempts]);
 
     const disconnect = useCallback(() => {
+        // 재연결 타이머 정리
         if (reconnectTimeoutRef.current) {
             clearTimeout(reconnectTimeoutRef.current);
+            reconnectTimeoutRef.current = null;
         }
+
+        // WebSocket 연결 종료
         if (wsRef.current) {
-            wsRef.current.close();
+            // 이미 닫힌 상태가 아니면 명시적으로 종료
+            if (wsRef.current.readyState !== WebSocket.CLOSED &&
+                wsRef.current.readyState !== WebSocket.CLOSING) {
+                wsRef.current.close();
+            }
             wsRef.current = null;
         }
+
         setIsConnected(false);
+        console.log('WebSocket manually disconnected');
     }, []);
 
     const sendMessage = useCallback((data) => {
@@ -85,12 +100,16 @@ export const useWebSocket = (url, options = {}) => {
     }, []);
 
     useEffect(() => {
+        isUnmountedRef.current = false;
         connect();
 
         return () => {
+            // cleanup: 언마운트 시
+            console.log('WebSocket hook unmounting - cleaning up');
+            isUnmountedRef.current = true;  // 언마운트 플래그 설정
             disconnect();
         };
-    }, [connect, disconnect]);
+    }, [url]); // ✅ url이 변경될 때만 재연결
 
     return {
         isConnected,
@@ -100,3 +119,4 @@ export const useWebSocket = (url, options = {}) => {
         reconnect: connect
     };
 };
+

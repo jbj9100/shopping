@@ -1,0 +1,272 @@
+/* 대시보드 페이지 */
+.dashboard-page {
+    min-height: 100vh;
+    background: #f5f7fa;
+    padding: 2rem 0;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* 헤더 */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.header-badges {
+    display: flex;
+    gap: 1rem;
+}
+
+.badge-realtime,
+.badge-connected {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-realtime {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.badge-connected {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+/* 통계 카드 */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+}
+
+.stat-title {
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-value-large {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.stat-trend.positive {
+    color: #4caf50;
+}
+
+.trend-label {
+    font-weight: 600;
+}
+
+/* 섹션 */
+.dashboard-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.section-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    color: #666;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+}
+
+/* TOP 10 테이블 */
+.top-products-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.top-products-table th {
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+    color: #666;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.top-products-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.top-products-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.rank-cell {
+    width: 60px;
+    text-align: center;
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.rank-badge.gold {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+}
+
+.rank-badge.silver {
+    background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+}
+
+.rank-badge.bronze {
+    background: linear-gradient(135deg, #cd7f32, #e9a164);
+}
+
+.rank-number {
+    color: #999;
+    font-weight: 600;
+}
+
+.product-cell {
+    max-width: 300px;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.product-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.sales-cell {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.change-cell {
+    text-align: right;
+}
+
+.change-positive {
+    color: #4caf50;
+    font-weight: 600;
+}
+
+.change-negative {
+    color: #f44336;
+    font-weight: 600;
+}
+
+/* CompactStatsBar 버튼 */
+.view-dashboard-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.view-dashboard-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 0 1rem;
+    }
+
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-value-large {
+        font-size: 2rem;
+    }
+}

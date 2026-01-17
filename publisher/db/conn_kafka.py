@@ -14,7 +14,7 @@ KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
 KAFKA_USER = os.getenv("KAFKA_USER")
 KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
 KAFKA_SASL_MECHANISM = os.getenv("KAFKA_SASL_MECHANISM")
-
+KAFKA_SECURITY_PROTOCOL = os.getenv("KAFKA_SECURITY_PROTOCOL")
 
 async def ping_kafka() -> tuple[bool, str | None]:
     """

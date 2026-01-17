@@ -164,7 +164,6 @@ CREATE TABLE orders (
   total_amount     INT NOT NULL,
 
   shipping_fee     INT NOT NULL DEFAULT 0,
-  shipping_address TEXT NOT NULL,
 
   -- Kafka 이벤트 추적용 (ORDER_PAID, ORDER_CANCELED)
   status           VARCHAR(20) NOT NULL DEFAULT 'PENDING',   -- PENDING/PAID/CANCELED

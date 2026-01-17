@@ -9,9 +9,7 @@ class OrderItemIn(APIModel):
 
 class OrderCreateIn(APIModel):
     items: List[OrderItemIn]
-    shipping_address: str
     
-
 
 class OrderItemOut(APIModel):
     product_id: int

@@ -9,6 +9,8 @@ import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import MyPage from './pages/MyPage';
 import AdminPage from './pages/AdminPage';
+import AdminDashboard from './pages/AdminDashboard';
+import DashboardPage from './pages/DashboardPage';
 import { OrderPage } from './pages/OrderPage';
 import { OrderHistoryPage } from './pages/OrderHistoryPage';
 import { OrderDetailPage } from './pages/OrderDetailPage';
@@ -27,6 +29,8 @@ function App() {
                             <Route path="/signup" element={<SignupPage />} />
                             <Route path="/my-page" element={<MyPage />} />
                             <Route path="/admin" element={<AdminPage />} />
+                            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                            <Route path="/dashboard" element={<DashboardPage />} />
                             <Route path="/products/:id" element={<ProductDetailPage />} />
                             <Route path="/cart" element={<CartPage />} />
                             <Route path="/order" element={<OrderPage />} />

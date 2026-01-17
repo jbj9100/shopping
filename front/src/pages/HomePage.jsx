@@ -8,6 +8,8 @@ import { RecommendationSection } from '../components/recommendation/Recommendati
 import { Badge } from '../components/common/Badge';
 import { productService } from '../services/productService';
 import { useWebSocket } from '../hooks/useWebSocket';
+import MiniDashboard from '../components/MiniDashboard';
+import '../styles/design-system.css';
 import './HomePage.css';
 
 export const HomePage = () => {
@@ -19,6 +21,19 @@ export const HomePage = () => {
     const [error, setError] = useState(null);
     const [currentFilters, setCurrentFilters] = useState({});
     const [priceUpdateCount, setPriceUpdateCount] = useState(0);
+
+    // 실시간 통계 state
+    const [dailySales, setDailySales] = useState({
+        date: new Date().toISOString().split('T')[0],
+        total_orders: 0,
+        total_revenue: 0
+    });
+    const [topProducts, setTopProducts] = useState([]);
+    const [priceTopDrops, setPriceTopDrops] = useState([]);
+    const [recommendations, setRecommendations] = useState([]);
+    const [activeUsers, setActiveUsers] = useState(0);
+    const [isConnected, setIsConnected] = useState(false);
+    const [lastUpdate, setLastUpdate] = useState(null);
 
     // 대량 이벤트 배칭을 위한 ref
     const priceUpdateQueueRef = useRef([]);
@@ -53,8 +68,8 @@ export const HomePage = () => {
         }, 3000);
     }, []);
 
-    // WebSocket 연결 (실시간 업데이트)
-    const { lastMessage } = useWebSocket('ws://localhost:8000/ws', {
+    // WebSocket 연결 (실시간 업데이트) - stock 채널 구독
+    const { lastMessage } = useWebSocket('ws://localhost:8001/websocket/ws/stock', {
         onMessage: (data) => {
             console.log('WebSocket message received:', data);
 
@@ -81,13 +96,27 @@ export const HomePage = () => {
                 batchTimerRef.current = setTimeout(processPriceUpdates, 100);
             }
 
-            // 재고 알림 이벤트 처리
+            // 재고 알림 이벤트 처리 (기존)
             if (data.type === 'STOCK_ALERT') {
                 setProducts(prev => prev.map(p =>
                     p.id === data.productId
                         ? { ...p, stock: data.stock }
                         : p
                 ));
+            }
+
+            // 재고 업데이트 이벤트 (Consumer Stock에서 발행)
+            if (data.type === 'STOCK_UPDATED') {
+                const productId = data.data?.product_id;
+                const newStock = data.data?.new_stock;
+                if (productId && newStock !== undefined) {
+                    setProducts(prev => prev.map(p =>
+                        p.id === productId
+                            ? { ...p, stock: newStock }
+                            : p
+                    ));
+                    console.log(`📦 재고 업데이트: 상품 ${productId} -> ${newStock}개`);
+                }
             }
 
             // 프로모션 이벤트
@@ -98,6 +127,27 @@ export const HomePage = () => {
         onError: (error) => {
             console.log('WebSocket error (백엔드 준비 시 자동 연결)');
         }
+    });
+
+    // Analytics WebSocket 연결 (실시간 통계)
+    useWebSocket('ws://localhost:8001/websocket/ws/analytics', {
+        onMessage: (data) => {
+            if (data.type === 'STATS_UPDATED') {
+                setDailySales(data.data.daily_sales);
+                setTopProducts(data.data.top_products || []);
+                setLastUpdate(Date.now());
+                setIsConnected(true);
+                console.log('📊 통계 업데이트:', data.data);
+            }
+
+            if (data.type === 'USER_COUNT_UPDATED') {
+                setActiveUsers(data.count);
+                setLastUpdate(Date.now());
+                setIsConnected(true);
+                console.log('👥 접속자 수 업데이트:', data.count);
+            }
+        },
+        onError: () => setIsConnected(false)
     });
 
     // 카테고리 목록 로드
@@ -270,31 +320,44 @@ export const HomePage = () => {
 
     return (
         <div className="home-page">
-            {/* 프로모션 배너 */}
-            <section className="promotion-banner">
+            {/* 히어로 + 카테고리 섹션 */}
+            <section className="hero-section">
                 <div className="container">
-                    <div className="promotion-content">
-                        <h2 className="promotion-title">⚡ 실시간 가격 변동 쇼핑몰</h2>
-                        <p className="promotion-subtitle">Kafka로 실시간 가격 업데이트! 최저가를 놓치지 마세요</p>
+                    <div className="hero-wrapper">
+                        {/* 왼쪽 영역: 텍스트 + 카테고리 */}
+                        <div className="hero-left-section">
+                            <div className="hero-text">
+                                <h1 className="hero-title">실시간 변동 쇼핑몰</h1>
+                                <p className="hero-subtitle">Kafka/WS로 가격 · 주문 전달을 1~3초 내 자동 업데이트</p>
+                            </div>
+
+                            <div className="category-grid">
+                                {categories.map(cat => (
+                                    <CategoryIcon
+                                        key={cat.id}
+                                        icon={cat.icon || cat.name[0].toUpperCase()}
+                                        label={cat.display_name}
+                                        category={cat.name}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 오른쪽 영역: 미니 대시보드 */}
+                        <div className="hero-content">
+                            <MiniDashboard
+                                isConnected={isConnected}
+                                lastUpdate={lastUpdate}
+                                activeUsers={activeUsers}
+                                dailySales={dailySales}
+                                topProducts={topProducts}
+                            />
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* 카테고리 아이콘 */}
-            <section className="category-icons">
-                <div className="container">
-                    <div className="category-icons-grid">
-                        {categories.map(cat => (
-                            <CategoryIcon
-                                key={cat.id}
-                                icon={cat.icon || cat.name[0].toUpperCase()}
-                                label={cat.display_name}
-                                category={cat.name}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* 실시간 대시보드 (Hero 섹션으로 이동됨) */}
 
             {/* 메인 콘텐츠 (필터 + 상품 목록) */}
             <section className="main-content-section">

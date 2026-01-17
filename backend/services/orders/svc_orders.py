@@ -59,7 +59,6 @@ async def svc_create_order(db: AsyncSession, order_create_in: OrderCreateIn, use
                 }
                 for item in order_items
             ],
-            "shipping_address": order_create_in.shipping_address
         },
         status="PENDING"
     )
@@ -76,8 +75,9 @@ async def svc_create_order(db: AsyncSession, order_create_in: OrderCreateIn, use
         items=order_items
     )
     
-    # 장바구니 비우기
-    await svc_clear_cartItems(db, user.id)
+    
+    # 장바구니 비우기 (주문 완료이므로 재고는 복구하지 않음)
+    await svc_clear_cartItems(db, user.id, restore_stock=False)
     await db.commit()  # 주문 + outbox_event 함께 커밋
     
     return order

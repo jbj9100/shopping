@@ -26,7 +26,6 @@ class Orders(Base, TimestampMixin):
     total_amount: Mapped[int] = mapped_column(Integer, nullable=False)
 
     shipping_fee: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    shipping_address: Mapped[str] = mapped_column(Text, nullable=False)
 
     # Kafka 이벤트 추적용 (ORDER_PAID, ORDER_CANCELED)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default=OrderStatus.PENDING.value, index=True)

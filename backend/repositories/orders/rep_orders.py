@@ -19,7 +19,6 @@ async def rep_create_order(db: AsyncSession, users: Users, order_create_in: Orde
         items_amount=items_amount,
         total_amount=total_amount,
         shipping_fee=shipping_fee,
-        shipping_address=order_create_in.shipping_address,
     )
     db.add(order)
     await db.flush()

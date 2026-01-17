@@ -219,36 +219,47 @@ async def svc_delete_cartItems(db: AsyncSession, user_id: int, cartItem_id: int)
     return await svc_get_cart_with_items(db, user_id)
 
 # 장바구니 비우기
-async def svc_clear_cartItems(db: AsyncSession, user_id: int):
-    """장바구니 전체 비운 후 빈 장바구니 반환"""
+async def svc_clear_cartItems(db: AsyncSession, user_id: int, restore_stock: bool = True):
+    """
+    장바구니 전체 비운 후 빈 장바구니 반환
+    
+    Args:
+        db: DB 세션
+        user_id: 사용자 ID
+        restore_stock: 재고 복구 여부 (기본값: True)
+            - True: 장바구니 비우기 시 재고 복구 (일반 비우기)
+            - False: 재고 복구 없이 비우기 (주문 완료 시)
+    """
     cart = await rep_get_cart_by_user_id(db, user_id)
     if not cart:
         raise ValueError("장바구니가 존재하지 않습니다.")
     
-    # 삭제 전에 모든 아이템의 재고 복구 + OutboxEvent 생성
-    items_data = await rep_get_cartItems_with_all_products(db, cart.id)
-    for cart_item, product in items_data:
-        stock = await svc_get_products_stock(db, cart_item.product_id)
-        new_stock = stock + cart_item.quantity
-        await svc_update_product_stock(db, cart_item.product_id, new_stock)
-        
-        # OutboxEvent 생성 (각 상품마다)
-        outbox_event = OutboxEvent(
-            aggregate_type=AggregateType.PRODUCT,
-            aggregate_id=cart_item.product_id,
-            event_type=ProductEvent.STOCK_CHANGED,
-            topic=KafkaTopic.PRODUCT_EVENTS,
-            payload={
-                "product_id": cart_item.product_id,
-                "old_stock": stock,
-                "new_stock": new_stock,
-                "change_reason": "CLEAR_CART",
-                "user_id": user_id
-            },
-            status="PENDING"
-        )
-        db.add(outbox_event)
+    # restore_stock=True인 경우에만 재고 복구 + OutboxEvent 생성
+    if restore_stock:
+        items_data = await rep_get_cartItems_with_all_products(db, cart.id)
+        for cart_item, product in items_data:
+            stock = await svc_get_products_stock(db, cart_item.product_id)
+            new_stock = stock + cart_item.quantity
+            await svc_update_product_stock(db, cart_item.product_id, new_stock)
+            
+            # OutboxEvent 생성 (각 상품마다)
+            outbox_event = OutboxEvent(
+                aggregate_type=AggregateType.PRODUCT,
+                aggregate_id=cart_item.product_id,
+                event_type=ProductEvent.STOCK_CHANGED,
+                topic=KafkaTopic.PRODUCT_EVENTS,
+                payload={
+                    "product_id": cart_item.product_id,
+                    "old_stock": stock,
+                    "new_stock": new_stock,
+                    "change_reason": "CLEAR_CART",
+                    "user_id": user_id
+                },
+                status="PENDING"
+            )
+            db.add(outbox_event)
 
     items = await rep_clear_cartItems(db, cart.id)
     await db.commit()
     return await svc_get_cart_with_items(db, user_id)
+

@@ -12,9 +12,6 @@ export const OrderPage = () => {
     const navigate = useNavigate();
     const { user } = useAuth(); // 로그인한 사용자 정보
     const [cartItems, setCartItems] = useState([]);
-    const [orderInfo, setOrderInfo] = useState({
-        address: '' // 통합된 주소만
-    });
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -52,30 +49,20 @@ export const OrderPage = () => {
         }
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setOrderInfo(prev => ({ ...prev, [name]: value }));
-    };
+
 
     const calculateTotal = () => {
         return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     };
 
     const handleOrder = async () => {
-        // 입력 검증
-        if (!orderInfo.address) {
-            alert('배송지 주소를 입력해주세요.');
-            return;
-        }
-
         try {
             // 백엔드 형식에 맞게 데이터 변환
             const orderPayload = {
                 items: cartItems.map(item => ({
                     product_id: item.product_id,
                     quantity: item.quantity
-                })),
-                shipping_address: orderInfo.address
+                }))
             };
 
             // 주문 API 호출
@@ -140,23 +127,6 @@ export const OrderPage = () => {
                                 value={user?.username || '로그인이 필요합니다'}
                                 disabled
                                 className="readonly-input"
-                            />
-                        </div>
-                    </div>
-                </Card>
-
-                {/* 배송지 정보 */}
-                <Card className="order-section">
-                    <h2 className="section-title">배송지 정보</h2>
-                    <div className="order-form">
-                        <div className="form-group">
-                            <label>주소 *</label>
-                            <textarea
-                                name="address"
-                                value={orderInfo.address}
-                                onChange={handleInputChange}
-                                placeholder="배송받을 주소를 입력하세요"
-                                rows="3"
                             />
                         </div>
                     </div>

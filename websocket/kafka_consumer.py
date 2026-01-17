@@ -19,14 +19,22 @@ async def consume_realtime_events():
    
      # ============ 3단계: Kafka Consumer 설정 ============
     bootstrap_servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+    kafka_user = os.getenv("KAFKA_USER")
+    kafka_password = os.getenv("KAFKA_PASSWORD")
+    kafka_sasl_mechanism = os.getenv("KAFKA_SASL_MECHANISM", "PLAIN")
+    
     unique_group_id = f"websocket-server-{uuid.uuid4().hex[:8]}"
     
     consumer = AIOKafkaConsumer(
-        "realtime.events",       # 3. 구독할 토픽
-        bootstrap_servers=bootstrap_servers,
-        group_id=unique_group_id,  # ✅ HPA: 각 인스턴스 다른 ID
+        "realtime-events",       # 3. 구독할 토픽
+        bootstrap_servers=bootstrap_servers.split(",") if "," in bootstrap_servers else bootstrap_servers,
+        group_id=unique_group_id,  # ✅ HPA: 각 인스턴스 다른 ID, consumer가 다시 kafka에서 데이터를 가져올 때 어디서부터 가져올지 알려주는 ID
         value_deserializer=lambda v: json.loads(v.decode('utf-8')),
-        auto_offset_reset='latest'
+        auto_offset_reset='latest', # group_id가 처음 생성되었을 때 오프셋을 어디서부터 가져올지 설정. latest: 새로운 메시지만, earliest: 처음부터
+        security_protocol="SASL_PLAINTEXT",
+        sasl_mechanism=kafka_sasl_mechanism,
+        sasl_plain_username=kafka_user,
+        sasl_plain_password=kafka_password,
     )
     # 여기까지는 그냥 설정만! 아직 연결 안 됨
     
