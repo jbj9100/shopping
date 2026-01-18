@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import { ProductGrid } from '../components/product/ProductGrid';
 import { ProductFilter } from '../components/product/ProductFilter';
 import { PriceDropTopN } from '../components/price-drop/PriceDropTopN';
@@ -154,7 +154,7 @@ export const HomePage = () => {
     useEffect(() => {
         const loadCategories = async () => {
             try {
-                const { data } = await axios.get('/api/shop/categories/all');
+                const { data } = await api.get('/api/shop/categories/all');
                 setCategories(data);  // 배열 직접 반환
             } catch (err) {
                 console.error('카테고리 로딩 실패:', err);
@@ -180,7 +180,7 @@ export const HomePage = () => {
                     categoryId = foundCategory?.id;
                 }
 
-                const { data } = await axios.get('/api/shop/products', {
+                const { data } = await api.get('/api/shop/products', {
                     params: categoryId ? { category_id: categoryId } : {}
                 });
                 setProducts(data);

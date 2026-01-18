@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websocket
+  namespace: websocket
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: websocket
+  template:
+    metadata:
+      labels:
+        app: websocket
+    spec:
+      containers:
+      - name: websocket
+        image: 192.168.19.143:5000/shopping-websocket:latest
+        ports:
+        - containerPort: 8001
+        envFrom:
+        - configMapRef:
+            name: websocket-config
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: websocket-config
+  namespace: websocket
+data:
+  REDIS_URL: "redis://:wjdqudwo@redis-service.cache.svc.cluster.local:6379/0"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka-service.kafka.svc.cluster.local:9092"

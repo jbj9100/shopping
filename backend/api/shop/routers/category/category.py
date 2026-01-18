@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from db.conn_db import get_session
-from core.deps.dep_session_rule import require_admin
+from core.deps.dep_jwt_rule import require_admin
 from models.m_user import Users
 from schemas.sc_category import CategoryIn, CategoryOut
 from services.category.svc_category import (

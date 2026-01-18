@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: publisher
+  labels:
+    app: shopping
+    tier: kafka
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: publisher-config
+  namespace: publisher
+data:
+  DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@postgres-service.post.svc.cluster.local:5432/shopping"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka-service.kafka.svc.cluster.local:9092"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publisher
+  namespace: publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: publisher
+  template:
+    metadata:
+      labels:
+        app: publisher
+    spec:
+      containers:
+      - name: publisher
+        image: 192.168.19.143:5000/shopping-publisher:latest
+        envFrom:
+        - configMapRef:
+            name: publisher-config
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: publisher-service
+  namespace: publisher
+spec:
+  selector:
+    app: publisher
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: metrics

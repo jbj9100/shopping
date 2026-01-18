@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from core.deps.dep_session_rule import require_user
+from core.deps.dep_jwt_rule import require_user
 from db.conn_db import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas.sc_carts import ( 

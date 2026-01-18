@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from services.admin.svc_admin import get_users_list, change_user_role, remove_user
 from db.conn_db import get_session
 from models.m_user import Users
-from core.deps.dep_session_rule import require_admin
+from core.deps.dep_jwt_rule import require_admin
 
 
 router = APIRouter(prefix="/api/shop/admin", tags=["admin"])

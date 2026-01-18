@@ -26,12 +26,6 @@ class Users(Base, TimestampMixin):
     orders: Mapped[List["Orders"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    price_alerts: Mapped[List["PriceAlert"]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
-    )
-    flash_queue_entries: Mapped[List["FlashSaleQueueEntry"]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
-    )
 
 
 class UserSession(Base):

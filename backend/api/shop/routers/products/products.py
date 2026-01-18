@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Response, UploadFile, File, Query, Depends, HTTPException
 from typing import Optional 
-from core.deps.dep_session_rule import require_admin
+from core.deps.dep_jwt_rule import require_admin
 from db.conn_db import get_session
 from schemas.sc_products import ProductOut, ProductIn
 from models.m_user import Users

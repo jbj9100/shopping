@@ -9,11 +9,19 @@ class ConnectionManager:
     """WebSocket 연결 관리 (채널별)"""
     
     def __init__(self):
-        # 채널별 활성 연결 목록
-        # {"stock": [ws1, ws2], "analytics": [ws3]}
+        # 채널별 활성 연결 목록, 실시간 접속자
+        # ex) {"stock": [ws1, ws2], "analytics": [ws3]}
+        # 저장 내용: WebSocket 객체(연결 자체)
+        # 즉, “지금 살아있는 네트워크 연결 핸들”
+        # 이건 외부(DB/Kafka)에서 다시 가져올 수 없는 것임 → 연결은 지금 이 프로세스에만 존재
         self.active_connections: Dict[str, List[WebSocket]] = {}
-        # 마지막 통계 데이터 캐싱 (초기 접속자용)
-        self.last_analytics_stats: Dict = None
+
+        # 총주문,총매츨,top3 데이터  (초기 접속자용)
+        # ex) {"total_orders": 100, "total_sales": 200, "top3": ["item1", "item2", "item3"]}
+        # 저장 내용: 통계 값(숫자/딕셔너리 스냅샷)
+        # 이건 원래 DB/Kafka에 근본 데이터가 있고, 이건 그 결과를 “복사해 둔 것”
+        # 즉, 다시 만들 수 있는 데이터(재계산 가능)
+        self.last_analytics_stats: Dict = None 
     
     async def connect(self, websocket: WebSocket, channel: str):
         """클라이언트 연결"""

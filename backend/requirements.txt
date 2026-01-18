@@ -13,3 +13,4 @@ sqlalchemy-utils
 google-generativeai
 python-multipart
 minio
+python-jose[cryptography]

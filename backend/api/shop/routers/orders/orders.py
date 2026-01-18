@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Response, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from core.deps.dep_session_rule import require_user
+from core.deps.dep_jwt_rule import require_user
 from db.conn_db import get_session
 from schemas.sc_orders import OrderOut, OrderCreateIn
 from typing import List
