@@ -18,6 +18,8 @@ data:
   MINIO_PUBLIC_BASE_URL: "http://minio-service.minio.svc.cluster.local:9000"
   MINIO_BUCKET_LIST: "category,products"
   
+  CORS_ORIGINS: "http://frontend-service.front.svc.cluster.local"
+
   # JWT 설정
   JWT_SECRET_KEY: "your-secret-key-change-this-in-production-use-minimum-32-characters-random-string"
   JWT_ALGORITHM: "HS256"

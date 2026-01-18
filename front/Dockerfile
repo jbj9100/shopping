@@ -9,7 +9,9 @@ RUN npm ci --legacy-peer-deps
 
 # 소스 복사 및 빌드
 COPY . .
-RUN npx vite build
+
+# Vite를 node로 직접 실행 (Podman 권한 문제 해결)
+RUN node node_modules/vite/bin/vite.js build
 
 # Runtime stage
 FROM nginx:alpine
