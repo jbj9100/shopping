@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-analytics
+  namespace: consumer-analytics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-analytics
+  template:
+    metadata:
+      labels:
+        app: consumer-analytics
+    spec:
+      containers:
+      - name: consumer-analytics
+        image: 192.168.19.143:5000/shopping-consumer-analytics:latest
+        envFrom:
+        - configMapRef:
+            name: consumer-analytics-config
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"

@@ -5,17 +5,19 @@ WORKDIR /app
 
 # Package 설치
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # 소스 복사 및 빌드
 COPY . .
-RUN npm run build
+RUN npx vite build
 
 # Runtime stage
 FROM nginx:alpine
 
-# Nginx 설정
+# Built 파일 복사
 COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Nginx 설정
 COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80

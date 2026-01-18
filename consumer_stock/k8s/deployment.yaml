@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-stock
+  namespace: consumer-stock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-stock
+  template:
+    metadata:
+      labels:
+        app: consumer-stock
+    spec:
+      containers:
+      - name: consumer-stock
+        image: 192.168.19.143:5000/shopping-consumer-stock:latest
+        envFrom:
+        - configMapRef:
+            name: consumer-stock-config
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"

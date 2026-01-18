@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: publisher-config
+  namespace: publisher
+data:
+  DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@postgres-service.post.svc.cluster.local:5432/shopping"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka-service.kafka.svc.cluster.local:9092"
