@@ -19,8 +19,7 @@ FROM nginx:alpine
 # Built 파일 복사
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Nginx 설정
-COPY nginx.conf /etc/nginx/nginx.conf
+# nginx.conf는 ConfigMap에서 마운트됨
 
 EXPOSE 80
 

@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: front
+data:
+  nginx.conf: |
+    events {
+      worker_connections 1024;
+    }
+
+    http {
+      include /etc/nginx/mime.types;
+      default_type application/octet-stream;
+
+      # DNS resolver (Kubernetes CoreDNS)
+      resolver kube-dns.kube-system.svc.cluster.local valid=10s;
+
+      # Ingress가 준 X-Forwarded-Proto/Host가 있으면 우선 사용, 없으면 로컬 값 사용
+      map $http_x_forwarded_proto $real_proto {
+        default $http_x_forwarded_proto;
+        ""      $scheme;
+      }
+
+      map $http_x_forwarded_host $real_host {
+        default $http_x_forwarded_host;
+        ""      $http_host;
+      }
+
+      server {
+        listen 80;
+        server_name _;
+
+        root /usr/share/nginx/html;
+        index index.html;
+
+        # SPA 라우팅
+        location / {
+          try_files $uri $uri/ /index.html;
+        }
+
+        # API 프록시 (요청 그대로 전달: /api/* -> backend의 /api/*)
+        location /api/ {
+          set $backend backend-service.backend.svc.cluster.local;
+
+          proxy_pass http://$backend:8000;
+
+          # ✅ 리다이렉트는 억지로 rewrite하지 않고, 백엔드가 올바른 URL 만들게 헤더로 해결
+          proxy_redirect off;
+
+          proxy_set_header Host              $real_host;
+          proxy_set_header X-Forwarded-Host  $real_host;
+          proxy_set_header X-Forwarded-Proto $real_proto;
+          proxy_set_header X-Real-IP         $remote_addr;
+          proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        }
+
+        # WebSocket 프록시
+        location /websocket/ {
+          set $websocket websocket-service.websocket.svc.cluster.local;
+
+          proxy_pass http://$websocket:8001;
+          proxy_http_version 1.1;
+
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "upgrade";
+
+          proxy_set_header Host              $real_host;
+          proxy_set_header X-Forwarded-Host  $real_host;
+          proxy_set_header X-Forwarded-Proto $real_proto;
+          proxy_set_header X-Real-IP         $remote_addr;
+          proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        }
+      }
+    }
