@@ -5,17 +5,17 @@ metadata:
   namespace: backend
 data:
   # Database
-  DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@postgres-service.post.svc.cluster.local:5432/shopping"
+  DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@post-postgresql.post.svc.cluster.local:5432/shopping"
   
   # Redis
-  REDIS_URL: "redis://:wjdqudwo@redis-service.redis.svc.cluster.local:6379/0"
+  REDIS_URL: "redis://:wjdqudwo@redis-master.redis.svc.cluster.local:6379/0"
   
   # MinIO
-  MINIO_URL: "minio-service.minio.svc.cluster.local:9000"
+  MINIO_URL: "minio.minio.svc.cluster.local:9000"
   MINIO_ACCESS_KEY: "minio"
   MINIO_SECRET_KEY: "minio123"
   MINIO_SECURE: "False"
-  MINIO_PUBLIC_BASE_URL: "http://minio-service.minio.svc.cluster.local:9000"
+  MINIO_PUBLIC_BASE_URL: "http://minio.minio.svc.cluster.local:9000"
   MINIO_BUCKET_LIST: "category,products"
   
   CORS_ORIGINS: "http://frontend-service.front.svc.cluster.local"

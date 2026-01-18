@@ -38,6 +38,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Health Check 엔드포인트 (Kubernetes Probes용)
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
 # router
 app.include_router(login.router) 
 app.include_router(signup.router) 
