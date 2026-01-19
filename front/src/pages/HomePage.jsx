@@ -186,7 +186,7 @@ export const HomePage = () => {
                     categoryId = foundCategory?.id;
                 }
 
-                const { data } = await api.get('/api/shop/products', {
+                const { data } = await api.get('/api/shop/products/', {
                     params: categoryId ? { category_id: categoryId } : {}
                 });
                 setProducts(data);

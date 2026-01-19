@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from core.lifespan.lifespan import lifespan
 import os
 import logging
@@ -37,6 +38,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 프록시 헤더 신뢰 설정 (HTTPS 인식용)
+# Ingress(리버스 프록시)가 붙여주는 X-Forwarded-Proto, X-Forwarded-For, X-Forwarded-Port 헤더를 “진짜 정보”로 믿고 
+# FastAPI/Starlette의 request.client.host, request.url.scheme 등을 그 값으로 교정하겠다
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
+
 
 # Health Check 엔드포인트 (Kubernetes Probes용)
 @app.get("/health")
