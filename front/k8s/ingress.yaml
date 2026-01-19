@@ -3,6 +3,9 @@ kind: Ingress
 metadata:
   name: shopping
   namespace: front
+  annotations:
+    haproxy.org/backend-config-snippet: |
+      http-response replace-value Location ^http://(.*)$ https://\1
 spec:
   ingressClassName: haproxy
   tls:

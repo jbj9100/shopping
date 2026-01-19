@@ -42,6 +42,9 @@ app.add_middleware(
 # 프록시 헤더 신뢰 설정 (HTTPS 인식용)
 # Ingress(리버스 프록시)가 붙여주는 X-Forwarded-Proto, X-Forwarded-For, X-Forwarded-Port 헤더를 “진짜 정보”로 믿고 
 # FastAPI/Starlette의 request.client.host, request.url.scheme 등을 그 값으로 교정하겠다
+# 원인: FastAPI는 내부(Pod)에서 HTTP로 동작하므로, 리다이렉트 주소를 만들 때 http:// 로 만들어서 보냈습니다.
+# 문제: 브라우저는 HTTPS 사이트인데 HTTP로 가라는 응답(리다이렉트)을 받으니 보안상 차단(Mixed Content) 했습니다.
+# 해결: 미들웨어가 "사실은 밖에서 HTTPS로 왔어"라는 꼬리표(X-Forwarded-Proto)를 읽고, FastAPI가 https:// 로 응답하게 수정해 줬습니다.
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 
 
