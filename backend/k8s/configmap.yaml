@@ -18,7 +18,9 @@ data:
   MINIO_ACCESS_KEY: "minio"
   MINIO_SECRET_KEY: "minio123"
   MINIO_SECURE: "False"
-  MINIO_PUBLIC_BASE_URL: "http://minio.minio.svc.cluster.local:9000"
+  # 상대 경로로 이미지 URL 생성 (예: /minio/category/food.jpeg)
+  # Frontend Nginx가 /minio/* 경로를 MinIO로 프록시
+  MINIO_PUBLIC_BASE_URL: "/minio"
   MINIO_BUCKET_LIST: "category,products"
   
   CORS_ORIGINS: "http://frontend-service.front.svc.cluster.local"

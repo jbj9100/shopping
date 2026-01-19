@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: consumer-analytics
-        image: 192.168.19.143:5000/shopping-consumer-analytics:latest
+        image: 192.168.80.90:5000/shopping-consumer-analytics:latest
         envFrom:
         - configMapRef:
             name: consumer-analytics-config

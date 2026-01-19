@@ -405,8 +405,12 @@ export const HomePage = () => {
 };
 
 const CategoryIcon = ({ icon, label, category }) => {
-    // icon이 URL인지 확인 (http:// 또는 blob: 으로 시작)
-    const isImageUrl = icon && (icon.startsWith('http') || icon.startsWith('blob:'));
+    // icon이 URL인지 확인 (http://, blob:, /minio/ 등)
+    const isImageUrl = icon && (
+        icon.startsWith('http') ||
+        icon.startsWith('blob:') ||
+        icon.startsWith('/minio/')  // ← 상대 경로 지원
+    );
 
     return (
         <a href={category ? `/category/${category}` : '/'} className="category-icon-item">
