@@ -10,6 +10,10 @@ export default defineConfig({
             '/api': {
                 target: 'http://localhost:8000',
                 changeOrigin: true
+            },
+            '/websocket': {
+                target: 'ws://localhost:8001',
+                ws: true
             }
         }
     }

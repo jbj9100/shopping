@@ -68,8 +68,14 @@ export const HomePage = () => {
         }, 3000);
     }, []);
 
+    // WebSocket URL 동적 생성 (로컬/Pod 환경 호환)
+    const getWsUrl = (path) => {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        return `${protocol}//${window.location.host}/websocket${path}`;
+    };
+
     // WebSocket 연결 (실시간 업데이트) - stock 채널 구독
-    const { lastMessage } = useWebSocket('ws://localhost:8001/websocket/ws/stock', {
+    const { lastMessage } = useWebSocket(getWsUrl('/ws/stock'), {
         onMessage: (data) => {
             console.log('WebSocket message received:', data);
 
@@ -130,7 +136,7 @@ export const HomePage = () => {
     });
 
     // Analytics WebSocket 연결 (실시간 통계)
-    useWebSocket('ws://localhost:8001/websocket/ws/analytics', {
+    useWebSocket(getWsUrl('/ws/analytics'), {
         onMessage: (data) => {
             if (data.type === 'STATS_UPDATED') {
                 setDailySales(data.data.daily_sales);
