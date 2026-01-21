@@ -106,7 +106,15 @@ export default function (data) {
     // 3️⃣ 장바구니에 추가
     for (const productId of selectedProducts) {
         const quantity = randomIntBetween(1, 2);
-        addToCart(tokens, productId, quantity, jar);
+        const success = addToCart(tokens, productId, quantity, jar);
+
+        // 실패 시 (재고 부족 등) 다른 상품으로 재시도
+        if (!success && productIds.length > 1) {
+            const retryProductId = productIds[randomIntBetween(0, productIds.length - 1)];
+            if (retryProductId !== productId) {
+                addToCart(tokens, retryProductId, quantity, jar);
+            }
+        }
         sleep(0.5);
     }
 
@@ -176,9 +184,23 @@ function addToCart(tokens, productId, quantity, jar) {
         tags: { name: 'add_to_cart' },
     });
 
-    check(res, {
+    const success = check(res, {
         'add to cart OK': (r) => r.status === 200,
-    }) || console.error(`[AddToCart Failed] Product: ${productId}, Status: ${res.status}, Body: ${res.body}`);
+    });
+
+    if (!success) {
+        // 재고 부족이나 상품 없음은 정상 시나리오로 간주 (부하 테스트에서)
+        if (res.status === 400 || res.status === 404 || res.status === 500) {
+            // 에러 로그는 최소화 (10%만 출력)
+            if (Math.random() < 0.1) {
+                console.error(`[AddToCart Failed] Product: ${productId}, Status: ${res.status}, Body: ${res.body}`);
+            }
+        } else {
+            console.error(`[AddToCart Failed] Product: ${productId}, Status: ${res.status}, Body: ${res.body}`);
+        }
+    }
+
+    return success;
 }
 
 //----------------------------------------------------------
