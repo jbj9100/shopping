@@ -56,12 +56,20 @@ async def refresh_access_token(
         
         # 4. Redis에서 Refresh Token jti 확인
         stored_user_id = await redis_client.get(f"refresh_token:{refresh_jti}")
-        if not stored_user_id or stored_user_id.decode() != user_id:
+        # Redis 클라이언트 버전에 따라 bytes 또는 str 반환 (로컬=bytes, k8s=str)
+        if isinstance(stored_user_id, bytes):
+            stored_user_id = stored_user_id.decode()
+        
+        if not stored_user_id or stored_user_id != user_id:
             raise HTTPException(status_code=401, detail="Refresh token not found or invalid")
         
         # 5. CSRF Token 검증
         stored_csrf = await redis_client.get(f"csrf:{user_id}")
-        if not stored_csrf or csrf_token != stored_csrf.decode():
+        # Redis 클라이언트 버전에 따라 bytes 또는 str 반환
+        if isinstance(stored_csrf, bytes):
+            stored_csrf = stored_csrf.decode()
+        
+        if not stored_csrf or csrf_token != stored_csrf:
             raise HTTPException(status_code=403, detail="CSRF token mismatch")
         
         # 6. 새 Access Token 생성

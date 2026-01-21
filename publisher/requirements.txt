@@ -1,4 +1,4 @@
-sqlalchemy>=2.0.0
-asyncpg>=0.29.0
-aiokafka>=0.10.0
-python-dotenv>=1.0.0
+sqlalchemy==2.0.25
+asyncpg==0.29.0
+aiokafka==0.10.0
+python-dotenv==1.0.0
