@@ -4,7 +4,7 @@ metadata:
   name: publisher-config
   namespace: publisher
 data:
-  DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@post-postgresql.post.svc.cluster.local:5432/shopping"
+  DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@postgresql.postgresql.svc.cluster.local:5432/shopping"
   DB_POOL_SIZE: "10"
   DB_MAX_OVERFLOW: "20"
   DB_POOL_RECYCLE: "3600"

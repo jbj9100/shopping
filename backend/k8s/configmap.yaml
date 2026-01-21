@@ -8,7 +8,7 @@ data:
   BACKEND_URL: "http://backend-service.backend.svc.cluster.local:8000"
   
   # Database
-  DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@post-postgresql.post.svc.cluster.local:5432/shopping"
+  DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@postgresql.postgresql.svc.cluster.local:5432/shopping"
   
   # Redis
   REDIS_URL: "redis://:wjdqudwo@redis-master.redis.svc.cluster.local:6379/0"
