@@ -36,20 +36,17 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // 401 에러 && 재시도 아님
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // 401/403 에러 && 재시도 아님 (HTTPBearer는 토큰 없을 때 403 반환)
+        if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
             originalRequest._retry = true;
 
             try {
                 // Refresh Token으로 새 Access Token 발급
-                const csrfToken = getCSRFToken();
+                // CSRF 검증 제거됨 - HttpOnly Cookie만으로 안전
                 const refreshResponse = await axios.post(
                     '/api/shop/refresh/',
                     {},
                     {
-                        headers: {
-                            'X-CSRF-Token': csrfToken
-                        },
                         withCredentials: true  // Refresh Cookie 전송
                     }
                 );
@@ -74,8 +71,8 @@ api.interceptors.response.use(
             }
         }
 
-        // 401 외 에러는 조용히 처리
-        if (error.response?.status !== 401) {
+        // 401/403 외 에러는 조용히 처리
+        if (error.response?.status !== 401 && error.response?.status !== 403) {
             console.error('API Error:', error);
         }
 
