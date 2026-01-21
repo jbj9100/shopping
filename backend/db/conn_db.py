@@ -9,12 +9,18 @@ load_dotenv()
 
 DATABASE_CONN = os.getenv("DATABASE_CONN")
 
+# DB Pool 설정
+DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "20"))
+DB_MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", "40"))
+DB_POOL_RECYCLE = int(os.getenv("DB_POOL_RECYCLE", "3600"))
+
 engine: AsyncEngine = create_async_engine(
-                       DATABASE_CONN, #echo=True,
-                       #poolclass=NullPool, # Connection Pool 사용하지 않음. 
-                       pool_size=10, 
-                       max_overflow=0,
-                       pool_recycle=300
+                       DATABASE_CONN,
+                       #echo=True,
+                       #poolclass=NullPool,
+                       pool_size=DB_POOL_SIZE,
+                       max_overflow=DB_MAX_OVERFLOW,
+                       pool_recycle=DB_POOL_RECYCLE
                        )
 
 # ORM은 "Connection" 대신 "Session"을 씁니다.

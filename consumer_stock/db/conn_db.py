@@ -15,14 +15,19 @@ DATABASE_CONN = os.getenv("DATABASE_CONN", "")
 if not DATABASE_CONN:
     raise ValueError("DATABASE_CONN 환경변수가 설정되지 않았습니다")
 
+# DB Pool 설정
+DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "10"))
+DB_MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", "20"))
+DB_POOL_RECYCLE = int(os.getenv("DB_POOL_RECYCLE", "3600"))
+
 # 비동기 엔진 생성
 engine = create_async_engine(
     DATABASE_CONN,
-    echo=False,  # SQL 로그 출력 (개발 시 True로 변경)
-    pool_pre_ping=True,  # 연결 유효성 자동 체크
-    pool_size=10,
-    max_overflow=0,
-    pool_recycle=300
+    echo=False,
+    pool_pre_ping=True,
+    pool_size=DB_POOL_SIZE,
+    max_overflow=DB_MAX_OVERFLOW,
+    pool_recycle=DB_POOL_RECYCLE
 )
 
 # ORM은 "Connection" 대신 "Session"을 씁니다.

@@ -13,6 +13,11 @@ data:
   # Redis
   REDIS_URL: "redis://:wjdqudwo@redis-master.redis.svc.cluster.local:6379/0"
   
+  # DB Connection Pool Settings
+  DB_POOL_SIZE: "20"
+  DB_MAX_OVERFLOW: "40"
+  DB_POOL_RECYCLE: "3600"
+  
   # MinIO
   MINIO_URL: "minio.minio.svc.cluster.local:9000"
   MINIO_ACCESS_KEY: "minio"

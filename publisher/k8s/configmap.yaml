@@ -5,4 +5,7 @@ metadata:
   namespace: publisher
 data:
   DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@post-postgresql.post.svc.cluster.local:5432/shopping"
+  DB_POOL_SIZE: "10"
+  DB_MAX_OVERFLOW: "20"
+  DB_POOL_RECYCLE: "3600"
   KAFKA_BOOTSTRAP_SERVERS: "kafka-controller-0.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-1.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-2.kafka-controller-headless.kafka.svc.cluster.local:9092"
