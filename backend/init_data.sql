@@ -1,5 +1,6 @@
-ROLLBACK;
 
+ROLLBACK;
+-- CREATE DATABASE shopping;
 BEGIN;
 
 -- Kafka 관련 테이블 (의존성 역순)

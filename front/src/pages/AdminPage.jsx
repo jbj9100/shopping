@@ -13,6 +13,11 @@ export const AdminPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
 
+    // 테스트 계정 일괄 생성
+    const [bulkAccountCount, setBulkAccountCount] = useState(10);
+    const [bulkCreationProgress, setBulkCreationProgress] = useState(null);
+    const [bulkCreationResults, setBulkCreationResults] = useState(null);
+
     // 카테고리 폼
     const [newCategory, setNewCategory] = useState({ name: '', display_name: '', description: '', icon: '' });
     const [newCategoryImageFile, setNewCategoryImageFile] = useState(null);
@@ -100,6 +105,66 @@ export const AdminPage = () => {
         } catch (err) {
             alert('사용자 삭제에 실패했습니다.');
         }
+    };
+
+    // 테스트 계정 일괄 생성
+    const handleBulkCreateAccounts = async () => {
+        if (!bulkAccountCount || bulkAccountCount < 1 || bulkAccountCount > 1000) {
+            alert('계정 개수는 1~1000 사이로 입력하세요.');
+            return;
+        }
+
+        if (!window.confirm(`테스트 계정 ${bulkAccountCount}개를 생성하시겠습니까?`)) {
+            return;
+        }
+
+        setBulkCreationProgress({ current: 0, total: bulkAccountCount });
+        setBulkCreationResults({ success: 0, skipped: 0, failed: 0 });
+
+        let successCount = 0;
+        let skipCount = 0;
+        let failCount = 0;
+
+        for (let i = 1; i <= bulkAccountCount; i++) {
+            const email = `loadtest${i}@test.com`;
+            const username = `loadtest${i}`;
+            const password = 'test1234';
+
+            try {
+                await api.post('/api/shop/signup/', {
+                    email,
+                    username,
+                    password
+                });
+                successCount++;
+            } catch (err) {
+                // 이미 존재하는 계정인 경우
+                if (err.response?.data?.detail?.toLowerCase().includes('already')) {
+                    skipCount++;
+                } else {
+                    failCount++;
+                    console.error(`계정 생성 실패 (${email}):`, err.response?.data?.detail || err.message);
+                }
+            }
+
+            // 진행 상황 업데이트
+            setBulkCreationProgress({ current: i, total: bulkAccountCount });
+            setBulkCreationResults({ success: successCount, skipped: skipCount, failed: failCount });
+
+            // Rate limiting 방지 (0.2초 대기)
+            if (i < bulkAccountCount) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+        }
+
+        // 완료 후 사용자 목록 새로고침
+        await fetchUsers();
+
+        // 진행 상태 초기화 (3초 후)
+        setTimeout(() => {
+            setBulkCreationProgress(null);
+            setBulkCreationResults(null);
+        }, 3000);
     };
 
     // 카테고리 관리
@@ -318,6 +383,63 @@ export const AdminPage = () => {
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                {/* ===== 테스트 계정 일괄 생성 ===== */}
+                <div className="page-header">
+                    <h1 className="page-title">🔧 테스트 계정 일괄 생성</h1>
+                </div>
+
+                <div className="create-form-section" style={{ marginBottom: '30px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
+                        <label style={{ fontWeight: 'bold', minWidth: '100px' }}>생성 개수:</label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="1000"
+                            value={bulkAccountCount}
+                            onChange={(e) => setBulkAccountCount(parseInt(e.target.value) || 0)}
+                            style={{ width: '100px', padding: '8px' }}
+                        />
+                        <span style={{ color: '#666', fontSize: '14px' }}>
+                            loadtest1@test.com ~ loadtest{bulkAccountCount}@test.com
+                        </span>
+                    </div>
+
+                    <button
+                        className="btn-create"
+                        onClick={handleBulkCreateAccounts}
+                        disabled={bulkCreationProgress !== null}
+                        style={{ opacity: bulkCreationProgress !== null ? 0.6 : 1 }}
+                    >
+                        {bulkCreationProgress ? '생성 중...' : '일괄 생성 시작'}
+                    </button>
+
+                    {/* 진행 상황 표시 */}
+                    {bulkCreationProgress && (
+                        <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+                            <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>
+                                진행 상황: {bulkCreationProgress.current} / {bulkCreationProgress.total}
+                            </div>
+                            <div style={{ width: '100%', height: '20px', backgroundColor: '#ddd', borderRadius: '10px', overflow: 'hidden' }}>
+                                <div
+                                    style={{
+                                        width: `${(bulkCreationProgress.current / bulkCreationProgress.total) * 100}%`,
+                                        height: '100%',
+                                        backgroundColor: '#4CAF50',
+                                        transition: 'width 0.3s'
+                                    }}
+                                />
+                            </div>
+                            {bulkCreationResults && (
+                                <div style={{ marginTop: '10px', fontSize: '14px', color: '#333' }}>
+                                    ✓ 생성: {bulkCreationResults.success} |
+                                    ○ 중복: {bulkCreationResults.skipped} |
+                                    ✗ 실패: {bulkCreationResults.failed}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div className="section-divider" />
