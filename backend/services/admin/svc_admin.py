@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.conn_db import AsyncSessionLocal
 from core.auth.auth_password_hash import hash_password
 from repositories.users.rep_admin import (
-    create_user, get_all_users, update_user_role, delete_user
+    create_user, get_all_users, update_user_role, delete_user, delete_users_bulk
 )
 from repositories.users.rep_common import get_user_by_email
 from models.m_user import Users
@@ -49,3 +49,9 @@ async def remove_user(db: AsyncSession, user_id: int) -> bool:
     if success:
         await db.commit()
     return success
+
+
+async def remove_users_bulk(db: AsyncSession, user_ids: list[int]) -> dict:
+    result = await delete_users_bulk(db, user_ids)
+    await db.commit()
+    return result

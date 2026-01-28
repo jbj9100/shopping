@@ -18,6 +18,9 @@ export const AdminPage = () => {
     const [bulkCreationProgress, setBulkCreationProgress] = useState(null);
     const [bulkCreationResults, setBulkCreationResults] = useState(null);
 
+    // 사용자 일괄 삭제
+    const [selectedUserIds, setSelectedUserIds] = useState([]);
+
     // 카테고리 폼
     const [newCategory, setNewCategory] = useState({ name: '', display_name: '', description: '', icon: '' });
     const [newCategoryImageFile, setNewCategoryImageFile] = useState(null);
@@ -104,6 +107,50 @@ export const AdminPage = () => {
             fetchUsers();
         } catch (err) {
             alert('사용자 삭제에 실패했습니다.');
+        }
+    };
+
+    // 사용자 일괄 삭제
+    const handleBulkDeleteUsers = async () => {
+        if (selectedUserIds.length === 0) {
+            alert('삭제할 사용자를 선택하세요.');
+            return;
+        }
+
+        if (!window.confirm(`선택한 ${selectedUserIds.length}명의 사용자를 삭제하시겠습니까?`)) {
+            return;
+        }
+
+        try {
+            const response = await api.post('/api/shop/admin/bulk-delete', {
+                user_ids: selectedUserIds
+            });
+
+            alert(`${response.data.deleted_count}명이 삭제되었습니다.`);
+            setSelectedUserIds([]);
+            await fetchUsers();
+        } catch (err) {
+            alert('일괄 삭제 실패: ' + (err.response?.data?.detail || err.message));
+        }
+    };
+
+    // 전체 선택/해제
+    const handleSelectAll = (checked) => {
+        if (checked) {
+            // 현재 사용자 제외한 모든 사용자 선택
+            const allIds = users.filter(u => u.id !== user.id).map(u => u.id);
+            setSelectedUserIds(allIds);
+        } else {
+            setSelectedUserIds([]);
+        }
+    };
+
+    // 개별 선택/해제
+    const handleSelectUser = (userId, checked) => {
+        if (checked) {
+            setSelectedUserIds([...selectedUserIds, userId]);
+        } else {
+            setSelectedUserIds(selectedUserIds.filter(id => id !== userId));
         }
     };
 
@@ -340,12 +387,27 @@ export const AdminPage = () => {
                 {/* ===== 사용자 관리 ===== */}
                 <div className="page-header">
                     <h1 className="page-title">사용자 관리</h1>
+                    <button
+                        className="btn-bulk-delete"
+                        onClick={handleBulkDeleteUsers}
+                        disabled={selectedUserIds.length === 0}
+                    >
+                        선택 삭제 ({selectedUserIds.length})
+                    </button>
                 </div>
 
                 <div className="data-table-container">
                     <table className="data-table">
                         <thead>
                             <tr>
+                                <th>
+                                    <input
+                                        type="checkbox"
+                                        className="table-checkbox"
+                                        checked={selectedUserIds.length > 0 && selectedUserIds.length === users.filter(u => u.id !== user.id).length}
+                                        onChange={(e) => handleSelectAll(e.target.checked)}
+                                    />
+                                </th>
                                 <th>번호</th>
                                 <th>사용자명</th>
                                 <th>이메일</th>
@@ -357,6 +419,15 @@ export const AdminPage = () => {
                         <tbody>
                             {users.map((u, idx) => (
                                 <tr key={u.id}>
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            className="table-checkbox"
+                                            checked={selectedUserIds.includes(u.id)}
+                                            disabled={u.id === user.id}
+                                            onChange={(e) => handleSelectUser(u.id, e.target.checked)}
+                                        />
+                                    </td>
                                     <td>{idx + 1}</td>
                                     <td>{u.username}</td>
                                     <td>{u.email}</td>

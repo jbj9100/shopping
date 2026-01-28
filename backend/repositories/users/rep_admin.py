@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from models.m_user import Users
+from repositories.users.rep_common import get_user_by_id
 from typing import Optional
 
 
@@ -38,3 +39,21 @@ async def delete_user(db: AsyncSession, user_id: int) -> bool:
         await db.delete(user)
         return True
     return False
+
+
+async def delete_users_bulk(db: AsyncSession, user_ids: list[int]) -> dict:
+    deleted_count = 0
+    failed_ids = []
+    
+    for user_id in user_ids:
+        user = await get_user_by_id(db, user_id)
+        if user:
+            await db.delete(user)
+            deleted_count += 1
+        else:
+            failed_ids.append(user_id)
+    
+    return {
+        "deleted_count": deleted_count,
+        "failed_ids": failed_ids
+    }
