@@ -1,12 +1,13 @@
-FROM python:3.10.19-slim
+FROM 192.168.80.90:5000/python:3.10.19-slim
 
 WORKDIR /app
 
+# 192.168.80.90:5000/python:3.10.19-slim안에서 미리함
 # 시스템 패키지 업데이트
-RUN apt-get update && apt-get install -y \
-    gcc \
-    postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y \
+#     gcc \
+#     postgresql-client \
+#     && rm -rf /var/lib/apt/lists/*
 
 # Requirements 설치
 COPY requirements.txt .
