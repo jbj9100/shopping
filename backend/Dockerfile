@@ -16,8 +16,7 @@ ARG PIP_INDEX_URL
 ARG PIP_TRUSTED_HOST
 
 # devpi에 캐시하기 위함
-RUN pip install --no-cache-dir \
-    -i ${PIP_INDEX_URL} --trusted-host ${PIP_TRUSTED_HOST} \
+RUN pip install -i ${PIP_INDEX_URL} --trusted-host ${PIP_TRUSTED_HOST} \
     -r requirements.txt
 
 # 소스 복사
