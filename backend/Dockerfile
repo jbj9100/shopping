@@ -1,13 +1,18 @@
-FROM 192.168.80.90:5000/python:3.10.19-slim
+FROM 192.168.80.90:5000/python:3.10.19-slim2
 
 WORKDIR /app
 
 # 192.168.80.90:5000/python:3.10.19-slim안에서 미리함
 # 시스템 패키지 업데이트
 # RUN apt-get update && apt-get install -y \
+#     curl \
 #     gcc \
 #     postgresql-client \
 #     && rm -rf /var/lib/apt/lists/*
+# RUN curl -sSL -o /usr/local/bin/yq \
+#     https://github.com/mikefarah/yq/releases/download/${YQ_VER}/yq_linux_amd64 \
+#  && chmod +x /usr/local/bin/yq \
+#  && yq --version
 
 # Requirements 설치
 COPY requirements.txt .

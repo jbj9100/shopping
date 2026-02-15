@@ -1,5 +1,4 @@
-FROM 192.168.80.90:5000/python:3.10.19-slim
-
+FROM 192.168.80.90:5000/python:3.10.19-slim2
 WORKDIR /app
 
 COPY requirements.txt .
