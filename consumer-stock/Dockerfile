@@ -1,4 +1,4 @@
-FROM python:3.10.19-slim
+FROM 192.168.80.90:5000/python:3.10.19-slim
 
 WORKDIR /app
 
@@ -6,8 +6,7 @@ COPY requirements.txt .
 ARG PIP_INDEX_URL
 ARG PIP_TRUSTED_HOST
 
-RUN pip install --no-cache-dir \
-    -i ${PIP_INDEX_URL} --trusted-host ${PIP_TRUSTED_HOST} \
+RUN pip install -i ${PIP_INDEX_URL} --trusted-host ${PIP_TRUSTED_HOST} \
     -r requirements.txt
 COPY . .
 
