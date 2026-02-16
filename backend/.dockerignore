@@ -72,8 +72,8 @@ docs/
 # Kubernetes 매니페스트
 k8s/
 
-# 데이터베이스 초기화 스크립트 (선택적)
-# init_data.sql
+# 데이터베이스 초기화 스크립트
+init_data.sql
 
 # 기타
 .dockerignore

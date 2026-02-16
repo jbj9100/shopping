@@ -27,6 +27,8 @@ data:
   # Frontend Nginx가 /minio/* 경로를 MinIO로 프록시
   MINIO_PUBLIC_BASE_URL: "/minio"
   MINIO_BUCKET_LIST: "category,products"
+  MINIO_IMAGE_ALLOWED_EXTENSIONS: '{".jpg", ".jpeg", ".png", ".gif", ".webp"}'
+  MINIO_IMAGE_MAX_FILE_SIZE: "5242880"  # 5 * 1024 * 1024 bytes
   
   CORS_ORIGINS: "http://frontend-service.front.svc.cluster.local"
 

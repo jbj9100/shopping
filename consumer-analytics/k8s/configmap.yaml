@@ -4,9 +4,29 @@ metadata:
   name: consumer-analytics-config
   namespace: consumer-analytics
 data:
+  # Database
   DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@postgresql.postgresql.svc.cluster.local:5432/shopping"
+  
+  # Redis
   REDIS_URL: "redis://:wjdqudwo@redis-master.redis.svc.cluster.local:6379/0"
+  
+  # DB Connection Pool Settings
   DB_POOL_SIZE: "10"
   DB_MAX_OVERFLOW: "20"
   DB_POOL_RECYCLE: "3600"
+  
+  # Kafka
   KAFKA_BOOTSTRAP_SERVERS: "kafka-controller-0.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-1.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-2.kafka-controller-headless.kafka.svc.cluster.local:9092"
+  KAFKA_USER: "user1"
+  KAFKA_PASSWORD: "wjdqudwo"
+  KAFKA_SASL_MECHANISM: "PLAIN"
+  KAFKA_SECURITY_PROTOCOL: "SASL_PLAINTEXT"
+  
+  # Consumer 설정
+  CONSUMER_GROUP_ID: "analytics-consumer-group"
+  CONSUMER_TOPIC: "order-events"
+  REALTIME_TOPIC: "realtime-events"
+  
+  # 로깅
+  LOG_LEVEL: "INFO"
+  LOG_FORMAT: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
