@@ -1,0 +1,59 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Dependencies (이미 빌드 시 설치됨)
+node_modules/
+
+# 빌드 아티팩트 (멀티스테이지 빌드시 불필요)
+dist/
+build/
+
+# 환경 변수
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 로그
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# 테스트
+coverage/
+.nyc_output/
+.jest/
+
+# IDE 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# 문서
+docs/
+*.md
+!README.md
+
+# Kubernetes 매니페스트
+k8s/
+
+# 기타
+.dockerignore
+Dockerfile
+docker-compose.yml
+.editorconfig
+.eslintcache
+.parcel-cache/

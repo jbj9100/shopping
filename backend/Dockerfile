@@ -14,6 +14,12 @@ WORKDIR /app
 #  && chmod +x /usr/local/bin/yq \
 #  && yq --version
 
+# pip 잡설/버전체크 줄이기(미세 최적화) + pyc 생성 방지
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+
 # Requirements 설치
 COPY requirements.txt .
 

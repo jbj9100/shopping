@@ -1,0 +1,82 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python 캐시 및 컴파일 파일
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 가상환경
+.env
+.venv/
+venv/
+ENV/
+env/
+
+# 빌드 아티팩트
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 테스트 및 커버리지
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# 타입 체커
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# IDE 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 로그
+*.log
+logs/
+
+# 문서
+docs/
+*.md
+!README.md
+
+# Kubernetes 매니페스트
+k8s/
+
+# 데이터베이스 초기화 스크립트 (선택적)
+# init_data.sql
+
+# 기타
+.dockerignore
+Dockerfile
+docker-compose.yml
+.editorconfig
