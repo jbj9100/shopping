@@ -17,4 +17,4 @@ COPY . .
 
 ENV PYTHONUNBUFFERED=1
 
-CMD ["python", "-m", "main.py"]
+CMD ["python",  "main.py"]

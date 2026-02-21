@@ -22,4 +22,4 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8001
 
-CMD ["python", "-m", "main.py"]
+CMD ["python", "main.py"]
