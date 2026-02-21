@@ -40,4 +40,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
 # 실행
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
