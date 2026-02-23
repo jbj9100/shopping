@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from core.lifespan.lifespan import lifespan
-from core.middlewares.otel import setup_otel
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 import os
 import logging
 
@@ -22,16 +20,8 @@ from api.shop.routers.images import images
 
 load_dotenv()
 
-# 1) OTel 초기화 (LoggingInstrumentor 포함) — logging.basicConfig 보다 먼저 실행
-setup_otel()
-
 LOG_LEVEL = os.getenv("LOG_LEVEL", "ERROR").upper()
-LOG_FORMAT = os.getenv("LOG_FORMAT")
-
-logging.basicConfig(
-    level=getattr(logging, LOG_LEVEL),
-    format=LOG_FORMAT
-)
+logging.basicConfig(level=getattr(logging, LOG_LEVEL))
 
 # 2) FastAPI 앱 생성
 app = FastAPI(lifespan=lifespan)
@@ -73,5 +63,3 @@ app.include_router(images.router)
 # app.include_router(ai_router)
 app.include_router(admin.router)
 
-# 3) FastAPI 계측 — app 생성 이후 마지막에 등록
-FastAPIInstrumentor().instrument_app(app)
