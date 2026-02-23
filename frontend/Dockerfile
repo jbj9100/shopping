@@ -28,6 +28,6 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 # nginx.conf는 ConfigMap에서 마운트됨
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]
