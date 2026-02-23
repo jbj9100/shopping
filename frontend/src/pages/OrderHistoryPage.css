@@ -1,0 +1,231 @@
+.order-history-page {
+    min-height: 100vh;
+    background: var(--bg-secondary, #f8f9fa);
+    padding: 2rem 0;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: var(--text-primary, #212529);
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.order-card {
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 주문 헤더 */
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color, #dee2e6);
+}
+
+.order-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.order-number {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+.order-date {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #6c757d);
+}
+
+/* 주문 상품 */
+.order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.order-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-secondary, #f8f9fa);
+    border-radius: 8px;
+}
+
+.order-item-image {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-primary, #ffffff);
+}
+
+.order-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.order-item-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.order-item-details {
+    flex: 1;
+}
+
+.order-item-details h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.item-quantity {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #6c757d);
+}
+
+.order-item-price {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+/* 주문 요약 */
+.order-summary {
+    padding: 1rem;
+    background: var(--bg-secondary, #f8f9fa);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 0.938rem;
+}
+
+.summary-divider {
+    height: 1px;
+    background: var(--border-color, #dee2e6);
+    margin: 0.5rem 0;
+}
+
+.summary-total {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary, #212529);
+}
+
+.total-amount {
+    color: var(--primary-color, #0d6efd);
+}
+
+/* 배송 정보 */
+.order-delivery {
+    padding: 1rem;
+    background: var(--bg-primary, #ffffff);
+    border: 1px solid var(--border-color, #e9ecef);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.order-delivery h4 {
+    font-size: 0.938rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary, #212529);
+}
+
+.order-delivery p {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #6c757d);
+    margin: 0.25rem 0;
+}
+
+/* 주문 액션 */
+.order-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+/* 빈 주문 */
+.empty-orders {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-orders p {
+    font-size: 1.125rem;
+    color: var(--text-secondary, #6c757d);
+    margin-bottom: 1.5rem;
+}
+
+/* 로딩 */
+.order-history-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+    font-size: 1.125rem;
+    color: var(--text-secondary, #6c757d);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .order-history-page {
+        padding: 1rem 0;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .order-item {
+        flex-direction: column;
+    }
+
+    .order-item-price {
+        text-align: right;
+    }
+
+    .order-actions {
+        flex-direction: column;
+    }
+
+    .order-actions button {
+        width: 100%;
+    }
+}

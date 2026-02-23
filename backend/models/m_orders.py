@@ -1,0 +1,69 @@
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, Integer, DateTime, BigInteger, Text, ForeignKey, CheckConstraint, UniqueConstraint, Index
+from typing import List, Optional
+from datetime import datetime
+
+from models.m_common import Base, TimestampMixin
+from enum import Enum
+
+
+# 주문 상태 (Kafka 이벤트 추적용)
+class OrderStatus(str, Enum):
+    PENDING = "PENDING"
+    PAID = "PAID"
+    CANCELED = "CANCELED"
+
+# 장바구니에서 주문을 생성할 때 생성
+class Orders(Base, TimestampMixin):
+    __tablename__ = "orders"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+
+    order_number: Mapped[str] = mapped_column(String(36), unique=True, index=True, nullable=False)
+
+    items_amount: Mapped[int] = mapped_column(Integer, nullable=False)
+    total_amount: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    shipping_fee: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+    # Kafka 이벤트 추적용 (ORDER_PAID, ORDER_CANCELED)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default=OrderStatus.PENDING.value, index=True)
+    paid_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    canceled_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # relationships
+    user: Mapped["Users"] = relationship(back_populates="orders")
+    items: Mapped[List["OrderItems"]] = relationship(
+        back_populates="order", cascade="all, delete-orphan"
+    )
+
+    __table_args__ = (
+        CheckConstraint("items_amount >= 0 AND shipping_fee >= 0 AND total_amount >= 0", name="amounts_nonneg"),
+        CheckConstraint("total_amount = items_amount + shipping_fee", name="total_eq_sum"),
+        CheckConstraint("status IN ('PENDING','PAID','CANCELED')", name="chk_order_status"),
+        Index('ix_orders_status', 'status', 'created_at'),  # 주문 상태별 조회 + 시간순 정렬용
+    )
+
+
+# 사용자가 주문한 상품 이력
+class OrderItems(Base):
+    __tablename__ = "order_items"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id", ondelete="CASCADE"), index=True, nullable=False)
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="RESTRICT"), index=True, nullable=False)
+
+    name_snapshot: Mapped[str] = mapped_column(String(200), nullable=False)
+    price_snapshot: Mapped[int] = mapped_column(Integer, nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    # relationships
+    order: Mapped["Orders"] = relationship(back_populates="items")
+    product: Mapped["Products"] = relationship()
+
+    __table_args__ = (
+        CheckConstraint("quantity > 0", name="qty_pos"),
+        CheckConstraint("price_snapshot >= 0", name="price_nonneg"),
+        UniqueConstraint("order_id", "product_id", name="uq_order_items_order_product"),
+    )

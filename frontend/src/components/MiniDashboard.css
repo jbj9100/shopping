@@ -1,0 +1,107 @@
+.mini-dashboard-card {
+    background: white;
+    border: 1px solid var(--color-neutral-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-lg);
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* Header */
+.mini-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* KPI Row */
+.mini-kpi-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-neutral-50);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+}
+
+.mini-kpi-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+}
+
+.mini-kpi-icon {
+    font-size: 1.25rem;
+    margin-bottom: 2px;
+}
+
+.mini-kpi-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mini-kpi-label {
+    font-size: 11px;
+    color: var(--color-neutral-500);
+    font-weight: 500;
+}
+
+.mini-kpi-value {
+    font-size: var(--font-size-md);
+    font-weight: 700;
+    color: var(--color-neutral-900);
+}
+
+.mini-kpi-divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--color-neutral-200);
+}
+
+/* List Top */
+.mini-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+    padding: 0 var(--spacing-xs);
+}
+
+.mini-list-header h3 {
+    font-size: var(--font-size-md);
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-neutral-800);
+}
+
+.header-sub {
+    font-size: 11px;
+    color: var(--color-neutral-500);
+}
+
+/* List Wrapper */
+/* .mini-table-wrapper { ... } */
+
+/* Link */
+.mini-footer-link {
+    text-align: right;
+    margin-top: var(--spacing-sm);
+}
+
+.mini-footer-link span {
+    font-size: 12px;
+    color: var(--color-primary);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.mini-footer-link span:hover {
+    text-decoration: underline;
+}

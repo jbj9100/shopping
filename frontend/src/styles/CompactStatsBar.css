@@ -1,0 +1,179 @@
+/* 컴팩트 통계 바 */
+.compact-stats-bar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1.5rem 0;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    color: white;
+}
+
+.compact-stats-bar .container {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* 매출 요약 */
+.stats-summary {
+    display: flex;
+    gap: 1.5rem;
+    flex-shrink: 0;
+}
+
+.stat-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.75rem 1.25rem;
+    border-radius: 50px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+}
+
+.stat-badge:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    font-size: 1.75rem;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* 인기 상품 슬라이더 */
+.trending-products {
+    flex: 1;
+    min-width: 0;
+}
+
+.trending-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    opacity: 0.95;
+}
+
+.trending-scroll {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 0.5rem;
+}
+
+.trending-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.trending-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.trending-item:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.trending-rank {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #ffd700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.trending-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.trending-count {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    margin-left: auto;
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+    .compact-stats-bar .container {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+
+    .stats-summary {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .trending-products {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .compact-stats-bar {
+        padding: 1rem 0;
+    }
+
+    .compact-stats-bar .container {
+        padding: 0 1rem;
+    }
+
+    .stats-summary {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .stat-badge {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .trending-scroll {
+        gap: 0.75rem;
+    }
+
+    .trending-item {
+        padding: 0.4rem 0.75rem;
+    }
+
+    .trending-name {
+        max-width: 120px;
+    }
+}

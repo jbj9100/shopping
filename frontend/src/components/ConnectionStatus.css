@@ -1,0 +1,57 @@
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.status-dot.connected {
+    background: var(--color-success);
+}
+
+.status-dot.disconnected {
+    background: var(--color-warning);
+    animation: none;
+}
+
+.status-text {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-neutral-700);
+}
+
+.last-update {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--color-neutral-500);
+    font-size: var(--font-size-xs);
+}
+
+.update-icon {
+    font-size: var(--font-size-sm);
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}

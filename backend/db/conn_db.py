@@ -1,0 +1,65 @@
+import os 
+from dotenv import load_dotenv
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, async_sessionmaker, AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import text
+from typing import AsyncGenerator
+
+load_dotenv()
+
+DATABASE_CONN = os.getenv("DATABASE_CONN")
+
+# DB Pool 설정
+DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "20"))
+DB_MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", "40"))
+DB_POOL_RECYCLE = int(os.getenv("DB_POOL_RECYCLE", "3600"))
+
+engine: AsyncEngine = create_async_engine(
+                       DATABASE_CONN,
+                       #echo=True,
+                       #poolclass=NullPool,
+                       pool_size=DB_POOL_SIZE,
+                       max_overflow=DB_MAX_OVERFLOW,
+                       pool_recycle=DB_POOL_RECYCLE
+                       )
+
+# ORM은 "Connection" 대신 "Session"을 씁니다.
+AsyncSessionLocal = async_sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False,  # async에서 흔히 끔
+    autoflush=False,
+    autocommit=False,
+)
+
+# get_session()은 요청하나를 session 객체에 담음
+# 그 session을 yield로 반환해서 라우터/서비스 레이어에서 명시적으로 commit/rollback을 함
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    if engine is None:
+        raise Exception("Database engine not initialized")
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+        except SQLAlchemyError:
+            # 세션 내부 에러면 rollback은 해주는게 안전
+            await session.rollback()
+            raise
+
+
+async def ping_db() -> tuple[bool, str | None]:
+    """
+    데이터베이스 연결 테스트
+    
+    Returns:
+        (성공 여부, 에러 메시지 또는 None)
+    """
+    try:
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+        return True, None
+    except SQLAlchemyError as e:
+        return False, f"Database connection error: {str(e)}"
+
+
+async def dispose_engine() -> None:
+    await engine.dispose()

@@ -1,0 +1,194 @@
+.order-detail-page {
+    padding: 2rem 0;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.order-detail-page .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.order-detail-page .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.order-detail-page .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
+}
+
+.order-detail-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    font-size: 1.2rem;
+    color: #718096;
+}
+
+/* 정보 카드 */
+.order-info-card,
+.order-items-card,
+.order-summary-card {
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+/* 정보 행 */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.info-value {
+    color: #2d3748;
+}
+
+/* 주문 상품 */
+.order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+}
+
+.order-item-image {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+}
+
+.order-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.order-item-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.order-item-details {
+    flex: 1;
+}
+
+.order-item-details h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 0.5rem 0;
+}
+
+.item-quantity {
+    font-size: 0.875rem;
+    color: #718096;
+    margin: 0;
+}
+
+.order-item-price {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* 주문 요약 */
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+}
+
+.summary-divider {
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 0.5rem 0;
+}
+
+.summary-total {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2d3748;
+    padding-top: 1rem;
+}
+
+.total-amount {
+    color: #3182ce;
+}
+
+/* 빈 주문 */
+.empty-order {
+    text-align: center;
+    padding: 3rem;
+}
+
+.empty-order p {
+    font-size: 1.125rem;
+    color: #718096;
+    margin-bottom: 1.5rem;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .order-detail-page .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .order-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-item-image {
+        width: 100%;
+        height: 200px;
+    }
+
+    .order-item-price {
+        align-self: flex-end;
+    }
+}

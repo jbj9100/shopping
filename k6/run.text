@@ -1,0 +1,1 @@
+k6 run -o experimental-prometheus-rw --tag testid="run-02" shopping.js

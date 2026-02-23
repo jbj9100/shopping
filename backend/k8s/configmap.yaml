@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: backend
+data:
+  # Backend
+  BACKEND_URL: "http://backend-service.backend.svc.cluster.local:8000"
+  
+  # Database
+  DATABASE_CONN: "postgresql+asyncpg://postgres:wjdqudwo@postgresql.postgresql.svc.cluster.local:5432/shopping"
+  
+  # Redis
+  REDIS_URL: "redis://:wjdqudwo@redis-master.redis.svc.cluster.local:6379/0"
+  
+  # DB Connection Pool Settings
+  DB_POOL_SIZE: "20"
+  DB_MAX_OVERFLOW: "40"
+  DB_POOL_RECYCLE: "3600"
+  
+  # MinIO
+  MINIO_URL: "minio.minio.svc.cluster.local:9000"
+  MINIO_ACCESS_KEY: "minio"
+  MINIO_SECRET_KEY: "minio123"
+  MINIO_SECURE: "False"
+  # 상대 경로로 이미지 URL 생성 (예: /minio/category/food.jpeg)
+  # Frontend Nginx가 /minio/* 경로를 MinIO로 프록시
+  MINIO_PUBLIC_BASE_URL: "/minio"
+  MINIO_BUCKET_LIST: "category,products"
+  MINIO_IMAGE_ALLOWED_EXTENSIONS: '{".jpg", ".jpeg", ".png", ".gif", ".webp"}'
+  MINIO_IMAGE_MAX_FILE_SIZE: "5242880"  # 5 * 1024 * 1024 bytes
+  
+  CORS_ORIGINS: "http://frontend-service.front.svc.cluster.local"
+
+  # JWT 설정
+  JWT_SECRET_KEY: "your-secret-key-change-this-in-production-use-minimum-32-characters-random-string"
+  JWT_ALGORITHM: "HS256"
+  ACCESS_TOKEN_EXPIRE_MINUTES: "5"
+  REFRESH_TOKEN_EXPIRE_DAYS: "7"
+  CSRF_TOKEN_EXPIRE_SECONDS: "3600"
+  
+  # Cookie 설정
+  REFRESH_COOKIE_NAME: "refresh_token"
+  REFRESH_COOKIE_MAX_AGE: "604800"
+  REFRESH_COOKIE_HTTPONLY: "true"
+  REFRESH_COOKIE_SECURE: "false"
+  REFRESH_COOKIE_SAMESITE: "lax"
+  REFRESH_COOKIE_PATH: "/"
+  
+  # Admin
+  ADMIN_EMAIL: "admin@admin.com"
+  ADMIN_USERNAME: "admin"
+  ADMIN_PASSWORD: "admin"
+  ADMIN_ROLE: "admin"
+  
+  # Logging
+  LOG_LEVEL: "INFO"
+  LOG_FORMAT: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

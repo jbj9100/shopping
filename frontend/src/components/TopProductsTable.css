@@ -1,0 +1,119 @@
+.top-products-table {
+    width: 100%;
+}
+
+.table-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    padding: 0 var(--spacing-xs);
+}
+
+.table-header h3 {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-neutral-900);
+    margin: 0;
+}
+
+.table-subtitle {
+    font-size: var(--font-size-xs);
+    color: var(--color-neutral-500);
+}
+
+.top-products-table table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    /* 중요: 컬럼 폭 고정 및 말줄임 처리를 위해 */
+}
+
+.top-products-table thead th {
+    text-align: left;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-bottom: 1px solid var(--color-neutral-300);
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-neutral-500);
+    text-transform: uppercase;
+}
+
+/* 컴팩트한 행 높이 및 패딩 */
+.top-products-table tbody td {
+    padding: 8px 12px;
+    /* py-2 px-3 수준 */
+    border-bottom: 1px solid var(--color-neutral-100);
+    height: 48px;
+    /* 컴팩트한 높이 */
+    vertical-align: middle;
+}
+
+/* Zebra striping (아주 연하게) */
+.top-products-table tbody tr:nth_child(even) {
+    background-color: #fcfcfc;
+}
+
+.top-products-table tbody tr:hover {
+    background: var(--color-neutral-50);
+}
+
+/* 컬럼 1: 순위 (가운데, 고정폭 44px) */
+.col-rank {
+    width: 44px;
+    text-align: center;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+}
+
+/* 컬럼 2: 상품명 (좌측, 나머지 공간) */
+.col-product {
+    text-align: left;
+    /* width auto */
+}
+
+/* 컬럼 3: 판매량 (우측, 고정폭 80~100px) */
+.col-sales {
+    width: 100px;
+    text-align: right;
+}
+
+/* 순위 뱃지/텍스트 */
+.rank-badge {
+    font-size: 16px;
+    /* 이모지 크기 */
+}
+
+.rank-number {
+    font-size: var(--font-size-sm);
+    color: var(--color-neutral-600);
+    font-weight: var(--font-weight-medium);
+}
+
+/* 상품명 말줄임 처리 */
+.product-name {
+    display: block;
+    width: 100%;
+    font-size: var(--font-size-sm);
+    color: var(--color-neutral-900);
+    font-weight: var(--font-weight-medium);
+
+    /* Ellipsis */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 판매량 강조 */
+.sales-count {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.empty-state {
+    padding: var(--spacing-xl);
+    text-align: center;
+    color: var(--color-neutral-500);
+    font-size: var(--font-size-sm);
+}

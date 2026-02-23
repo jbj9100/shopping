@@ -1,0 +1,156 @@
+.queue-page {
+    min-height: 100vh;
+    background: var(--color-background);
+    padding: var(--spacing-12) 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.queue-loading {
+    text-align: center;
+    font-size: var(--font-size-xl);
+    color: var(--color-text-secondary);
+}
+
+.queue-card {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: var(--spacing-8);
+    text-align: center;
+}
+
+.queue-title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-2);
+    color: var(--color-text-primary);
+}
+
+.queue-subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-8);
+}
+
+.queue-position-box {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: var(--color-text-inverse);
+    padding: var(--spacing-8);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--spacing-6);
+}
+
+.queue-position-label {
+    font-size: var(--font-size-base);
+    opacity: 0.9;
+    margin-bottom: var(--spacing-2);
+}
+
+.queue-position-value {
+    font-size: 4rem;
+    font-weight: var(--font-weight-bold);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.queue-progress {
+    height: 12px;
+    background: var(--color-border-light);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--spacing-6);
+}
+
+.queue-progress-bar {
+    height: 100%;
+    background: var(--color-primary);
+    transition: width var(--transition-slow);
+}
+
+.queue-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: var(--spacing-8);
+    padding: var(--spacing-6);
+    background: var(--color-background);
+    border-radius: var(--radius);
+}
+
+.queue-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+}
+
+.queue-info-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+}
+
+.queue-info-value {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.queue-tips {
+    text-align: left;
+    background: var(--color-info);
+    color: var(--color-text-inverse);
+    padding: var(--spacing-6);
+    border-radius: var(--radius);
+}
+
+.queue-tips h3 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-3);
+}
+
+.queue-tips ul {
+    list-style: disc;
+    padding-left: var(--spacing-6);
+}
+
+.queue-tips li {
+    margin-bottom: var(--spacing-2);
+}
+
+/* 내 차례 */
+.queue-your-turn {
+    background: linear-gradient(135deg, #fff 0%, #f0fff4 100%);
+}
+
+.queue-success-icon {
+    font-size: 5rem;
+    margin-bottom: var(--spacing-4);
+}
+
+.reservation-timer {
+    background: var(--color-error);
+    color: var(--color-text-inverse);
+    padding: var(--spacing-6);
+    border-radius: var(--radius-xl);
+    margin: var(--spacing-8) 0;
+}
+
+.timer-label {
+    font-size: var(--font-size-base);
+    opacity: 0.9;
+    margin-bottom: var(--spacing-2);
+}
+
+.timer-value {
+    font-size: 3rem;
+    font-weight: var(--font-weight-bold);
+    font-family: 'Courier New', monospace;
+}
+
+.queue-actions {
+    margin: var(--spacing-6) 0;
+}
+
+.queue-warning {
+    font-size: var(--font-size-sm);
+    color: var(--color-error);
+    font-weight: var(--font-weight-medium);
+}
