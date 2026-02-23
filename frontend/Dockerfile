@@ -20,7 +20,7 @@ COPY . .
 RUN node node_modules/vite/bin/vite.js build
 
 # Runtime stage
-FROM docker.io/library/nginx:1.28.2-alpine-otel
+FROM 192.168.80.90:5000/nginx:1.28.2-alpine-otel
 
 # Built 파일 복사
 COPY --from=builder /app/dist /usr/share/nginx/html
