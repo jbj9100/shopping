@@ -1,1 +1,1 @@
-shopping mall project1
+shopping mall project2
