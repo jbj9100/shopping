@@ -281,7 +281,7 @@ k6/
 | 이벤트 스트리밍 | Apache Kafka (aiokafka) |
 | 파일 스토리지 | MinIO |
 | 실시간 통신 | WebSocket (FastAPI) |
-| 컨테이너 | Docker |
+| 컨테이너 | Containerd |
 | 오케스트레이션 | Kubernetes |
 | 부하 테스트 | k6 |
-| 관측성 | OpenTelemetry + Jaeger |
+| 관측성 | OpenTelemetry  |
